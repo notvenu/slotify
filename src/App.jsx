@@ -114,7 +114,7 @@ export default function App() {
 
     const theorySlots = course.theory || [];
     const labSlots = course.lab || [];
-    const mainSlots = theorySlots.filter((s) => /^[A-F]\d?$/i.test(s));
+    const mainSlots = theorySlots.filter((s) => /^[A-G]\d?$/i.test(s));
     const tSlots = theorySlots.filter((s) => /^T/i.test(s));
 
     let credits = 0;
