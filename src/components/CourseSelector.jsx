@@ -226,7 +226,7 @@ const handleAdd = () => {
                     setSelectedTheoryIdx(null);
                     setSelectedLabIdx(null);
                   }}
-                  className={`border p-2 rounded-lg text-left ${
+                  className={`border p-2 rounded-lg text-left cursor-pointer ${
                     isSelected && !isEditing
                       ? "opacity-50 cursor-not-allowed"
                       : "hover:bg-blue-50"

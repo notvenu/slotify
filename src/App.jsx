@@ -5,6 +5,7 @@ import SlotGrid from "./components/SlotGrid";
 import ClashWarning from "./components/ClashWarning";
 import SelectedCourses from "./components/SelectedCourses";
 import slotMapping from "./data/slotMapping";
+import Footer from "./components/Footer"
 import { parseCourseData } from "./utils/parser";
 
 export default function App() {
@@ -142,39 +143,38 @@ export default function App() {
 
       {hasClash() && <ClashWarning />}
 
-      <SelectedCourses
-  groupedCourses={groupCourses(selectedCourses)}
-  onRemoveCourse={(course) =>
-    setSelectedCourses(
-      selectedCourses.filter(
-        (c) => !(c.code === course.code && c.name === course.name)
-      )
-    )
-  }
-  onRemoveMultiple={(indices) => {
-    const grouped = groupCourses(selectedCourses);
-    const toRemove = indices.map((i) => grouped[i]);
-    setSelectedCourses((prev) =>
-      prev.filter(
-        (c) =>
-          !toRemove.some(
-            (r) => c.code === r.code && c.name === r.name
+        <SelectedCourses
+          groupedCourses={groupCourses(selectedCourses)}
+          onRemoveCourse={(course) =>
+            setSelectedCourses(
+              selectedCourses.filter(
+                (c) => !(c.code === course.code && c.name === course.name)
+              )
+            )
+      }
+    onRemoveMultiple={(indices) => {
+      const grouped = groupCourses(selectedCourses);
+      const toRemove = indices.map((i) => grouped[i]);
+      setSelectedCourses((prev) =>
+        prev.filter(
+          (c) =>
+            !toRemove.some(
+              (r) => c.code === r.code && c.name === r.name
+            )
+        )
+      );
+    }}
+    onRemoveAll={() => setSelectedCourses([])}
+    onEditCourse={(course) => {
+        setSelectedCourses(
+          selectedCourses.filter(
+            (c) => !(c.code === course.code && c.name === course.name)
           )
-      )
-    );
-  }}
-  onRemoveAll={() => setSelectedCourses([])}
-  onEditCourse={(course) => {
-    setSelectedCourses(
-      selectedCourses.filter(
-        (c) => !(c.code === course.code && c.name === course.name)
-      )
-    );
-    setEditingCourse(course);
-  }}
-  getCourseCredits={getCourseCredits}
-/>
-
+        );
+        setEditingCourse(course);
+      }}
+      getCourseCredits={getCourseCredits}
+    />
 
       <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
         <div className="font-bold text-lg text-blue-800">
@@ -186,6 +186,9 @@ export default function App() {
       </div>
 
       <SlotGrid selectedCourses={selectedCourses} />
+      <footer className="w-full mt-12 border-t border-gray-300 dark:border-gray-700 pt-6 pb-4">
+        <Footer/>
+    </footer>
     </div>
   );
 }
