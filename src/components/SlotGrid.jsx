@@ -1,13 +1,11 @@
-import React, { useRef } from "react";
-import domtoimage from "dom-to-image";
-import slotMapping from "../data/slotMapping";
+import React, { useRef } from 'react';
+import domtoimage from 'dom-to-image';
+import slotMapping from '../data/slotMapping';
 
 export default function SlotGrid({ selectedCourses }) {
   const timetableRef = useRef(null);
-
   const timetable = {};
 
-  
   for (let course of selectedCourses) {
     for (let slot of [...(course.theory || []), ...(course.lab || [])]) {
       timetable[slot] = {
@@ -21,13 +19,13 @@ export default function SlotGrid({ selectedCourses }) {
   }
 
   const timeSlots = [
-    "08:00-08:50", "09:00-09:50", "10:00-10:50",
-    "11:00-11:50", "12:00-12:50", "12:50-13:30", "13:30-14:00",
-    "14:00-14:50", "15:00-15:50", "16:00-16:50", "17:00-17:50",
-    "18:00-18:50", "19:00-19:30"
+    '08:00-08:50', '09:00-09:50', '10:00-10:50',
+    '11:00-11:50', '12:00-12:50', '12:50-13:30', '13:30-14:00',
+    '14:00-14:50', '15:00-15:50', '16:00-16:50', '17:00-17:50',
+    '18:00-18:50', '19:00-19:30'
   ];
 
-  const days = ["TUE", "WED", "THU", "FRI", "SAT"];
+  const days = ['TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
   const dayTimeToSlots = {};
   Object.entries(slotMapping).forEach(([slot, timeSlots]) => {
@@ -60,33 +58,31 @@ export default function SlotGrid({ selectedCourses }) {
   };
 
   const slotTypeColorMap = {
-    theory: "bg-green-500 text-white",
-    lab: "bg-orange-500 text-white",
-    project: "bg-pink-500 text-white"
+    theory: 'bg-green-500 text-white',
+    lab: 'bg-orange-500 text-white',
+    project: 'bg-pink-500 text-white'
   };
 
   const detectSlotType = (slot) => {
-    if (/^L\d+/i.test(slot)) return "lab";
-    if (/^P/i.test(slot)) return "project";
-    return "theory";
+    if (/^L\d+/i.test(slot)) return 'lab';
+    if (/^P/i.test(slot)) return 'project';
+    return 'theory';
   };
 
-const handleDownload = () => {
-  if (!timetableRef.current) return;
+  const handleDownload = () => {
+    if (!timetableRef.current) return;
 
-  console.log("Downloading with dom-to-image...");
-  domtoimage.toPng(timetableRef.current)
-    .then((dataUrl) => {
-      const link = document.createElement("a");
-      link.download = "Timetable"+`-${Date.now()}`+".png";
-      link.href = dataUrl;
-      link.click();
-    })
-    .catch((error) => {
-      console.error("Screenshot failed:", error);
-    });
-};
-
+    domtoimage.toPng(timetableRef.current)
+      .then((dataUrl) => {
+        const link = document.createElement('a');
+        link.download = `Timetable-${Date.now()}.png`;
+        link.href = dataUrl;
+        link.click();
+      })
+      .catch((error) => {
+        console.error('Screenshot failed:', error);
+      });
+  };
 
   return (
     <div className="mt-6">
@@ -178,7 +174,6 @@ const handleDownload = () => {
         </table>
       </div>
 
-      
       <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-1 text-sm">
         <div className="flex items-center gap-1">
           <div className="w-4 h-4 rounded-lg bg-green-500" />

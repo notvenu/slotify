@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect } from 'react';
 
 export default function CourseSelector({
   courseData,
@@ -8,7 +8,7 @@ export default function CourseSelector({
   editingCourse,
   setEditingCourse,
 }) {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [selecting, setSelecting] = useState(null);
   const [selectedTheoryIdx, setSelectedTheoryIdx] = useState(null);
@@ -22,8 +22,7 @@ export default function CourseSelector({
     const q = searchTerm.trim().toLowerCase();
     if (!q) return uniqueCourses;
     return uniqueCourses.filter(
-      (c) =>
-        c.name.toLowerCase().includes(q) || c.code.toLowerCase().includes(q)
+      (c) => c.name.toLowerCase().includes(q) || c.code.toLowerCase().includes(q)
     );
   }, [searchTerm, uniqueCourses]);
 
@@ -35,17 +34,18 @@ export default function CourseSelector({
   function getTheoryAndLabCombos(course) {
     const theoryCombos = [];
     const labCombos = [];
+
     course?.slotCombos?.forEach((combo, idx) => {
       if (combo.theory.length > 0 && combo.lab.length === 0) {
         theoryCombos.push({ ...combo, idx });
       } else if (combo.lab.length > 0 && combo.theory.length === 0) {
         labCombos.push({ ...combo, idx });
       } else if (combo.theory.length > 0 && combo.lab.length > 0) {
-        // This combo has BOTH theory and lab; we treat it as a single combined combo
         theoryCombos.push({ ...combo, idx });
         labCombos.push({ ...combo, idx });
       }
     });
+
     return { theoryCombos, labCombos };
   }
 
@@ -54,6 +54,7 @@ export default function CourseSelector({
       const course = courseData.find(
         (c) => c.code === editingCourse.code && c.name === editingCourse.name
       );
+
       if (course) {
         setSelecting(course);
 
@@ -84,85 +85,81 @@ export default function CourseSelector({
     (combo) => combo.theory.length > 0 && combo.lab.length > 0
   );
 
-  const { theoryCombos, labCombos } = selecting ? getTheoryAndLabCombos(selecting) : { theoryCombos: [], labCombos: [] };
+  const { theoryCombos, labCombos } = selecting
+    ? getTheoryAndLabCombos(selecting)
+    : { theoryCombos: [], labCombos: [] };
 
-const hasAnyTheory = theoryCombos.length > 0;
-const hasAnyLab = labCombos.length > 0;
+  const hasAnyTheory = theoryCombos.length > 0;
+  const hasAnyLab = labCombos.length > 0;
+  const requiresBoth = hasAnyTheory && hasAnyLab;
 
-const requiresBoth = hasAnyTheory && hasAnyLab;
-
-const canAdd =
-  selecting &&
-  (
-    requiresBoth
+  const canAdd =
+    selecting &&
+    (requiresBoth
       ? selectedTheoryIdx !== null && selectedLabIdx !== null
-      : (selectedTheoryIdx !== null || selectedLabIdx !== null)
-  ) &&
-  (isEditing || selectedCourses.length < maxSubjects);
+      : selectedTheoryIdx !== null || selectedLabIdx !== null) &&
+    (isEditing || selectedCourses.length < maxSubjects);
 
+  const handleAdd = () => {
+    if (!canAdd) return;
 
-const handleAdd = () => {
-  if (!canAdd) return;
+    const alreadyAdded = selectedCourses.some(
+      (s) => s.code === selecting.code && s.name === selecting.name
+    );
 
-  // ✅ Check if already added
-  const alreadyAdded = selectedCourses.some(
-    (s) => s.code === selecting.code && s.name === selecting.name
-  );
-
-  if (alreadyAdded && !isEditing) {
-    // Prevent duplicate
-    alert("This course has already been added.");
-    return;
-  }
-
-  const { theoryCombos, labCombos } = getTheoryAndLabCombos(selecting);
-
-  let selectedTheoryCombo = selectedTheoryIdx !== null
-    ? theoryCombos.find((c) => c.idx === selectedTheoryIdx)
-    : null;
-  let selectedLabCombo = selectedLabIdx !== null
-    ? labCombos.find((c) => c.idx === selectedLabIdx)
-    : null;
-
-  const combinedTheory = [...new Set([
-    ...(selectedTheoryCombo?.theory || []),
-    ...(selectedLabCombo?.theory || [])
-  ])];
-
-  const combinedLab = [...new Set([
-    ...(selectedTheoryCombo?.lab || []),
-    ...(selectedLabCombo?.lab || [])
-  ])];
-
-  const newCourse = {
-    code: selecting.code,
-    name: selecting.name,
-    type: selecting.type,
-    theory: combinedTheory,
-    lab: combinedLab,
-  };
-
-  setSelectedCourses((prev) => {
-    if (isEditing) {
-      const filtered = prev.filter(
-        (c) =>
-          !(c.code === editingCourse.code &&
-            c.name === editingCourse.name &&
-            JSON.stringify(c.theory.sort()) === JSON.stringify(editingCourse.theory.sort()) &&
-            JSON.stringify(c.lab.sort()) === JSON.stringify(editingCourse.lab.sort()))
-      );
-      return [...filtered, newCourse];
+    if (alreadyAdded && !isEditing) {
+      alert('This course has already been added.');
+      return;
     }
-    return [...prev, newCourse];
-  });
 
-  if (isEditing && setEditingCourse) {
-    setEditingCourse(null);
-  }
-  setSelecting(null);
-  setSelectedTheoryIdx(null);
-  setSelectedLabIdx(null);
-};
+    const { theoryCombos, labCombos } = getTheoryAndLabCombos(selecting);
+
+    const selectedTheoryCombo = selectedTheoryIdx !== null
+      ? theoryCombos.find((c) => c.idx === selectedTheoryIdx)
+      : null;
+    const selectedLabCombo = selectedLabIdx !== null
+      ? labCombos.find((c) => c.idx === selectedLabIdx)
+      : null;
+
+    const combinedTheory = [...new Set([
+      ...(selectedTheoryCombo?.theory || []),
+      ...(selectedLabCombo?.theory || [])
+    ])];
+
+    const combinedLab = [...new Set([
+      ...(selectedTheoryCombo?.lab || []),
+      ...(selectedLabCombo?.lab || [])
+    ])];
+
+    const newCourse = {
+      code: selecting.code,
+      name: selecting.name,
+      type: selecting.type,
+      theory: combinedTheory,
+      lab: combinedLab,
+    };
+
+    setSelectedCourses((prev) => {
+      if (isEditing) {
+        const filtered = prev.filter(
+          (c) =>
+            !(c.code === editingCourse.code &&
+              c.name === editingCourse.name &&
+              JSON.stringify(c.theory.sort()) === JSON.stringify(editingCourse.theory.sort()) &&
+              JSON.stringify(c.lab.sort()) === JSON.stringify(editingCourse.lab.sort()))
+        );
+        return [...filtered, newCourse];
+      }
+      return [...prev, newCourse];
+    });
+
+    if (isEditing && setEditingCourse) {
+      setEditingCourse(null);
+    }
+    setSelecting(null);
+    setSelectedTheoryIdx(null);
+    setSelectedLabIdx(null);
+  };
 
   const handleCancel = () => {
     if (isEditing && setEditingCourse) {
@@ -184,7 +181,7 @@ const handleAdd = () => {
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-bold">
-        {isEditing ? "Edit Course" : "Course Selector"}
+        {isEditing ? 'Edit Course' : 'Course Selector'}
       </h2>
       
       {!selecting && (
@@ -203,7 +200,7 @@ const handleAdd = () => {
               <button
                 className="text-sm px-2 py-2 bg-gray-200 rounded-lg cursor-pointer hover:bg-gray-300"
                 onClick={() => {
-                  setSearchTerm("");
+                  setSearchTerm('');
                   setCurrentPage(1);
                 }}
               >
@@ -228,8 +225,8 @@ const handleAdd = () => {
                   }}
                   className={`border p-2 rounded-lg text-left cursor-pointer ${
                     isSelected && !isEditing
-                      ? "opacity-50 cursor-not-allowed"
-                      : "hover:bg-blue-50"
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'hover:bg-blue-50'
                   }`}
                 >
                   <div className="font-semibold">{c.name}</div>
@@ -249,14 +246,10 @@ const handleAdd = () => {
                 Prev
               </button>
               <span className="p-1">
-                Page {currentPage} /{" "}
-                {Math.ceil(filteredCourses.length / coursesPerPage)}
+                Page {currentPage} / {Math.ceil(filteredCourses.length / coursesPerPage)}
               </span>
               <button
-                disabled={
-                  currentPage ===
-                  Math.ceil(filteredCourses.length / coursesPerPage)
-                }
+                disabled={currentPage === Math.ceil(filteredCourses.length / coursesPerPage)}
                 onClick={() => setCurrentPage((p) => p + 1)}
                 className="p-1 border-1 rounded-lg cursor-pointer"
               >
@@ -284,7 +277,7 @@ const handleAdd = () => {
             const allNill = selecting.slotCombos.every(
               (combo) =>
                 combo.theory.length === 1 &&
-                combo.theory[0].toUpperCase() === "NILL" &&
+                combo.theory[0].toUpperCase() === 'NILL' &&
                 combo.lab.length === 0
             );
 
@@ -299,7 +292,6 @@ const handleAdd = () => {
                       onClick={() => {
                         setSelectedCourses((prev) => {
                           if (isEditing) {
-                            // Remove the exact matching course (by code, name, theory, and lab)
                             const filtered = prev.filter(
                               (c) =>
                                 !(c.code === editingCourse.code && 
@@ -314,18 +306,16 @@ const handleAdd = () => {
                               theory: [],
                               lab: [],
                             }];
-                          } else {
-                            return [...prev, {
-                              code: selecting.code,
-                              name: selecting.name,
-                              type: selecting.type,
-                              theory: [],
-                              lab: [],
-                            }];
                           }
+                          return [...prev, {
+                            code: selecting.code,
+                            name: selecting.name,
+                            type: selecting.type,
+                            theory: [],
+                            lab: [],
+                          }];
                         });
                         
-                        // Clear editing mode and reset state
                         if (isEditing && setEditingCourse) {
                           setEditingCourse(null);
                         }
@@ -335,7 +325,7 @@ const handleAdd = () => {
                       }}
                       className="px-3 py-1 bg-green-500 text-white rounded-lg cursor-pointer hover:bg-green-600"
                     >
-                      {isEditing ? "Save Changes" : "Add Course"}
+                      {isEditing ? 'Save Changes' : 'Add Course'}
                     </button>
                     <button
                       onClick={handleCancel}
@@ -362,8 +352,8 @@ const handleAdd = () => {
                             key={combo.idx}
                             className={`flex items-center gap-2 border px-2 py-1 rounded-lg cursor-pointer ${
                               isChecked
-                                ? "bg-blue-100 border-blue-300"
-                                : "bg-white hover:bg-blue-50"
+                                ? 'bg-blue-100 border-blue-300'
+                                : 'bg-white hover:bg-blue-50'
                             }`}
                           >
                             <input
@@ -373,10 +363,10 @@ const handleAdd = () => {
                               onChange={() => handleTheorySelection(combo.idx)}
                             />
                             <span>
-                              Theory: {combo.theory.join("+")}
+                              Theory: {combo.theory.join('+')}
                               {combo.lab.length > 0
-                                ? ` | Lab: ${combo.lab.join("+")}`
-                                : ""}
+                                ? ` | Lab: ${combo.lab.join('+')}`
+                                : ''}
                             </span>
                           </label>
                         );
@@ -395,8 +385,8 @@ const handleAdd = () => {
                             key={combo.idx}
                             className={`flex items-center gap-2 border px-2 py-1 rounded-lg cursor-pointer ${
                               isChecked
-                                ? "bg-blue-100 border-blue-300"
-                                : "bg-white hover:bg-blue-50"
+                                ? 'bg-blue-100 border-blue-300'
+                                : 'bg-white hover:bg-blue-50'
                             }`}
                           >
                             <input
@@ -406,10 +396,10 @@ const handleAdd = () => {
                               onChange={() => handleLabSelection(combo.idx)}
                             />
                             <span>
-                              Lab: {combo.lab.join("+")}
+                              Lab: {combo.lab.join('+')}
                               {combo.theory.length > 0
-                                ? ` | Theory: ${combo.theory.join("+")}`
-                                : ""}
+                                ? ` | Theory: ${combo.theory.join('+')}`
+                                : ''}
                             </span>
                           </label>
                         );
@@ -423,11 +413,11 @@ const handleAdd = () => {
                     onClick={handleAdd}
                     className={`px-3 py-1 rounded-lg ${
                       canAdd
-                        ? "bg-green-500 text-white hover:bg-green-600"
-                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                        ? 'bg-green-500 text-white hover:bg-green-600'
+                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                     }`}
                   >
-                    {isEditing ? "Save Changes" : "Add Course"}
+                    {isEditing ? 'Save Changes' : 'Add Course'}
                   </button>
                   <button
                     onClick={handleCancel}
