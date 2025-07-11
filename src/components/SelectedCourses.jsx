@@ -12,6 +12,7 @@ export default function SelectedCourses({
   getCourseCredits,
 }) {
   const [selectedIndices, setSelectedIndices] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const toggleSelection = (idx) => {
     setSelectedIndices((prev) =>
@@ -63,11 +64,10 @@ export default function SelectedCourses({
     const title = 'Selected Courses';
     XLSX.utils.sheet_add_aoa(worksheet, [[title]], { origin: 'A1' });
 
-    const mergeRef = XLSX.utils.encode_range({
-      s: { c: 0, r: 0 },
-      e: { c: headers.length - 1, r: 0 },
-    });
-    worksheet['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: headers.length - 1 } }];
+    worksheet['!merges'] = [{
+      s: { r: 0, c: 0 },
+      e: { r: 0, c: headers.length - 1 }
+    }];
 
     XLSX.utils.sheet_add_aoa(worksheet, data, { origin: 'A3' });
     worksheet['!cols'] = headers.map(() => ({ wch: 20 }));
@@ -156,15 +156,79 @@ export default function SelectedCourses({
     doc.save(`SelectedCourses-${Date.now()}.pdf`);
   };
 
+  const filteredCourses = groupedCourses.filter(
+    (course) =>
+      course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      course.code.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="my-6">
       <h2 className="text-lg font-semibold mb-2">Selected Courses</h2>
+
+      {groupedCourses.length > 0 && (
+      <div className="mb-4 flex flex-wrap justify-between gap-2 items-center">
+        {/* Left: Search */}
+        <div className="flex gap-2 items-center flex-wrap">
+          <input
+            type="text"
+            placeholder="Search by name or code..."
+            className="border px-2 py-1 rounded-lg w-full md:w-72"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          {searchTerm && (
+            <button
+              className="px-2 py-1 bg-gray-300 rounded-lg cursor-pointer hover:bg-gray-400"
+              onClick={() => setSearchTerm('')}
+            >
+              Clear
+            </button>
+          )}
+        </div>
+
+        {/* Right: Action Buttons */}
+        <div className="flex gap-2 flex-wrap">
+          {selectionMode && (
+            <button
+              className="px-3 py-1 bg-red-500 text-white rounded-lg cursor-pointer hover:bg-red-600"
+              onClick={() => {
+                onRemoveMultiple(selectedIndices);
+                setSelectedIndices([]);
+              }}
+            >
+              Remove Selected
+            </button>
+          )}
+          <button
+            className="px-3 py-1 bg-red-500 text-white rounded-lg cursor-pointer hover:bg-red-600"
+            onClick={onRemoveAll}
+          >
+            Remove All
+          </button>
+          <button
+            className="px-3 py-1 bg-green-500 text-white rounded-lg cursor-pointer hover:bg-green-600"
+            onClick={handleDownloadExcel}
+          >
+            Download Excel
+          </button>
+          <button
+            className="px-3 py-1 bg-blue-500 text-white rounded-lg cursor-pointer hover:bg-blue-600"
+            onClick={handleDownloadPDF}
+          >
+            Download PDF
+          </button>
+        </div>
+      </div>
+    )}
+
+
       <div className="space-y-2">
-        {groupedCourses.length === 0 && (
-          <div className="text-gray-500">No courses added.</div>
+        {filteredCourses.length === 0 && (
+          <div className="text-gray-500">No courses found.</div>
         )}
 
-        {groupedCourses.map((course, idx) => (
+        {filteredCourses.map((course, idx) => (
           <div
             key={idx}
             className={`flex flex-col md:flex-row md:items-center gap-4 border p-2 rounded-lg ${
@@ -215,40 +279,6 @@ export default function SelectedCourses({
           </div>
         ))}
       </div>
-
-      {groupedCourses.length > 0 && (
-        <div className="mt-3 flex gap-2 flex-wrap">
-          {selectionMode && (
-            <button
-              className="px-3 py-1 bg-red-500 text-white rounded-lg cursor-pointer hover:bg-red-600"
-              onClick={() => {
-                onRemoveMultiple(selectedIndices);
-                setSelectedIndices([]);
-              }}
-            >
-              Remove Selected
-            </button>
-          )}
-          <button
-            className="px-3 py-1 bg-red-500 text-white rounded-lg cursor-pointer hover:bg-red-600"
-            onClick={onRemoveAll}
-          >
-            Remove All
-          </button>
-          <button
-            className="px-3 py-1 bg-green-500 text-white rounded-lg cursor-pointer hover:bg-green-600"
-            onClick={handleDownloadExcel}
-          >
-            Download Excel
-          </button>
-          <button
-            className="px-3 py-1 bg-blue-500 text-white rounded-lg cursor-pointer hover:bg-blue-600"
-            onClick={handleDownloadPDF}
-          >
-            Download PDF
-          </button>
-        </div>
-      )}
     </div>
   );
 }
