@@ -66,7 +66,7 @@ const slotMapping = {
   TD2: [{ day: 'THU', time: '17:00-17:50' }],
   TE1: [{ day: 'FRI', time: '12:00-12:50' }],
   TE2: [{ day: 'THU', time: '14:00-14:50' }],
-  TF1: [{ day: 'TUE', time: '11:00-11:50' }],
+  TF1: [{ day: 'SAT', time: '11:00-11:50' }],
   TF2: [{ day: 'WED', time: '14:00-14:50' }],
   TG1: [{ day: 'THU', time: '10:00-10:50' }],
   TG2: [{ day: 'THU', time: '17:00-17:50' }],
@@ -85,7 +85,7 @@ const slotMapping = {
   TGG1: [{ day: 'WED', time: '08:00-08:50' }],
   TGG2: [{ day: 'THU', time: '18:00-18:50' }],
   
-    SC1: [{ day: 'WED', time: '16:00-16:50' }],
+  SC1: [{ day: 'WED', time: '16:00-16:50' }],
   SC2: [{ day: 'WED', time: '11:00-11:50' }],
   SD1: [{ day: 'SAT', time: '15:00-15:50' }],
   SD2: [{ day: 'FRI', time: '12:00-12:50' }],
@@ -109,7 +109,7 @@ const slotMapping = {
     { day: "SAT", time: '13:30-14:00'},
   ],
   
-    L1:  [{ day: 'TUE', time: '08:00-08:50' }],
+  L1:  [{ day: 'TUE', time: '08:00-08:50' }],
   L2:  [{ day: 'TUE', time: '09:00-09:50' }],
   L3:  [{ day: 'TUE', time: '10:00-10:50' }],
   L4:  [{ day: 'TUE', time: '11:00-11:50' }],
