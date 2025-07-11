@@ -5,7 +5,7 @@ export default function CourseSelector({
   selectedCourses,
   setSelectedCourses,
   maxSubjects,
-  editingCourse, // NEW: receive editing course
+  editingCourse,
 }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -47,7 +47,6 @@ export default function CourseSelector({
     return { theoryCombos, labCombos };
   }
 
-  // NEW: Preselect when editingCourse changes
   useEffect(() => {
     if (editingCourse) {
       const course = courseData.find(
@@ -59,7 +58,6 @@ export default function CourseSelector({
 
         const { theoryCombos, labCombos } = getTheoryAndLabCombos(course);
 
-        // Find matching theory
         const matchedTheory = theoryCombos.find(
           (combo) =>
             JSON.stringify(combo.theory) === JSON.stringify(editingCourse.theory) &&
@@ -67,7 +65,6 @@ export default function CourseSelector({
         );
         if (matchedTheory) setSelectedTheoryIdx(matchedTheory.idx);
 
-        // If no match in theory, try lab
         if (!matchedTheory) {
           const matchedLab = labCombos.find(
             (combo) =>
@@ -146,7 +143,7 @@ export default function CourseSelector({
         />
         {searchTerm && (
           <button
-            className="text-sm px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
+            className="text-sm px-2 py-1 bg-gray-200 rounded-lg hover:bg-gray-300"
             onClick={() => {
               setSearchTerm("");
               setCurrentPage(1);
@@ -181,7 +178,7 @@ export default function CourseSelector({
                     setSelectedTheoryIdx(null);
                     setSelectedLabIdx(null);
                   }}
-                  className={`border p-2 rounded text-left ${
+                  className={`border p-2 rounded-lg text-left ${
                     isSelected
                       ? "opacity-50 cursor-not-allowed"
                       : "hover:bg-blue-50"
@@ -220,89 +217,137 @@ export default function CourseSelector({
       )}
 
       {selecting && (
-        <div className="border p-4 rounded bg-blue-50">
-          <div className="mb-2 font-semibold">
-            {selecting.name} ({selecting.code})
-          </div>
+  <div className="border p-4 rounded-lg bg-blue-50">
+    <div className="mb-2 font-semibold">
+      {selecting.name} ({selecting.code})
+    </div>
+
+    {(() => {
+      const { theoryCombos, labCombos } = getTheoryAndLabCombos(selecting);
+      const allNill = selecting.slotCombos.every(
+        (combo) =>
+          combo.theory.length === 1 &&
+          combo.theory[0].toUpperCase() === "NILL" &&
+          combo.lab.length === 0
+      );
+
+      if (allNill) {
+        
+        return (
+          <>
+            <div className="mb-2 text-sm text-gray-700">
+              This course has no slots (Project/Internship).
+            </div>
+            <div className="flex gap-2 mt-4">
+              <button
+                onClick={() => {
+                  setSelectedCourses((prev) => [
+                    ...prev,
+                    {
+                      code: selecting.code,
+                      name: selecting.name,
+                      type: selecting.type,
+                      theory: [],
+                      lab: [],
+                    },
+                  ]);
+                  setSelecting(null);
+                  setSelectedTheoryIdx(null);
+                  setSelectedLabIdx(null);
+                }}
+                className="px-3 py-1 bg-green-500 text-white rounded-lg"
+              >
+                {editingCourse ? "Save Changes" : "Add Course"}
+              </button>
+              <button
+                onClick={() => {
+                  setSelecting(null);
+                  setSelectedTheoryIdx(null);
+                  setSelectedLabIdx(null);
+                }}
+                className="px-3 py-1 bg-gray-200 rounded-lg hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+            </div>
+          </>
+        );
+      }
+
+      return (
+        <>
           <div className="mb-2 font-medium">Select Slot Combination(s):</div>
-          {(() => {
-            const { theoryCombos, labCombos } = getTheoryAndLabCombos(selecting);
-            return (
-              <>
-                {theoryCombos.length > 0 && (
-                  <div className="mb-4">
-                    <div className="font-semibold mb-1">Theory Slots</div>
-                    <div className="flex flex-col gap-2">
-                      {theoryCombos.map((combo) => {
-                        const isChecked = selectedTheoryIdx === combo.idx;
-                        return (
-                          <label
-                            key={combo.idx}
-                            className={`flex items-center gap-2 border px-2 py-1 rounded ${
-                              isChecked
-                                ? "bg-blue-100"
-                                : "bg-white hover:bg-blue-50"
-                            }`}
-                          >
-                            <input
-                              type="radio"
-                              name="theoryCombo"
-                              checked={isChecked}
-                              onChange={() => setSelectedTheoryIdx(combo.idx)}
-                            />
-                            <span>
-                              Theory: {combo.theory.join("+")}
-                              {combo.lab.length > 0
-                                ? ` | Lab: ${combo.lab.join("+")}`
-                                : ""}
-                            </span>
-                          </label>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-                {labCombos.length > 0 && (
-                  <div className="mb-2">
-                    <div className="font-semibold mb-1">Lab Slots</div>
-                    <div className="flex flex-col gap-2">
-                      {labCombos.map((combo) => {
-                        const isChecked = selectedLabIdx === combo.idx;
-                        return (
-                          <label
-                            key={combo.idx}
-                            className={`flex items-center gap-2 border px-2 py-1 rounded ${
-                              isChecked
-                                ? "bg-blue-100"
-                                : "bg-white hover:bg-blue-50"
-                            }`}
-                          >
-                            <input
-                              type="radio"
-                              name="labCombo"
-                              checked={isChecked}
-                              onChange={() => setSelectedLabIdx(combo.idx)}
-                            />
-                            <span>
-                              Lab: {combo.lab.join("+")}
-                              {combo.theory.length > 0
-                                ? ` | Theory: ${combo.theory.join("+")}`
-                                : ""}
-                            </span>
-                          </label>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-              </>
-            );
-          })()}
+          {theoryCombos.length > 0 && (
+            <div className="mb-4">
+              <div className="font-semibold mb-1">Theory Slots</div>
+              <div className="flex flex-col gap-2">
+                {theoryCombos.map((combo) => {
+                  const isChecked = selectedTheoryIdx === combo.idx;
+                  return (
+                    <label
+                      key={combo.idx}
+                      className={`flex items-center gap-2 border px-2 py-1 rounded-lg ${
+                        isChecked
+                          ? "bg-blue-100"
+                          : "bg-white hover:bg-blue-50"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="theoryCombo"
+                        checked={isChecked}
+                        onChange={() => setSelectedTheoryIdx(combo.idx)}
+                      />
+                      <span>
+                        Theory: {combo.theory.join("+")}
+                        {combo.lab.length > 0
+                          ? ` | Lab: ${combo.lab.join("+")}`
+                          : ""}
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+          {labCombos.length > 0 && (
+            <div className="mb-2">
+              <div className="font-semibold mb-1">Lab Slots</div>
+              <div className="flex flex-col gap-2">
+                {labCombos.map((combo) => {
+                  const isChecked = selectedLabIdx === combo.idx;
+                  return (
+                    <label
+                      key={combo.idx}
+                      className={`flex items-center gap-2 border px-2 py-1 rounded-lg ${
+                        isChecked
+                          ? "bg-blue-100"
+                          : "bg-white hover:bg-blue-50"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="labCombo"
+                        checked={isChecked}
+                        onChange={() => setSelectedLabIdx(combo.idx)}
+                      />
+                      <span>
+                        Lab: {combo.lab.join("+")}
+                        {combo.theory.length > 0
+                          ? ` | Theory: ${combo.theory.join("+")}`
+                          : ""}
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+          )}
           <div className="flex gap-2 mt-4">
             <button
               disabled={!canAdd}
               onClick={handleAdd}
-              className={`px-3 py-1 rounded ${
+              className={`px-3 py-1 rounded-lg ${
                 canAdd
                   ? "bg-green-500 text-white"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -316,13 +361,17 @@ export default function CourseSelector({
                 setSelectedTheoryIdx(null);
                 setSelectedLabIdx(null);
               }}
-              className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+              className="px-3 py-1 bg-gray-200 rounded-lg hover:bg-gray-300"
             >
               Cancel
             </button>
           </div>
-        </div>
-      )}
+        </>
+      );
+    })()}
+  </div>
+)}
+
     </div>
   );
 }

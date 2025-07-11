@@ -14,7 +14,7 @@ export default function App() {
   const [editingCourse, setEditingCourse] = useState(null);
 
   useEffect(() => {
-    // Load default PDF on first mount if no data is stored
+    
     const saved = localStorage.getItem("uploadedCourseData");
     if (!saved) {
       async function loadDefaultPDF() {
@@ -56,7 +56,7 @@ export default function App() {
         for (let { day, time } of mappings) {
           const key = `${day}-${time}`;
           if (occupiedTimes.has(key)) {
-            return true; // clash found
+            return true;
           }
           occupiedTimes.add(key);
         }
@@ -67,6 +67,8 @@ export default function App() {
 };
 
   const getCourseCredits = (course) => {
+    if (course.code === "CAP4001" || course.name === "Capstone") return 4;
+    if (course.code === "BIC4002") return 12;
     const theorySlots = course.theory || [];
     const labSlots = course.lab || [];
     const mainSlots = theorySlots.filter((s) => /^[A-F]\d?$/i.test(s));
@@ -132,7 +134,7 @@ export default function App() {
         selectedCourses={selectedCourses}
         setSelectedCourses={(courses) => {
           setSelectedCourses(courses);
-          setEditingCourse(null); // Clear edit after add
+          setEditingCourse(null);
         }}
         maxSubjects={numSubjects}
         editingCourse={editingCourse}
@@ -174,7 +176,7 @@ export default function App() {
 />
 
 
-      <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded">
+      <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
         <div className="font-bold text-lg text-blue-800">
           Total Credits: {getTotalCredits(groupCourses(selectedCourses))}
         </div>

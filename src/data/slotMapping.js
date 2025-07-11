@@ -22,7 +22,7 @@ const slotMapping = {
   ],
   C2: [
     { day: 'THU', time: '15:00-15:50' },
-    { day: 'FRI', time: '15:00-15:50' }
+    { day: 'FRI', time: '14:00-14:50' }
   ],
   D1: [
     { day: 'TUE', time: '12:00-12:50' },
@@ -30,7 +30,7 @@ const slotMapping = {
   ],
   D2: [
     { day: 'WED', time: '14:00-14:50' },
-    { day: 'SAT', time: '15:00-15:50' }
+    { day: 'SAT', time: '14:00-14:50' }
   ],
   E1: [
     { day: 'WED', time: '11:00-11:50' },
@@ -53,8 +53,8 @@ const slotMapping = {
     { day: 'SAT', time: '11:00-11:50' }
   ],
   G2: [
-    { day: 'TUE', time: '16:00-16:50' },
-    { day: 'WED', time: '14:00-14:50' }
+    { day: 'TUE', time: '17:00-17:50' },
+    { day: 'WED', time: '15:00-15:50' }
   ],
   
   // === Single-slot T-prefixed Theory Slots ===
@@ -63,12 +63,12 @@ const slotMapping = {
   TB1: [{ day: 'FRI', time: '09:00-09:50' }],
   TB2: [{ day: 'FRI', time: '15:00-15:50' }],
   TC1: [{ day: 'TUE', time: '11:00-11:50' }],
-  TC2: [{ day: 'TUE', time: '16:00-16:50' }],
+  TC2: [{ day: 'TUE', time: '17:00-17:50' }],
   TD1: [{ day: 'THU', time: '10:00-10:50' }],
   TD2: [{ day: 'THU', time: '17:00-17:50' }],
   TE1: [{ day: 'FRI', time: '12:00-12:50' }],
   TE2: [{ day: 'THU', time: '14:00-14:50' }],
-  TF1: [{ day: 'TUE', time: '08:00-08:50' }],
+  TF1: [{ day: 'TUE', time: '11:00-11:50' }],
   TF2: [{ day: 'WED', time: '14:00-14:50' }],
   TG1: [{ day: 'THU', time: '10:00-10:50' }],
   TG2: [{ day: 'THU', time: '17:00-17:50' }],
@@ -96,12 +96,23 @@ const slotMapping = {
   SE2: [{ day: 'SAT', time: '09:00-09:50' }],
   
   // === Club Slots ===
-  CLUB: [{ day: 'THU', time: '12:00-12:50' }],
-  CLUBSECS: [{ day: 'SAT', time: '12:00-12:50' }],
-  
+  CLUB: [
+    { day: 'THU', time: '12:00-12:50' },
+    { day: 'SAT', time: '17:00-17:50' }
+  ],
   // === ECS Slots ===
-  ECS: [{ day: 'THU', time: '11:00-11:50' }],
-  ECSCLUBS: [{ day: 'SAT', time: '11:00-11:50' }],
+  ECS: [
+    { day: 'THU', time: '11:00-11:50' },
+    { day: 'SAT', time: '16:00-16:50' }
+  ],
+  // === Lunch Slots ===
+  Lunch: [
+    { day: "TUE", time: '13:30-14:00'},
+    { day: "WED", time: '13:30-14:00'},
+    { day: "THU", time: '13:30-14:00'},
+    { day: "FRI", time: '13:30-14:00'},
+    { day: "SAT", time: '13:30-14:00'},
+  ],
   
   // === Lab Slots ===
   L1:  [{ day: 'TUE', time: '08:00-08:50' }],

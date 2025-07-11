@@ -33,7 +33,7 @@ export default function SelectedCourses({
         {groupedCourses.map((course, idx) => (
           <div
             key={idx}
-            className={`flex flex-col md:flex-row md:items-center gap-4 border p-2 rounded ${
+            className={`flex flex-col md:flex-row md:items-center gap-4 border p-2 rounded-lg ${
               isSelected(idx) ? "bg-yellow-50" : "bg-gray-50"
             }`}
           >
@@ -68,13 +68,13 @@ export default function SelectedCourses({
             {!selectionMode && (
               <div className="flex gap-2">
                 <button
-                  className="px-2 py-1 bg-yellow-200 rounded hover:bg-yellow-300"
+                  className="px-2 py-1 bg-yellow-200 rounded-lg hover:bg-yellow-300"
                   onClick={() => onEditCourse(course)}
                 >
                   Edit
                 </button>
                 <button
-                  className="px-2 py-1 bg-red-200 rounded hover:bg-red-300"
+                  className="px-2 py-1 bg-red-200 rounded-lg hover:bg-red-300"
                   onClick={() => onRemoveCourse(course)}
                 >
                   Remove
@@ -89,7 +89,7 @@ export default function SelectedCourses({
         <div className="mt-3 flex gap-2 flex-wrap">
           {selectionMode && (
             <button
-              className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+              className="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600"
               onClick={() => {
                 onRemoveMultiple(selectedIndices);
                 setSelectedIndices([]);
@@ -99,7 +99,7 @@ export default function SelectedCourses({
             </button>
           )}
           <button
-            className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+            className="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600"
             onClick={() => {
               onRemoveAll();
               setSelectedIndices([]);

@@ -10,7 +10,7 @@ export default function FileUploader({ onExtract, onRemove }) {
     const parsedData = JSON.parse(savedData);
     setFileName("Default Timetable.pdf");
     setIsUploaded(true);
-    onExtract(parsedData); // Pass parsed data, not file
+    onExtract(parsedData);
   }
 }, [onExtract]);
 
@@ -30,12 +30,12 @@ export default function FileUploader({ onExtract, onRemove }) {
     setIsUploaded(false);
     localStorage.removeItem("uploadedCourseData");
     localStorage.removeItem("selectedCourses");
-    onExtract([]);  // Clear parsed data
-    onRemove();     // Clear selectedCourses
+    onExtract([]);
+    onRemove();
   };
 
   return (
-    <div className="mb-4 border p-4 rounded bg-gray-50">
+    <div className="mb-4 border p-4 rounded-lg bg-gray-50">
       <p className="text-sm text-gray-700 mb-2 font-medium">
         Please upload <span className="font-semibold">ONLY THE COURSE LIST FILE. </span> <p className="text-sm text-gray-600 mt-1">
         Supported formats: .xlsx, .xls, .csv, .pdf, .docx</p>
@@ -55,7 +55,7 @@ export default function FileUploader({ onExtract, onRemove }) {
             ✅ Uploaded: {fileName}
           </div>
           <button
-            className="px-2 py-1 bg-red-200 rounded hover:bg-red-300"
+            className="px-2 py-1 bg-red-200 rounded-lg hover:bg-red-300"
             onClick={handleRemove}
           >
             Remove File

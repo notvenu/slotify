@@ -7,7 +7,7 @@ export default function SlotGrid({ selectedCourses }) {
 
   const timetable = {};
 
-  // Build timetable mapping
+  
   for (let course of selectedCourses) {
     for (let slot of [...(course.theory || []), ...(course.lab || [])]) {
       timetable[slot] = {
@@ -94,7 +94,7 @@ const handleDownload = () => {
 
       <button
         onClick={handleDownload}
-        className="mb-4 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+        className="mb-4 px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
       >
         Download Timetable as Image
       </button>
@@ -178,19 +178,15 @@ const handleDownload = () => {
         </table>
       </div>
 
-      {/* Legend */}
-      <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-2 text-sm">
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-green-500" />
+      
+      <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-1 text-sm">
+        <div className="flex items-center gap-1">
+          <div className="w-4 h-4 rounded-lg bg-green-500" />
           <span>Theory Slot</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-orange-500" />
+        <div className="flex items-center gap-1">
+          <div className="w-4 h-4 rounded-lg bg-orange-500" />
           <span>Lab Slot</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded bg-pink-500" />
-          <span>Project Slot</span>
         </div>
       </div>
     </div>
