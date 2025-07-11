@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Analytics } from "@vercel/analytics/next"
 import FileUploader from './components/Fileuploader';
 import CourseSelector from './components/CourseSelector';
 import SlotGrid from './components/SlotGrid';
@@ -159,6 +160,8 @@ export default function App() {
   };
 
   return (
+    <>
+    <Analytics/>
     <div className="p-6 max-w-5xl mx-auto">
       <h1 className="text-3xl font-bold mb-4">SLOTIFY</h1>
 
@@ -247,5 +250,6 @@ export default function App() {
         <Footer />
       </footer>
     </div>
+    </>
   );
 }
