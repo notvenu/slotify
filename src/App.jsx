@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/react"
 import FileUploader from './components/Fileuploader';
 import CourseSelector from './components/CourseSelector';
 import SlotGrid from './components/SlotGrid';
