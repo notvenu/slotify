@@ -44,12 +44,21 @@ export default function FileUploader({ onExtract, onRemove }) {
       </div>
 
       {!isUploaded && (
-        <input
-          type="file"
-          accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-          onChange={handleFileChange}
-          className="mb-2 mt-2"
-        />
+        <div className="mt-2">
+          <label
+            htmlFor="file-upload"
+            className="cursor-pointer bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Browse...
+          </label>
+          <input
+            id="file-upload"
+            type="file"
+            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            onChange={handleFileChange}
+            className="hidden"
+          />
+        </div>
       )}
 
       {isUploaded && (
