@@ -55,7 +55,7 @@ export default function FileUploader({ onExtract, onRemove }) {
             ✅ Uploaded: {fileName}
           </div>
           <button
-            className="px-2 py-1 bg-red-200 rounded-lg hover:bg-red-300"
+            className="px-2 py-1 bg-red-200 rounded-lg cursor-pointer hover:bg-red-300"
             onClick={handleRemove}
           >
             Remove File

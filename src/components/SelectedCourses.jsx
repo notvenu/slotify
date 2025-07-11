@@ -42,6 +42,7 @@ export default function SelectedCourses({
                 type="checkbox"
                 checked={isSelected(idx)}
                 onChange={() => toggleSelection(idx)}
+                className="cursor-pointer"
               />
               <div>
                 <div className="font-semibold">{course.name}</div>
@@ -68,13 +69,13 @@ export default function SelectedCourses({
             {!selectionMode && (
               <div className="flex gap-2">
                 <button
-                  className="px-2 py-1 bg-yellow-200 rounded-lg hover:bg-yellow-300"
+                  className="px-2 py-1 bg-yellow-200 rounded-lg cursor-pointer hover:bg-yellow-300"
                   onClick={() => onEditCourse(course)}
                 >
                   Edit
                 </button>
                 <button
-                  className="px-2 py-1 bg-red-200 rounded-lg hover:bg-red-300"
+                  className="px-2 py-1 bg-red-200 rounded-lg cursor-pointer hover:bg-red-300"
                   onClick={() => onRemoveCourse(course)}
                 >
                   Remove
@@ -89,7 +90,7 @@ export default function SelectedCourses({
         <div className="mt-3 flex gap-2 flex-wrap">
           {selectionMode && (
             <button
-              className="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600"
+              className="px-3 py-1 bg-red-500 text-white rounded-lg cursor-pointer hover:bg-red-600"
               onClick={() => {
                 onRemoveMultiple(selectedIndices);
                 setSelectedIndices([]);
@@ -99,7 +100,7 @@ export default function SelectedCourses({
             </button>
           )}
           <button
-            className="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600"
+            className="px-3 py-1 bg-red-500 text-white rounded-lg cursor-pointer hover:bg-red-600"
             onClick={() => {
               onRemoveAll();
               setSelectedIndices([]);

@@ -123,7 +123,7 @@ export default function App() {
         <label className="font-medium mr-2">Number of Subjects:</label>
         <input
           type="number"
-          className="border p-1 w-16"
+          className="border p-1 w-16 rounded-lg"
           value={numSubjects}
           onChange={(e) => setNumSubjects(e.target.value)}
         />

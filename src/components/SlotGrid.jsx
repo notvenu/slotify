@@ -96,7 +96,7 @@ const handleDownload = () => {
         onClick={handleDownload}
         className="mb-4 px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
       >
-        Download Timetable as Image
+        Download Timetable
       </button>
 
       <div className="overflow-x-auto">

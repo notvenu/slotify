@@ -1,4 +1,3 @@
-// utils/parser.js
 import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf'
 import { GlobalWorkerOptions } from 'pdfjs-dist/legacy/build/pdf'
 import pdfWorker from 'pdfjs-dist/build/pdf.worker?url'
@@ -20,11 +19,9 @@ export async function parseCourseData(file) {
 
   const lines = text.split(/\n/).filter(Boolean);
 
-  // Group by code+name
-  const courseMap = new Map();
+    const courseMap = new Map();
 
-  // Regex for a single course chunk (add PJT as a type and NILL as a slot)
-  const courseRegex = /([A-Z]{3}\d{4})\s+(.+?)\s+(ETH|TH|ELA|LO|PJT)\s+([A-Z0-9\+\-]+|NILL)/g;
+    const courseRegex = /([A-Z]{3}\d{4})\s+(.+?)\s+(ETH|TH|ELA|LO|PJT)\s+([A-Z0-9\+\-]+|NILL)/g;
 
   for (let line of lines) {
     let match;

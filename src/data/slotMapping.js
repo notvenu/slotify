@@ -1,6 +1,5 @@
 const slotMapping = {
-  // === Theory Slots ===
-  A1: [
+    A1: [
     { day: 'TUE', time: '09:00-09:50' },
     { day: 'SAT', time: '12:00-12:50' }
   ],
@@ -57,8 +56,7 @@ const slotMapping = {
     { day: 'WED', time: '15:00-15:50' }
   ],
   
-  // === Single-slot T-prefixed Theory Slots ===
-  TA1: [{ day: 'FRI', time: '10:00-10:50' }],
+    TA1: [{ day: 'FRI', time: '10:00-10:50' }],
   TA2: [{ day: 'FRI', time: '16:00-16:50' }],
   TB1: [{ day: 'FRI', time: '09:00-09:50' }],
   TB2: [{ day: 'FRI', time: '15:00-15:50' }],
@@ -87,21 +85,18 @@ const slotMapping = {
   TGG1: [{ day: 'WED', time: '08:00-08:50' }],
   TGG2: [{ day: 'THU', time: '18:00-18:50' }],
   
-  // === Special Slots ===
-  SC1: [{ day: 'WED', time: '16:00-16:50' }],
+    SC1: [{ day: 'WED', time: '16:00-16:50' }],
   SC2: [{ day: 'WED', time: '11:00-11:50' }],
   SD1: [{ day: 'SAT', time: '15:00-15:50' }],
   SD2: [{ day: 'FRI', time: '12:00-12:50' }],
   SE1: [{ day: 'THU', time: '14:00-14:50' }],
   SE2: [{ day: 'SAT', time: '09:00-09:50' }],
   
-  // === Club Slots ===
-  CLUB: [
+    CLUB: [
     { day: 'THU', time: '12:00-12:50' },
     { day: 'SAT', time: '17:00-17:50' }
   ],
-  // === ECS Slots ===
-  ECS: [
+    ECS: [
     { day: 'THU', time: '11:00-11:50' },
     { day: 'SAT', time: '16:00-16:50' }
   ],
@@ -114,8 +109,7 @@ const slotMapping = {
     { day: "SAT", time: '13:30-14:00'},
   ],
   
-  // === Lab Slots ===
-  L1:  [{ day: 'TUE', time: '08:00-08:50' }],
+    L1:  [{ day: 'TUE', time: '08:00-08:50' }],
   L2:  [{ day: 'TUE', time: '09:00-09:50' }],
   L3:  [{ day: 'TUE', time: '10:00-10:50' }],
   L4:  [{ day: 'TUE', time: '11:00-11:50' }],
