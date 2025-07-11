@@ -56,7 +56,7 @@ const slotMapping = {
     { day: 'WED', time: '15:00-15:50' }
   ],
   
-    TA1: [{ day: 'FRI', time: '10:00-10:50' }],
+  TA1: [{ day: 'FRI', time: '10:00-10:50' }],
   TA2: [{ day: 'FRI', time: '16:00-16:50' }],
   TB1: [{ day: 'FRI', time: '09:00-09:50' }],
   TB2: [{ day: 'FRI', time: '15:00-15:50' }],
