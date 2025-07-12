@@ -111,7 +111,7 @@ export default function App() {
 
   const getCourseCredits = (course) => {
     if (course.code === 'CAP4001' || course.name === 'Capstone') return 4;
-    if (course.code === 'BIC4002') return 12;
+    if (course.code === 'BIC4002' || (course.name === 'Industrial Intership' || course.name === 'Senior Design Project')) return 12;
 
     const theorySlots = course.theory || [];
     const labSlots = course.lab || [];

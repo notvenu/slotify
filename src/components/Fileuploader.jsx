@@ -1,17 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 export default function FileUploader({ onExtract, onRemove }) {
   const [fileName, setFileName] = useState('');
+  const [fileURL, setFileURL] = useState('');
   const [isUploaded, setIsUploaded] = useState(false);
+  const fileURLRef = useRef('');
+
+  useEffect(() => {
+    fileURLRef.current = fileURL;
+  }, [fileURL]);
 
   useEffect(() => {
     const savedData = localStorage.getItem('uploadedCourseData');
     if (savedData) {
       const parsedData = JSON.parse(savedData);
       setFileName('Default Timetable.pdf');
+      setFileURL('/default.pdf');
       setIsUploaded(true);
       onExtract(parsedData);
     }
+
+    return () => {
+      if (fileURLRef.current && fileURLRef.current.startsWith('blob:')) {
+        URL.revokeObjectURL(fileURLRef.current);
+      }
+    };
   }, []);
 
   const handleFileChange = async (e) => {
@@ -19,13 +32,19 @@ export default function FileUploader({ onExtract, onRemove }) {
     if (file) {
       setFileName(file.name);
       setIsUploaded(true);
+      const url = URL.createObjectURL(file);
+      setFileURL(url);
       const parsed = await onExtract(file);
       localStorage.setItem('uploadedCourseData', JSON.stringify(parsed));
     }
   };
 
   const handleRemove = () => {
+    if (fileURL && fileURL.startsWith('blob:')) {
+      URL.revokeObjectURL(fileURL);
+    }
     setFileName('');
+    setFileURL('');
     setIsUploaded(false);
     localStorage.removeItem('uploadedCourseData');
     localStorage.removeItem('selectedCourses');
@@ -44,21 +63,38 @@ export default function FileUploader({ onExtract, onRemove }) {
       </div>
 
       {!isUploaded && (
-        <input
-          type="file"
-          accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-          onChange={handleFileChange}
-          className="mb-2 mt-2"
-        />
+        <div className="flex items-center space-x-3 mt-3">
+          <input
+            id="fileInput"
+            type="file"
+            accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            onChange={handleFileChange}
+            className="hidden"
+          />
+          <label
+            htmlFor="fileInput"
+            className="inline-block px-4 py-2 bg-blue-500 text-white rounded-lg cursor-pointer hover:bg-blue-600"
+          >
+            📂 Choose File
+          </label>
+        </div>
       )}
 
       {isUploaded && (
-        <div className="flex items-center justify-between mt-2">
+        <div className="flex items-center justify-between mt-3">
           <div className="text-green-700 font-medium">
-            ✅ Uploaded: {fileName}
+            ✅ Uploaded:{' '}
+            <a
+              href={fileURL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline text-blue-700 hover:text-blue-900"
+            >
+              {fileName}
+            </a>
           </div>
           <button
-            className="px-2 py-1 bg-red-200 rounded-lg cursor-pointer hover:bg-red-300"
+            className="px-4 py-2 bg-red-200 rounded-lg cursor-pointer hover:bg-red-300"
             onClick={handleRemove}
           >
             Remove File
