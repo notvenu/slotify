@@ -67,7 +67,7 @@ const slotMapping = {
   TE1: [{ day: 'FRI', time: '12:00-12:50' }],
   TE2: [{ day: 'THU', time: '14:00-14:50' }],
   TF1: [{ day: 'SAT', time: '11:00-11:50' }],
-  TF2: [{ day: 'WED', time: '14:00-14:50' }],
+  TF2: [{ day: 'WED', time: '15:00-15:50' }],
   TG1: [{ day: 'THU', time: '10:00-10:50' }],
   TG2: [{ day: 'THU', time: '17:00-17:50' }],
   TAA1: [{ day: 'THU', time: '11:00-11:50' }],
@@ -100,7 +100,7 @@ const slotMapping = {
     { day: 'THU', time: '11:00-11:50' },
     { day: 'SAT', time: '16:00-16:50' }
   ],
-  // === Lunch Slots ===
+  
   Lunch: [
     { day: "TUE", time: '13:30-14:00'},
     { day: "WED", time: '13:30-14:00'},
