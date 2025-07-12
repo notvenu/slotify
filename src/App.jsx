@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Analytics } from "@vercel/analytics/react"
+import { Analytics } from "@vercel/analytics/react";
 import FileUploader from './components/Fileuploader';
 import CourseSelector from './components/CourseSelector';
 import SlotGrid from './components/SlotGrid';
@@ -17,6 +17,23 @@ export default function App() {
   const [editingCourse, setEditingCourse] = useState(null);
   const [hasLoadedSelected, setHasLoadedSelected] = useState(false);
 
+  // Helper to load the default PDF
+  const loadDefaultTimetable = async () => {
+    try {
+      const response = await fetch('/default.pdf');
+      const blob = await response.blob();
+      const defaultFile = new File([blob], 'Default Timetable.pdf', {
+        type: 'application/pdf',
+      });
+
+      const parsed = await parseCourseData(defaultFile);
+      setCourseData(parsed);
+      localStorage.setItem('uploadedCourseData', JSON.stringify(parsed));
+    } catch (error) {
+      console.error('Error loading default PDF:', error);
+    }
+  };
+
   useEffect(() => {
     const savedParsedData = localStorage.getItem('uploadedCourseData');
     const savedSelected = localStorage.getItem('selectedCourses');
@@ -25,21 +42,7 @@ export default function App() {
     if (savedParsedData) {
       setCourseData(JSON.parse(savedParsedData));
     } else {
-      (async () => {
-        try {
-          const response = await fetch('/default.pdf');
-          const blob = await response.blob();
-          const defaultFile = new File([blob], 'Default Timetable.pdf', {
-            type: 'application/pdf',
-          });
-
-          const parsed = await parseCourseData(defaultFile);
-          setCourseData(parsed);
-          localStorage.setItem('uploadedCourseData', JSON.stringify(parsed));
-        } catch (error) {
-          console.error('Error loading default PDF:', error);
-        }
-      })();
+      loadDefaultTimetable();
     }
 
     if (savedSelected) {
@@ -47,7 +50,7 @@ export default function App() {
     }
 
     if (savedNumSubjects) {
-      try { 
+      try {
         const parsed = JSON.parse(savedNumSubjects);
         if (typeof parsed === 'number' && !isNaN(parsed)) {
           setNumSubjects(parsed);
@@ -77,6 +80,11 @@ export default function App() {
   }, [numSubjects]);
 
   const handleFile = async (fileOrParsed) => {
+    if (fileOrParsed === 'loadDefault') {
+      await loadDefaultTimetable();
+      return;
+    }
+
     if (Array.isArray(fileOrParsed)) {
       setCourseData(fileOrParsed);
       localStorage.setItem('uploadedCourseData', JSON.stringify(fileOrParsed));
@@ -161,95 +169,95 @@ export default function App() {
 
   return (
     <>
-    <Analytics/>
-    <div className="p-6 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold mb-4">SLOTIFY</h1>
+      <Analytics/>
+      <div className="p-6 max-w-5xl mx-auto">
+        <h1 className="text-3xl font-bold mb-4">SLOTIFY</h1>
 
-      <FileUploader onExtract={handleFile} />
+        <FileUploader onExtract={handleFile} />
 
-      <div className="my-4">
-        <label className="font-medium mr-2">Number of Subjects:</label>
-        <input
-          type="number"
-          className="border p-1 w-16 rounded-lg"
-          value={numSubjectsInput}
-          onChange={(e) => {
-            const val = e.target.value;
-            setNumSubjectsInput(val);
-            const parsed = parseInt(val, 10);
-            if (!isNaN(parsed)) {
-              setNumSubjects(parsed);
-            }
+        <div className="my-4">
+          <label className="font-medium mr-2">Number of Subjects:</label>
+          <input
+            type="number"
+            className="border p-1 w-16 rounded-lg"
+            value={numSubjectsInput}
+            onChange={(e) => {
+              const val = e.target.value;
+              setNumSubjectsInput(val);
+              const parsed = parseInt(val, 10);
+              if (!isNaN(parsed)) {
+                setNumSubjects(parsed);
+              }
+            }}
+            onBlur={() => {
+              if (numSubjectsInput.trim() === "") {
+                setNumSubjects(5);
+                setNumSubjectsInput("5");
+              }
+            }}
+          />
+        </div>
+
+        <CourseSelector
+          courseData={courseData}
+          selectedCourses={selectedCourses}
+          setSelectedCourses={(courses) => {
+            setSelectedCourses(courses);
+            setEditingCourse(null);
           }}
-          onBlur={() => {
-            if (numSubjectsInput.trim() === "") {
-              setNumSubjects(5);
-              setNumSubjectsInput("5");
-            }
-          }}
+          maxSubjects={numSubjects}
+          editingCourse={editingCourse}
+          setEditingCourse={setEditingCourse}
         />
-      </div>
 
-      <CourseSelector
-        courseData={courseData}
-        selectedCourses={selectedCourses}
-        setSelectedCourses={(courses) => {
-          setSelectedCourses(courses);
-          setEditingCourse(null);
-        }}
-        maxSubjects={numSubjects}
-        editingCourse={editingCourse}
-        setEditingCourse={setEditingCourse}
-      />
+        {hasClash() && <ClashWarning />}
 
-      {hasClash() && <ClashWarning />}
-
-      <SelectedCourses
-        groupedCourses={groupCourses(selectedCourses)}
-        onRemoveCourse={(course) =>
-          setSelectedCourses(
-            selectedCourses.filter(
-              (c) => !(c.code === course.code && c.name === course.name)
+        <SelectedCourses
+          groupedCourses={groupCourses(selectedCourses)}
+          onRemoveCourse={(course) =>
+            setSelectedCourses(
+              selectedCourses.filter(
+                (c) => !(c.code === course.code && c.name === course.name)
+              )
             )
-          )
-        }
-        onRemoveMultiple={(indices) => {
-          const grouped = groupCourses(selectedCourses);
-          const toRemove = indices.map((i) => grouped[i]);
-          setSelectedCourses((prev) =>
-            prev.filter(
-              (c) =>
-                !toRemove.some((r) => c.code === r.code && c.name === r.name)
-            )
-          );
-        }}
-        onRemoveAll={() => setSelectedCourses([])}
-        onEditCourse={(course) => {
-          setSelectedCourses(
-            selectedCourses.filter(
-              (c) => !(c.code === course.code && c.name === course.name)
-            )
-          );
-          setEditingCourse(course);
-        }}
-        getCourseCredits={getCourseCredits}
-      />
+          }
+          onRemoveMultiple={(indices) => {
+            const grouped = groupCourses(selectedCourses);
+            const toRemove = indices.map((i) => grouped[i]);
+            setSelectedCourses((prev) =>
+              prev.filter(
+                (c) =>
+                  !toRemove.some((r) => c.code === r.code && c.name === r.name)
+              )
+            );
+          }}
+          onRemoveAll={() => setSelectedCourses([])}
+          onEditCourse={(course) => {
+            setSelectedCourses(
+              selectedCourses.filter(
+                (c) => !(c.code === course.code && c.name === course.name)
+              )
+            );
+            setEditingCourse(course);
+          }}
+          getCourseCredits={getCourseCredits}
+        />
 
-      <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-        <div className="font-bold text-lg text-blue-800">
-          Total Credits: {getTotalCredits(groupCourses(selectedCourses))}
+        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="font-bold text-lg text-blue-800">
+            Total Credits: {getTotalCredits(groupCourses(selectedCourses))}
+          </div>
+          <div className="text-sm text-blue-600 mt-1">
+            Total Courses: {groupCourses(selectedCourses).length}
+          </div>
         </div>
-        <div className="text-sm text-blue-600 mt-1">
-          Total Courses: {groupCourses(selectedCourses).length}
-        </div>
+
+        <SlotGrid selectedCourses={selectedCourses} />
+
+        <footer className="w-full mt-12 border-t border-gray-300 dark:border-gray-700 pt-6 pb-4">
+          <Footer />
+        </footer>
       </div>
-
-      <SlotGrid selectedCourses={selectedCourses} />
-
-      <footer className="w-full mt-12 border-t border-gray-300 dark:border-gray-700 pt-6 pb-4">
-        <Footer />
-      </footer>
-    </div>
     </>
   );
 }

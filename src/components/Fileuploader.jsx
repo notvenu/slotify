@@ -40,17 +40,18 @@ export default function FileUploader({ onExtract, onRemove }) {
   };
 
   const handleRemove = () => {
-    if (fileURL && fileURL.startsWith('blob:')) {
-      URL.revokeObjectURL(fileURL);
-    }
-    setFileName('');
-    setFileURL('');
-    setIsUploaded(false);
-    localStorage.removeItem('uploadedCourseData');
-    localStorage.removeItem('selectedCourses');
-    onExtract([]);
-    onRemove();
-  };
+  if (fileURL && fileURL.startsWith('blob:')) {
+    URL.revokeObjectURL(fileURL);
+  }
+  setFileName('');
+  setFileURL('');
+  setIsUploaded(false);
+  localStorage.removeItem('uploadedCourseData');
+  localStorage.removeItem('selectedCourses');
+  onExtract('loadDefault'); // <=== This tells App to load default timetable
+  onRemove();
+};
+
 
   return (
     <div className="mb-4 border p-4 rounded-lg bg-gray-50">
@@ -64,6 +65,7 @@ export default function FileUploader({ onExtract, onRemove }) {
 
       {!isUploaded && (
         <div className="flex items-center space-x-3 mt-3">
+          {/* Hidden input */}
           <input
             id="fileInput"
             type="file"
@@ -71,6 +73,7 @@ export default function FileUploader({ onExtract, onRemove }) {
             onChange={handleFileChange}
             className="hidden"
           />
+          {/* Label acting as button */}
           <label
             htmlFor="fileInput"
             className="inline-block px-4 py-2 bg-blue-500 text-white rounded-lg cursor-pointer hover:bg-blue-600"
