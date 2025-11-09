@@ -55,13 +55,24 @@ export default function App() {
     } catch (e) {}
 
     const savedParsedData = localStorage.getItem('uploadedCourseData');
+         
     const savedSelected = localStorage.getItem('selectedCourses');
     const savedNumSubjects = localStorage.getItem('numSubjects');
 
     if (savedParsedData) {
       setCourseData(JSON.parse(savedParsedData));
     } else {
-      loadDefaultTimetable();
+      // Only auto-load the default timetable if the user hasn't explicitly
+      // removed it (skipDefault flag). This prevents the default file from
+      // immediately coming back when the user removes it.
+      try {
+        const skip = localStorage.getItem('skipDefault');
+        if (skip !== '1') {
+          loadDefaultTimetable();
+        }
+      } catch (e) {
+        loadDefaultTimetable();
+      }
     }
 
     if (savedSelected) {
@@ -107,6 +118,8 @@ export default function App() {
 
   const handleFile = async (fileOrParsed) => {
     if (fileOrParsed === 'loadDefault') {
+      // If user explicitly requests loading default, clear any skip flag.
+      try { localStorage.removeItem('skipDefault'); } catch (e) {}
       await loadDefaultTimetable();
       return;
     }
@@ -114,6 +127,8 @@ export default function App() {
     if (Array.isArray(fileOrParsed)) {
       setCourseData(fileOrParsed);
       localStorage.setItem('uploadedCourseData', JSON.stringify(fileOrParsed));
+      // User uploaded a file — clear skipDefault so normal behavior resumes.
+      try { localStorage.removeItem('skipDefault'); } catch (e) {}
       return fileOrParsed;
     }
 
@@ -197,7 +212,7 @@ export default function App() {
     <>
       <Analytics />
       <div
-        className={`min-h-screen transition-colors duration-300 ${
+        className={`min-h-screen theme-transition transition-colors duration-500 ease-in-out ${
           theme === 'dark'
             ? 'bg-gray-900 text-gray-100'
             : 'bg-gray-50 text-gray-900'
@@ -210,8 +225,8 @@ export default function App() {
               onClick={toggleTheme}
               className={`px-3 py-2 rounded-lg font-medium transition ${
                 theme === 'dark'
-                  ? 'bg-gray-800 text-yellow-300 hover:bg-gray-700'
-                  : 'bg-gray-200 text-gray-900 hover:bg-gray-300'
+                  ? 'bg-gray-800 text-gray-200 hover:bg-gray-700'
+                  : 'bg-gray-300 text-gray-900 hover:bg-gray-400'
               }`}
               aria-label="Toggle theme"
             >
@@ -223,6 +238,11 @@ export default function App() {
             onExtract={handleFile}
             defaultReloadSignal={defaultReloadSignal}
             theme={theme}
+            onRemove={() => {
+              // Clear app state when user removes the uploaded/default file
+              setCourseData([]);
+              setSelectedCourses([]);
+            }}
           />
 
           <div className="my-4">

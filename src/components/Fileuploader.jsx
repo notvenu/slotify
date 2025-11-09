@@ -48,6 +48,20 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
     }
   };
 
+  const handleRestoreDefault = async () => {
+    try {
+      localStorage.removeItem('skipDefault');
+    } catch (e) {}
+    // Ask parent to load default timetable
+    if (typeof onExtract === 'function') {
+      await onExtract('loadDefault');
+      // update UI to reflect default loaded
+      setFileName('Default Timetable.pdf');
+      setFileURL('/default1.pdf');
+      setIsUploaded(true);
+    }
+  };
+
   const handleRemove = () => {
   if (fileURL && fileURL.startsWith('blob:')) {
     URL.revokeObjectURL(fileURL);
@@ -57,8 +71,14 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
   setIsUploaded(false);
   localStorage.removeItem('uploadedCourseData');
   localStorage.removeItem('selectedCourses');
-  onExtract('loadDefault'); // <=== This tells App to load default timetable
-  onRemove();
+  // Mark that the user explicitly removed the uploaded/default file so
+  // the app doesn't auto-reload the default again on next mount.
+  try {
+    localStorage.setItem('skipDefault', '1');
+  } catch (e) {}
+
+  // Notify parent to clear any in-memory selected data if provided
+  if (typeof onRemove === 'function') onRemove();
 };
 
 
@@ -93,6 +113,17 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
           >
             📂 Choose File
           </label>
+          <button
+            type="button"
+            onClick={handleRestoreDefault}
+            className={`px-4 py-2 rounded-lg text-sm font-medium ${
+              theme === 'dark'
+                ? 'bg-gray-700 text-gray-100 hover:bg-gray-600'
+                : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+            }`}
+          >
+            Restore Default
+          </button>
         </div>
       )}
 

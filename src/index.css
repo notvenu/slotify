@@ -39,3 +39,16 @@
 .theme-dark .text-gray-400 {
 	color: var(--app-muted) !important;
 }
+
+:root, body, .theme-transition, .min-h-screen {
+  transition: background-color 400ms ease-in-out, color 400ms ease-in-out, border-color 400ms ease-in-out;
+}
+
+/* Make buttons show pointer cursor by default; disabled buttons show not-allowed */
+button:not(:disabled), input[type="button"]:not(:disabled), input[type="submit"]:not(:disabled) {
+	cursor: pointer;
+}
+
+button:disabled, input[type="button"][disabled], input[type="submit"][disabled], [aria-disabled="true"] {
+	cursor: not-allowed;
+}
