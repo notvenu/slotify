@@ -17,13 +17,16 @@ export default function CourseSelector({
 
   const coursesPerPage = 10;
 
-  const uniqueCourses = useMemo(() => courseData, [courseData]);
+  // keep original ordering / structure as provided by courseData
+  const uniqueCourses = useMemo(() => courseData || [], [courseData]);
 
   const filteredCourses = useMemo(() => {
     const q = searchTerm.trim().toLowerCase();
     if (!q) return uniqueCourses;
     return uniqueCourses.filter(
-      (c) => c.name.toLowerCase().includes(q) || c.code.toLowerCase().includes(q)
+      (c) =>
+        (c.name || '').toLowerCase().includes(q) ||
+        (c.code || '').toLowerCase().includes(q)
     );
   }, [searchTerm, uniqueCourses]);
 
@@ -36,14 +39,19 @@ export default function CourseSelector({
     const theoryCombos = [];
     const labCombos = [];
 
-    course?.slotCombos?.forEach((combo, idx) => {
-      if (combo.theory.length > 0 && combo.lab.length === 0) {
-        theoryCombos.push({ ...combo, idx });
-      } else if (combo.lab.length > 0 && combo.theory.length === 0) {
-        labCombos.push({ ...combo, idx });
-      } else if (combo.theory.length > 0 && combo.lab.length > 0) {
-        theoryCombos.push({ ...combo, idx });
-        labCombos.push({ ...combo, idx });
+    (course?.slotCombos || []).forEach((combo, idx) => {
+      // ensure arrays exist
+      const theory = Array.isArray(combo.theory) ? combo.theory : [];
+      const lab = Array.isArray(combo.lab) ? combo.lab : [];
+      const c = { theory, lab, idx };
+
+      if (theory.length > 0 && lab.length === 0) {
+        theoryCombos.push(c);
+      } else if (lab.length > 0 && theory.length === 0) {
+        labCombos.push(c);
+      } else if (theory.length > 0 && lab.length > 0) {
+        theoryCombos.push(c);
+        labCombos.push(c);
       }
     });
 
@@ -52,26 +60,25 @@ export default function CourseSelector({
 
   useEffect(() => {
     if (editingCourse) {
-      const course = courseData.find(
+      const course = (courseData || []).find(
         (c) => c.code === editingCourse.code && c.name === editingCourse.name
       );
 
       if (course) {
         setSelecting(course);
 
-        const matchedCombo = course.slotCombos.find(
+        const matchedCombo = (course.slotCombos || []).find(
           (combo) =>
-            JSON.stringify(combo.theory.sort()) === JSON.stringify(editingCourse.theory.sort()) &&
-            JSON.stringify(combo.lab.sort()) === JSON.stringify(editingCourse.lab.sort())
+            JSON.stringify((combo.theory || []).slice().sort()) ===
+              JSON.stringify((editingCourse.theory || []).slice().sort()) &&
+            JSON.stringify((combo.lab || []).slice().sort()) ===
+              JSON.stringify((editingCourse.lab || []).slice().sort())
         );
 
         if (matchedCombo) {
           const idx = matchedCombo.idx;
-          const hasTheory = matchedCombo.theory.length > 0;
-          const hasLab = matchedCombo.lab.length > 0;
-
-          setSelectedTheoryIdx(hasTheory ? idx : null);
-          setSelectedLabIdx(hasLab ? idx : null);
+          setSelectedTheoryIdx((matchedCombo.theory || []).length > 0 ? idx : null);
+          setSelectedLabIdx((matchedCombo.lab || []).length > 0 ? idx : null);
         } else {
           setSelectedTheoryIdx(null);
           setSelectedLabIdx(null);
@@ -82,8 +89,8 @@ export default function CourseSelector({
 
   const isEditing = !!editingCourse;
 
-  const hasAnyComboWithBothTheoryAndLab = selecting?.slotCombos.some(
-    (combo) => combo.theory.length > 0 && combo.lab.length > 0
+  const hasAnyComboWithBothTheoryAndLab = selecting?.slotCombos?.some(
+    (combo) => (combo.theory || []).length > 0 && (combo.lab || []).length > 0
   );
 
   const { theoryCombos, labCombos } = selecting
@@ -113,24 +120,24 @@ export default function CourseSelector({
       return;
     }
 
-    const { theoryCombos, labCombos } = getTheoryAndLabCombos(selecting);
+    const { theoryCombos: tCombos, labCombos: lCombos } = getTheoryAndLabCombos(selecting);
 
     const selectedTheoryCombo = selectedTheoryIdx !== null
-      ? theoryCombos.find((c) => c.idx === selectedTheoryIdx)
+      ? tCombos.find((c) => c.idx === selectedTheoryIdx)
       : null;
     const selectedLabCombo = selectedLabIdx !== null
-      ? labCombos.find((c) => c.idx === selectedLabIdx)
+      ? lCombos.find((c) => c.idx === selectedLabIdx)
       : null;
 
-    const combinedTheory = [...new Set([
+    const combinedTheory = Array.from(new Set([
       ...(selectedTheoryCombo?.theory || []),
       ...(selectedLabCombo?.theory || [])
-    ])];
+    ]));
 
-    const combinedLab = [...new Set([
+    const combinedLab = Array.from(new Set([
       ...(selectedTheoryCombo?.lab || []),
       ...(selectedLabCombo?.lab || [])
-    ])];
+    ]));
 
     const newCourse = {
       code: selecting.code,
@@ -146,8 +153,8 @@ export default function CourseSelector({
           (c) =>
             !(c.code === editingCourse.code &&
               c.name === editingCourse.name &&
-              JSON.stringify(c.theory.sort()) === JSON.stringify(editingCourse.theory.sort()) &&
-              JSON.stringify(c.lab.sort()) === JSON.stringify(editingCourse.lab.sort()))
+              JSON.stringify((c.theory || []).slice().sort()) === JSON.stringify((editingCourse.theory || []).slice().sort()) &&
+              JSON.stringify((c.lab || []).slice().sort()) === JSON.stringify((editingCourse.lab || []).slice().sort()))
         );
         return [...filtered, newCourse];
       }
@@ -184,7 +191,7 @@ export default function CourseSelector({
       <h2 className="text-xl font-bold">
         {isEditing ? 'Edit Course' : 'Course Selector'}
       </h2>
-      
+
       {!selecting && (
         <>
           <div className="flex gap-2 items-center">
@@ -195,11 +202,19 @@ export default function CourseSelector({
                 setCurrentPage(1);
               }}
               placeholder="Search by code or name..."
-              className={`border px-2 py-2 flex-1 rounded-lg ${theme === 'dark' ? 'bg-gray-800 border-gray-700 text-gray-100' : 'bg-white border-gray-300'}`}
+              className={`border px-3 py-2 w-full rounded-lg shadow-sm focus:outline-none focus:ring-2 transition ${
+                theme === 'dark'
+                  ? 'bg-gray-800 border-gray-700 text-gray-100 focus:ring-blue-500'
+                  : 'bg-white border-gray-300 focus:ring-blue-400'
+              }`}
             />
             {searchTerm && (
               <button
-                className={`text-sm px-2 py-2 rounded-lg cursor-pointer ${theme === 'dark' ? 'bg-gray-700 text-gray-100 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'}`}
+                className={`text-sm px-3 py-2 rounded-lg transition ${
+                  theme === 'dark'
+                    ? 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+                    : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
+                }`}
                 onClick={() => {
                   setSearchTerm('');
                   setCurrentPage(1);
@@ -210,40 +225,47 @@ export default function CourseSelector({
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-96 overflow-y-auto border p-2 rounded-lg">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-96 overflow-y-auto border p-2 rounded-lg">
             {paginatedCourses.map((c) => {
               const isSelected = selectedCourses.some(
                 (s) => s.code === c.code && s.name === c.name
               );
               return (
                 <button
-                  key={c.code + c.name}
+                  key={(c.code || '') + (c.name || '')}
                   disabled={isSelected && !isEditing}
                   onClick={() => {
                     setSelecting(c);
                     setSelectedTheoryIdx(null);
                     setSelectedLabIdx(null);
                   }}
-                  className={`border p-2 rounded-lg text-left cursor-pointer ${
+                  className={`border p-3 rounded-lg text-left transition-all flex flex-col justify-center items-start ${
                     isSelected && !isEditing
                       ? 'opacity-50 cursor-not-allowed'
                       : theme === 'dark'
-                      ? 'hover:bg-blue-900/30 border-gray-700 bg-gray-800 text-gray-100'
-                      : 'hover:bg-blue-50 bg-white'
+                      ? 'bg-gray-800 border-gray-700 hover:bg-blue-900/30'
+                      : 'bg-white border-gray-200 hover:bg-blue-50'
                   }`}
                 >
                   <div className="font-semibold">{c.name}</div>
-                  <div className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>{c.code}</div>
+                  <div className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                    {c.code}
+                  </div>
                 </button>
               );
             })}
+            {paginatedCourses.length === 0 && (
+              <div className="col-span-full text-center text-sm text-gray-500 p-4">
+                No courses found.
+              </div>
+            )}
           </div>
-          
+
           {filteredCourses.length > coursesPerPage && (
-            <div className="flex gap-2 justify-center">
+            <div className="flex gap-2 justify-center items-center">
               <button
                 disabled={currentPage === 1}
-                onClick={() => setCurrentPage((p) => p - 1)}
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 className={`p-2 border rounded-lg transition-colors ${
                   theme === 'dark'
                     ? currentPage === 1
@@ -257,7 +279,7 @@ export default function CourseSelector({
                 Prev
               </button>
               <span className={`p-2 ${theme === 'dark' ? 'text-gray-200' : ''}`}>
-                Page {currentPage} / {Math.ceil(filteredCourses.length / coursesPerPage)}
+                Page {currentPage} / {Math.max(1, Math.ceil(filteredCourses.length / coursesPerPage))}
               </span>
               <button
                 disabled={currentPage === Math.ceil(filteredCourses.length / coursesPerPage)}
@@ -284,20 +306,21 @@ export default function CourseSelector({
           <div className={`mb-2 font-semibold ${theme === 'dark' ? 'text-gray-100' : ''}`}>
             {selecting.name} ({selecting.code})
           </div>
-          
+
           {isEditing && (
-            <div className={`mb-2 text-sm font-medium ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>
+            <div className={`mb-2 text-sm font-medium ${theme === 'dark' ? 'text-blue-300' : 'text-blue-600'}`}>
               Editing mode - modify the slot selection below
             </div>
           )}
 
           {(() => {
-            const { theoryCombos, labCombos } = getTheoryAndLabCombos(selecting);
-            const allNill = selecting.slotCombos.every(
+            const { theoryCombos: tCombos, labCombos: lCombos } = getTheoryAndLabCombos(selecting);
+
+            const allNill = (selecting.slotCombos || []).every(
               (combo) =>
-                combo.theory.length === 1 &&
-                combo.theory[0].toUpperCase() === 'NILL' &&
-                combo.lab.length === 0
+                (combo.theory || []).length === 1 &&
+                ((combo.theory || [])[0] || '').toUpperCase() === 'NILL' &&
+                (combo.lab || []).length === 0
             );
 
             if (allNill) {
@@ -313,10 +336,10 @@ export default function CourseSelector({
                           if (isEditing) {
                             const filtered = prev.filter(
                               (c) =>
-                                !(c.code === editingCourse.code && 
+                                !(c.code === editingCourse.code &&
                                   c.name === editingCourse.name &&
-                                  JSON.stringify(c.theory.sort()) === JSON.stringify(editingCourse.theory.sort()) &&
-                                  JSON.stringify(c.lab.sort()) === JSON.stringify(editingCourse.lab.sort()))
+                                  JSON.stringify((c.theory || []).slice().sort()) === JSON.stringify((editingCourse.theory || []).slice().sort()) &&
+                                  JSON.stringify((c.lab || []).slice().sort()) === JSON.stringify((editingCourse.lab || []).slice().sort()))
                             );
                             return [...filtered, {
                               code: selecting.code,
@@ -334,15 +357,13 @@ export default function CourseSelector({
                             lab: [],
                           }];
                         });
-                        
-                        if (isEditing && setEditingCourse) {
-                          setEditingCourse(null);
-                        }
+
+                        if (isEditing && setEditingCourse) setEditingCourse(null);
                         setSelecting(null);
                         setSelectedTheoryIdx(null);
                         setSelectedLabIdx(null);
                       }}
-                      className="px-3 py-1 bg-green-500 text-white rounded-lg cursor-pointer hover:bg-green-600"
+                      className="px-3 py-2 bg-green-500 text-white rounded-lg cursor-pointer hover:bg-green-600"
                     >
                       {isEditing ? 'Save Changes' : 'Add Course'}
                     </button>
@@ -350,11 +371,11 @@ export default function CourseSelector({
                       onClick={handleCancel}
                       className={`px-3 py-2 rounded-lg transition-colors cursor-pointer ${
                         theme === 'dark'
-                            ? 'bg-gray-700 text-gray-200 hover:bg-gray-600 active:bg-gray-800'
-                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300 active:bg-gray-400'
+                          ? 'bg-gray-700 text-gray-200 hover:bg-gray-600 active:bg-gray-800'
+                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300 active:bg-gray-400'
                       }`}
                     >
-                        Cancel
+                      Cancel
                     </button>
                   </div>
                 </>
@@ -364,23 +385,24 @@ export default function CourseSelector({
             return (
               <>
                 <div className="mb-2 font-medium">Select Slot Combination(s):</div>
-                {theoryCombos.length > 0 && (
+
+                {tCombos.length > 0 && (
                   <div className="mb-4">
                     <div className="font-semibold mb-1">Theory Slots</div>
                     <div className="flex flex-col gap-2">
-                      {theoryCombos.map((combo) => {
+                      {tCombos.map((combo) => {
                         const isChecked = selectedTheoryIdx === combo.idx;
                         return (
                           <label
-                            key={combo.idx}
-                            className={`flex items-center gap-2 border px-2 py-1 rounded-lg cursor-pointer ${
+                            key={`t-${combo.idx}`}
+                            className={`flex items-center gap-2 border px-3 py-2 rounded-lg cursor-pointer ${
                               isChecked
                                 ? theme === 'dark'
                                   ? 'bg-blue-800 border-blue-700 text-blue-100'
                                   : 'bg-blue-100 border-blue-300'
                                 : theme === 'dark'
-                                ? 'bg-gray-800 border-gray-700 text-gray-100 hover:bg-gray-700'
-                                : 'bg-white hover:bg-blue-50'
+                                  ? 'bg-gray-800 border-gray-700 text-gray-100 hover:bg-gray-700'
+                                  : 'bg-white hover:bg-blue-50'
                             }`}
                           >
                             <input
@@ -389,11 +411,9 @@ export default function CourseSelector({
                               checked={isChecked}
                               onChange={() => handleTheorySelection(combo.idx)}
                             />
-                            <span>
+                            <span className="text-sm">
                               Theory: {combo.theory.join('+')}
-                              {combo.lab.length > 0
-                                ? ` | Lab: ${combo.lab.join('+')}`
-                                : ''}
+                              {combo.lab.length > 0 ? ` | Lab: ${combo.lab.join('+')}` : ''}
                             </span>
                           </label>
                         );
@@ -401,23 +421,24 @@ export default function CourseSelector({
                     </div>
                   </div>
                 )}
-                {labCombos.length > 0 && (
+
+                {lCombos.length > 0 && (
                   <div className="mb-2">
                     <div className="font-semibold mb-1">Lab Slots</div>
                     <div className="flex flex-col gap-2">
-                      {labCombos.map((combo) => {
+                      {lCombos.map((combo) => {
                         const isChecked = selectedLabIdx === combo.idx;
                         return (
                           <label
-                            key={combo.idx}
-                            className={`flex items-center gap-2 border px-2 py-1 rounded-lg cursor-pointer ${
+                            key={`l-${combo.idx}`}
+                            className={`flex items-center gap-2 border px-3 py-2 rounded-lg cursor-pointer ${
                               isChecked
                                 ? theme === 'dark'
                                   ? 'bg-blue-800 border-blue-700 text-blue-100'
                                   : 'bg-blue-100 border-blue-300'
                                 : theme === 'dark'
-                                ? 'bg-gray-800 border-gray-700 text-gray-100 hover:bg-gray-700'
-                                : 'bg-white hover:bg-blue-50'
+                                  ? 'bg-gray-800 border-gray-700 text-gray-100 hover:bg-gray-700'
+                                  : 'bg-white hover:bg-blue-50'
                             }`}
                           >
                             <input
@@ -426,11 +447,9 @@ export default function CourseSelector({
                               checked={isChecked}
                               onChange={() => handleLabSelection(combo.idx)}
                             />
-                            <span>
+                            <span className="text-sm">
                               Lab: {combo.lab.join('+')}
-                              {combo.theory.length > 0
-                                ? ` | Theory: ${combo.theory.join('+')}`
-                                : ''}
+                              {combo.theory.length > 0 ? ` | Theory: ${combo.theory.join('+')}` : ''}
                             </span>
                           </label>
                         );
@@ -438,21 +457,26 @@ export default function CourseSelector({
                     </div>
                   </div>
                 )}
-                <div className="flex gap-2 mt-4">
+
+                <div className="flex gap-3 mt-4">
                   <button
                     disabled={!canAdd}
                     onClick={handleAdd}
-                    className={`px-3 py-1 rounded-lg ${
+                    className={`px-4 py-2 rounded-lg font-medium transition ${
                       canAdd
-                        ? 'bg-green-500 text-white hover:bg-green-600'
-                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        ? 'bg-green-500 text-white hover:bg-green-600 active:bg-green-700'
+                        : 'bg-gray-400 text-gray-200 cursor-not-allowed'
                     }`}
                   >
                     {isEditing ? 'Save Changes' : 'Add Course'}
                   </button>
                   <button
                     onClick={handleCancel}
-                    className="px-3 py-1 bg-gray-200 rounded-lg hover:bg-gray-300"
+                    className={`px-4 py-2 rounded-lg font-medium transition ${
+                      theme === 'dark'
+                        ? 'bg-gray-700 text-gray-200 hover:bg-gray-600'
+                        : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                    }`}
                   >
                     Cancel
                   </button>
