@@ -16,11 +16,15 @@ export default function App() {
   const [numSubjectsInput, setNumSubjectsInput] = useState("5");
   const [editingCourse, setEditingCourse] = useState(null);
   const [hasLoadedSelected, setHasLoadedSelected] = useState(false);
+  const [theme, setTheme] = useState('light');
+  const [defaultTag, setDefaultTag] = useState(null);
 
   // Helper to load the default PDF
+  const [defaultReloadSignal, setDefaultReloadSignal] = useState(0);
+
   const loadDefaultTimetable = async () => {
     try {
-      const response = await fetch('/default.pdf');
+      const response = await fetch('/default1.pdf');
       const blob = await response.blob();
       const defaultFile = new File([blob], 'Default Timetable.pdf', {
         type: 'application/pdf',
@@ -29,12 +33,36 @@ export default function App() {
       const parsed = await parseCourseData(defaultFile);
       setCourseData(parsed);
       localStorage.setItem('uploadedCourseData', JSON.stringify(parsed));
+      // save tag/last-modified for change detection
+      const tag = response.headers.get('ETag') || response.headers.get('Last-Modified') || response.headers.get('Content-Length');
+      if (tag) {
+        try {
+          localStorage.setItem('defaultFileTag', tag);
+        } catch (e) {}
+        setDefaultTag(tag);
+      }
+      // signal to children that default data was reloaded
+      setDefaultReloadSignal(Date.now());
     } catch (error) {
       console.error('Error loading default PDF:', error);
     }
   };
 
   useEffect(() => {
+    // initialize theme from localStorage
+    try {
+      const saved = localStorage.getItem('theme');
+      if (saved === 'dark') {
+        setTheme('dark');
+        document.documentElement.classList.add('dark');
+      } else {
+        setTheme('light');
+        document.documentElement.classList.remove('dark');
+      }
+    } catch (e) {
+      // ignore
+    }
+
     const savedParsedData = localStorage.getItem('uploadedCourseData');
     const savedSelected = localStorage.getItem('selectedCourses');
     const savedNumSubjects = localStorage.getItem('numSubjects');
@@ -67,6 +95,43 @@ export default function App() {
     }
 
     setHasLoadedSelected(true);
+  }, []);
+
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    try {
+      localStorage.setItem('theme', next);
+    } catch (e) {}
+    if (next === 'dark') document.documentElement.classList.add('dark');
+    else document.documentElement.classList.remove('dark');
+  };
+
+  // automatic default file change detection: check HEAD for ETag/Last-Modified
+  useEffect(() => {
+    let mounted = true;
+    const check = async () => {
+      try {
+        const resp = await fetch('/default1.pdf', { method: 'HEAD' });
+        const tag = resp.headers.get('ETag') || resp.headers.get('Last-Modified') || resp.headers.get('Content-Length');
+        const stored = localStorage.getItem('defaultFileTag');
+        if (tag && tag !== stored) {
+          // If the default file changed, reload it and overwrite stored parsed data
+          await loadDefaultTimetable();
+        }
+        if (tag && mounted) {
+          setDefaultTag(tag);
+          try { localStorage.setItem('defaultFileTag', tag); } catch (e) {}
+        }
+      } catch (e) {
+        // ignore network errors
+      }
+    };
+
+    // run once immediately and then poll every 60s
+    check();
+    const id = setInterval(check, 60000);
+    return () => { mounted = false; clearInterval(id); };
   }, []);
 
   useEffect(() => {
@@ -170,10 +235,22 @@ export default function App() {
   return (
     <>
       <Analytics/>
-      <div className="p-6 max-w-5xl mx-auto">
-        <h1 className="text-3xl font-bold mb-4">SLOTIFY</h1>
+  <div className={`${theme === 'dark' ? 'theme-dark min-h-screen bg-gray-900 text-gray-100' : 'min-h-screen bg-white text-gray-900'}`}>
+        <div className="p-6 max-w-5xl mx-auto">
+          <div className="flex items-center justify-between mb-4">
+          <h1 className="text-3xl font-bold">SLOTIFY</h1>
+          <div>
+            <button
+              onClick={toggleTheme}
+              className="px-3 py-2 rounded-lg bg-gray-100 text-gray-100 dark:bg-gray-800 hover:opacity-90 "
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? '🌙 Dark' : '☀️ Light'}
+            </button>
+          </div>
+        </div>
 
-        <FileUploader onExtract={handleFile} />
+  <FileUploader onExtract={handleFile} defaultReloadSignal={defaultReloadSignal} theme={theme} />
 
         <div className="my-4">
           <label className="font-medium mr-2">Number of Subjects:</label>
@@ -208,6 +285,7 @@ export default function App() {
           maxSubjects={numSubjects}
           editingCourse={editingCourse}
           setEditingCourse={setEditingCourse}
+          theme={theme}
         />
 
         {hasClash() && <ClashWarning />}
@@ -241,22 +319,24 @@ export default function App() {
             setEditingCourse(course);
           }}
           getCourseCredits={getCourseCredits}
+          theme={theme}
         />
 
-        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <div className="font-bold text-lg text-blue-800">
+        <div className={`${theme === 'dark' ? 'bg-blue-900/20 border-blue-700 text-blue-200' : 'bg-blue-50 border-blue-200 text-blue-800'} mt-4 p-3 rounded-lg`}>
+          <div className="font-bold text-lg">
             Total Credits: {getTotalCredits(groupCourses(selectedCourses))}
           </div>
-          <div className="text-sm text-blue-600 mt-1">
+          <div className="text-sm mt-1">
             Total Courses: {groupCourses(selectedCourses).length}
           </div>
         </div>
 
-        <SlotGrid selectedCourses={selectedCourses} />
+        <SlotGrid selectedCourses={selectedCourses} theme={theme} />
 
         <footer className="w-full mt-12 border-t border-gray-300 dark:border-gray-700 pt-6 pb-4">
           <Footer />
         </footer>
+      </div>
       </div>
     </>
   );

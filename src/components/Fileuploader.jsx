@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-export default function FileUploader({ onExtract, onRemove }) {
+export default function FileUploader({ onExtract, onRemove, defaultReloadSignal, theme = 'light' }) {
   const [fileName, setFileName] = useState('');
   const [fileURL, setFileURL] = useState('');
   const [isUploaded, setIsUploaded] = useState(false);
@@ -15,7 +15,7 @@ export default function FileUploader({ onExtract, onRemove }) {
     if (savedData) {
       const parsedData = JSON.parse(savedData);
       setFileName('Default Timetable.pdf');
-      setFileURL('/default.pdf');
+      setFileURL('/default1.pdf');
       setIsUploaded(true);
       onExtract(parsedData);
     }
@@ -26,6 +26,15 @@ export default function FileUploader({ onExtract, onRemove }) {
       }
     };
   }, []);
+
+  // If the app reloads the default data, update this component's UI
+  useEffect(() => {
+    if (!defaultReloadSignal) return;
+    // update FileUploader to show the default file as uploaded
+    setFileName('Default Timetable.pdf');
+    setFileURL('/default1.pdf');
+    setIsUploaded(true);
+  }, [defaultReloadSignal]);
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
@@ -54,12 +63,12 @@ export default function FileUploader({ onExtract, onRemove }) {
 
 
   return (
-    <div className="mb-4 border p-4 rounded-lg bg-gray-50">
-      <p className="text-sm text-gray-700 mb-2 font-medium">
+    <div className={`mb-4 border p-4 rounded-lg ${theme === 'dark' ? 'bg-gray-800 border-gray-700 text-gray-100' : 'bg-gray-50 border-gray-200 text-gray-900'}`}>
+      <p className={`text-sm mb-2 font-medium ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
         Please upload{' '}
         <span className="font-semibold">ONLY THE COURSE LIST FILE.</span>
       </p>
-      <div className="text-sm text-gray-600 mt-1">
+      <div className={`text-sm mt-1 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
         Supported formats: .xlsx, .xls, .csv, .pdf, .docx
       </div>
 
@@ -76,7 +85,11 @@ export default function FileUploader({ onExtract, onRemove }) {
           {/* Label acting as button */}
           <label
             htmlFor="fileInput"
-            className="inline-block px-4 py-2 bg-blue-500 text-white rounded-lg cursor-pointer hover:bg-blue-600"
+            className={`inline-block px-4 py-2 text-white rounded-lg cursor-pointer ${
+              theme === 'dark'
+                ? 'bg-blue-700 hover:bg-blue-600'
+                : 'bg-blue-500 hover:bg-blue-600'
+            }`}
           >
             📂 Choose File
           </label>
@@ -85,19 +98,23 @@ export default function FileUploader({ onExtract, onRemove }) {
 
       {isUploaded && (
         <div className="flex items-center justify-between mt-3">
-          <div className="text-green-700 font-medium">
+          <div className={`font-medium ${theme === 'dark' ? 'text-green-400' : 'text-green-700'}`}>
             ✅ Uploaded:{' '}
             <a
               href={fileURL}
               target="_blank"
               rel="noopener noreferrer"
-              className="underline text-blue-700 hover:text-blue-900"
+              className={`underline ${theme === 'dark' ? 'text-blue-400 hover:text-blue-300' : 'text-blue-700 hover:text-blue-900'}`}
             >
               {fileName}
             </a>
           </div>
           <button
-            className="px-4 py-2 bg-red-200 rounded-lg cursor-pointer hover:bg-red-300"
+            className={`px-4 py-2 rounded-lg cursor-pointer ${
+              theme === 'dark' 
+                ? 'bg-red-900/50 text-red-100 hover:bg-red-900/70' 
+                : 'bg-red-200 hover:bg-red-300'
+            }`}
             onClick={handleRemove}
           >
             Remove File

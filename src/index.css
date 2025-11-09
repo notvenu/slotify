@@ -1,1 +1,41 @@
 @import "tailwindcss";
+
+.theme-dark {
+	--app-text: #e6edf3; /* base text */
+	--app-muted: #cbd5e1; /* muted */
+	--app-link: #93c5fd;
+}
+
+.theme-dark h1,
+.theme-dark h2,
+.theme-dark h3,
+.theme-dark h4,
+.theme-dark h5,
+.theme-dark h6,
+.theme-dark p,
+.theme-dark label,
+.theme-dark span,
+.theme-dark a,
+.theme-dark div,
+.theme-dark li,
+.theme-dark option {
+	color: var(--app-text) !important;
+}
+
+.theme-dark a,
+.theme-dark .link {
+	color: var(--app-link) !important;
+}
+
+.theme-dark .text-blue-900,
+.theme-dark .text-blue-800,
+.theme-dark .text-blue-700,
+.theme-dark .text-blue-600 {
+	color: var(--app-link) !important;
+}
+
+.theme-dark .text-gray-600,
+.theme-dark .text-gray-500,
+.theme-dark .text-gray-400 {
+	color: var(--app-muted) !important;
+}

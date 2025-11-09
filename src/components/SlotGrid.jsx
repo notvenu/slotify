@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import domtoimage from 'dom-to-image';
 import slotMapping from '../data/slotMapping';
 
-export default function SlotGrid({ selectedCourses }) {
+export default function SlotGrid({ selectedCourses, theme = 'light' }) {
   const timetableRef = useRef(null);
   const timetable = {};
 
@@ -57,7 +57,11 @@ export default function SlotGrid({ selectedCourses }) {
     return entries;
   };
 
-  const slotTypeColorMap = {
+  const slotTypeColorMap = theme === 'dark' ? {
+    theory: 'bg-emerald-800 text-emerald-100',
+    lab: 'bg-amber-800 text-amber-100',
+    project: 'bg-pink-800 text-pink-100'
+  } : {
     theory: 'bg-green-500 text-white',
     lab: 'bg-orange-500 text-white',
     project: 'bg-pink-500 text-white'
@@ -86,24 +90,38 @@ export default function SlotGrid({ selectedCourses }) {
 
   return (
     <div className="mt-6">
-      <h2 className="text-xl font-bold mb-4">Generated Timetable</h2>
+      <h2 className={`text-xl font-bold mb-4 ${theme === 'dark' ? 'text-gray-100' : ''}`}>
+        Generated Timetable
+      </h2>
 
       <button
         onClick={handleDownload}
-        className="mb-4 px-3 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+        className={`mb-4 px-3 py-2 text-white rounded-lg transition-colors ${
+          theme === 'dark'
+            ? 'bg-blue-700 hover:bg-blue-600 active:bg-blue-800'
+            : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700'
+        }`}
       >
         Download Timetable
       </button>
 
       <div className="overflow-x-auto">
-        <table ref={timetableRef} className="w-full bg-white border-collapse border border-gray-300">
+        <table ref={timetableRef} className={`w-full border-collapse border ${
+            theme === 'dark'
+              ? 'bg-gray-900 border-gray-700'
+              : 'bg-white border-gray-300'
+          }`}>
           <thead>
-            <tr className="bg-green-500 text-white">
-              <th className="border border-gray-300 p-2 text-sm font-bold">Day</th>
+            <tr className={theme === 'dark' ? 'bg-emerald-800' : 'bg-green-500'}>
+              <th className={`border p-2 text-sm font-bold text-white ${
+                theme === 'dark' ? 'border-gray-700' : 'border-gray-300'
+              }`}>Day</th>
               {timeSlots.map((time) => (
                 <th
                   key={time}
-                  className="border border-gray-300 p-2 text-sm font-bold min-w-[90px]"
+                  className={`border p-2 text-sm font-bold min-w-[90px] text-white ${
+                    theme === 'dark' ? 'border-gray-700' : 'border-gray-300'
+                  }`}
                 >
                   {time}
                 </th>
@@ -113,7 +131,11 @@ export default function SlotGrid({ selectedCourses }) {
           <tbody>
             {days.map((day) => (
               <tr key={day}>
-                <td className="border border-gray-300 p-2 text-xs font-medium bg-gray-50 text-center">
+                <td className={`border p-2 text-xs font-medium text-center ${
+                  theme === 'dark'
+                    ? 'bg-gray-800 border-gray-700 text-gray-100'
+                    : 'bg-gray-50 border-gray-300'
+                }`}>
                   {day}
                 </td>
                 {timeSlots.map((time) => {
@@ -123,7 +145,9 @@ export default function SlotGrid({ selectedCourses }) {
                   return (
                     <td
                       key={`${day}-${time}`}
-                      className="border border-gray-300 p-0 text-center relative"
+                      className={`border p-0 text-center relative ${
+                        theme === 'dark' ? 'border-gray-700' : 'border-gray-300'
+                      }`}
                     >
                       {entries.length > 0 ? (
                         <div className="flex flex-col justify-center items-center h-full w-full">
@@ -150,14 +174,20 @@ export default function SlotGrid({ selectedCourses }) {
                           const theorySlots = slotsInCell.filter(s => !/^L\d+/i.test(s));
                           const labSlots = slotsInCell.filter(s => /^L\d+/i.test(s));
                           return (
-                            <div className="text-xs text-gray-400 h-16 flex flex-col items-center justify-center leading-tight">
+                            <div className={`text-xs h-16 flex flex-col items-center justify-center leading-tight ${
+                              theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                            }`}>
                               {theorySlots.length > 0 && (
-                                <div className="text-[10px] font-medium text-gray-500">
+                                <div className={`text-[10px] font-medium ${
+                                  theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                                }`}>
                                   {theorySlots.join('/')}
                                 </div>
                               )}
                               {labSlots.length > 0 && (
-                                <div className="text-[10px] text-gray-500">
+                                <div className={`text-[10px] ${
+                                  theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                                }`}>
                                   {labSlots.join('/')}
                                 </div>
                               )}
@@ -174,14 +204,14 @@ export default function SlotGrid({ selectedCourses }) {
         </table>
       </div>
 
-      <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-1 text-sm">
+      <div className="mt-4 grid grid-cols-2 md:grid-cols-3 text-sm">
         <div className="flex items-center gap-1">
-          <div className="w-4 h-4 rounded-lg bg-green-500" />
-          <span>Theory Slot</span>
+          <div className={`w-4 h-4 rounded-lg ${theme === 'dark' ? 'bg-emerald-800' : 'bg-green-500'}`} />
+          <span className={theme === 'dark' ? 'text-gray-200' : ''}>Theory Slot</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-4 h-4 rounded-lg bg-orange-500" />
-          <span>Lab Slot</span>
+          <div className={`w-4 h-4 rounded-lg ${theme === 'dark' ? 'bg-amber-800' : 'bg-orange-500'}`} />
+          <span className={theme === 'dark' ? 'text-gray-200' : ''}>Lab Slot</span>
         </div>
       </div>
     </div>

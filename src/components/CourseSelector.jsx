@@ -7,6 +7,7 @@ export default function CourseSelector({
   maxSubjects,
   editingCourse,
   setEditingCourse,
+  theme = 'light'
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -194,11 +195,11 @@ export default function CourseSelector({
                 setCurrentPage(1);
               }}
               placeholder="Search by code or name..."
-              className="border px-2 py-2 flex-1 rounded-lg"
+              className={`border px-2 py-2 flex-1 rounded-lg ${theme === 'dark' ? 'bg-gray-800 border-gray-700 text-gray-100' : 'bg-white border-gray-300'}`}
             />
             {searchTerm && (
               <button
-                className="text-sm px-2 py-2 bg-gray-200 rounded-lg cursor-pointer hover:bg-gray-300"
+                className={`text-sm px-2 py-2 rounded-lg cursor-pointer ${theme === 'dark' ? 'bg-gray-700 text-gray-100 hover:bg-gray-600' : 'bg-gray-200 hover:bg-gray-300'}`}
                 onClick={() => {
                   setSearchTerm('');
                   setCurrentPage(1);
@@ -226,11 +227,13 @@ export default function CourseSelector({
                   className={`border p-2 rounded-lg text-left cursor-pointer ${
                     isSelected && !isEditing
                       ? 'opacity-50 cursor-not-allowed'
-                      : 'hover:bg-blue-50'
+                      : theme === 'dark'
+                      ? 'hover:bg-blue-900/30 border-gray-700 bg-gray-800 text-gray-100'
+                      : 'hover:bg-blue-50 bg-white'
                   }`}
                 >
                   <div className="font-semibold">{c.name}</div>
-                  <div className="text-sm text-gray-600">{c.code}</div>
+                  <div className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>{c.code}</div>
                 </button>
               );
             })}
@@ -241,17 +244,33 @@ export default function CourseSelector({
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage((p) => p - 1)}
-                className="p-1 border-1 rounded-lg cursor-pointer"
+                className={`p-2 border rounded-lg transition-colors ${
+                  theme === 'dark'
+                    ? currentPage === 1
+                      ? 'border-gray-700 text-gray-600 cursor-not-allowed'
+                      : 'border-gray-700 text-gray-200 hover:bg-gray-700 active:bg-gray-800'
+                    : currentPage === 1
+                    ? 'border-gray-200 text-gray-400 cursor-not-allowed'
+                    : 'border-gray-200 hover:bg-gray-100 active:bg-gray-200'
+                }`}
               >
                 Prev
               </button>
-              <span className="p-1">
+              <span className={`p-2 ${theme === 'dark' ? 'text-gray-200' : ''}`}>
                 Page {currentPage} / {Math.ceil(filteredCourses.length / coursesPerPage)}
               </span>
               <button
                 disabled={currentPage === Math.ceil(filteredCourses.length / coursesPerPage)}
                 onClick={() => setCurrentPage((p) => p + 1)}
-                className="p-1 border-1 rounded-lg cursor-pointer"
+                className={`p-2 border rounded-lg transition-colors ${
+                  theme === 'dark'
+                    ? currentPage === Math.ceil(filteredCourses.length / coursesPerPage)
+                      ? 'border-gray-700 text-gray-600 cursor-not-allowed'
+                      : 'border-gray-700 text-gray-200 hover:bg-gray-700 active:bg-gray-800'
+                    : currentPage === Math.ceil(filteredCourses.length / coursesPerPage)
+                    ? 'border-gray-200 text-gray-400 cursor-not-allowed'
+                    : 'border-gray-200 hover:bg-gray-100 active:bg-gray-200'
+                }`}
               >
                 Next
               </button>
@@ -261,13 +280,13 @@ export default function CourseSelector({
       )}
 
       {selecting && (
-        <div className="border p-4 rounded-lg bg-blue-50">
-          <div className="mb-2 font-semibold">
+        <div className={`border p-4 rounded-lg ${theme === 'dark' ? 'bg-blue-900/20 border-blue-800' : 'bg-blue-50'}`}>
+          <div className={`mb-2 font-semibold ${theme === 'dark' ? 'text-gray-100' : ''}`}>
             {selecting.name} ({selecting.code})
           </div>
           
           {isEditing && (
-            <div className="mb-2 text-sm text-blue-600 font-medium">
+            <div className={`mb-2 text-sm font-medium ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>
               Editing mode - modify the slot selection below
             </div>
           )}
@@ -284,7 +303,7 @@ export default function CourseSelector({
             if (allNill) {
               return (
                 <>
-                  <div className="mb-2 text-sm text-gray-700">
+                  <div className={`mb-2 text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
                     This course has no slots (Project/Internship).
                   </div>
                   <div className="flex gap-2 mt-4">
@@ -329,9 +348,13 @@ export default function CourseSelector({
                     </button>
                     <button
                       onClick={handleCancel}
-                      className="px-3 py-1 bg-gray-200 rounded-lg cursor-pointer hover:bg-gray-300"
+                      className={`px-3 py-2 rounded-lg transition-colors cursor-pointer ${
+                        theme === 'dark'
+                            ? 'bg-gray-700 text-gray-200 hover:bg-gray-600 active:bg-gray-800'
+                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300 active:bg-gray-400'
+                      }`}
                     >
-                      Cancel
+                        Cancel
                     </button>
                   </div>
                 </>
@@ -352,7 +375,11 @@ export default function CourseSelector({
                             key={combo.idx}
                             className={`flex items-center gap-2 border px-2 py-1 rounded-lg cursor-pointer ${
                               isChecked
-                                ? 'bg-blue-100 border-blue-300'
+                                ? theme === 'dark'
+                                  ? 'bg-blue-800 border-blue-700 text-blue-100'
+                                  : 'bg-blue-100 border-blue-300'
+                                : theme === 'dark'
+                                ? 'bg-gray-800 border-gray-700 text-gray-100 hover:bg-gray-700'
                                 : 'bg-white hover:bg-blue-50'
                             }`}
                           >
@@ -385,7 +412,11 @@ export default function CourseSelector({
                             key={combo.idx}
                             className={`flex items-center gap-2 border px-2 py-1 rounded-lg cursor-pointer ${
                               isChecked
-                                ? 'bg-blue-100 border-blue-300'
+                                ? theme === 'dark'
+                                  ? 'bg-blue-800 border-blue-700 text-blue-100'
+                                  : 'bg-blue-100 border-blue-300'
+                                : theme === 'dark'
+                                ? 'bg-gray-800 border-gray-700 text-gray-100 hover:bg-gray-700'
                                 : 'bg-white hover:bg-blue-50'
                             }`}
                           >
