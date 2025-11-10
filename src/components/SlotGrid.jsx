@@ -105,8 +105,8 @@ export default function SlotGrid({ selectedCourses, theme = 'light' }) {
         Download Timetable
       </button>
 
-      <div className="overflow-x-auto">
-        <table ref={timetableRef} className={`w-full border-collapse border ${
+      <div className="max-w-full overflow-x-auto md:overflow-x-hidden">
+        <table ref={timetableRef} className={`w-full min-w-[768px] md:min-w-0 md:table-fixed border-collapse border ${
             theme === 'dark'
               ? 'bg-gray-900 border-gray-700'
               : 'bg-white border-gray-300'
@@ -119,7 +119,7 @@ export default function SlotGrid({ selectedCourses, theme = 'light' }) {
               {timeSlots.map((time) => (
                 <th
                   key={time}
-                  className={`border p-2 text-sm font-bold min-w-[90px] text-white ${
+                  className={`border p-2 text-sm font-bold min-w-[90px] md:min-w-0 text-white ${
                     theme === 'dark' ? 'border-gray-700' : 'border-gray-300'
                   }`}
                 >
