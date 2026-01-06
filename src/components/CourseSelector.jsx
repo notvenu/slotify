@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { colorConfig, getThemeColor } from '../utils/colors';
 
 export default function CourseSelector({
   courseData,
@@ -7,7 +8,8 @@ export default function CourseSelector({
   maxSubjects,
   editingCourse,
   setEditingCourse,
-  theme = 'light'
+  theme = 'light',
+  showToast
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -16,6 +18,43 @@ export default function CourseSelector({
   const [selectedLabIdx, setSelectedLabIdx] = useState(null);
 
   const coursesPerPage = 10;
+
+  // Centralized theme colors using colorConfig
+  const inputTheme = getThemeColor(theme, colorConfig.input);
+  const inputColors = `${inputTheme.bg} ${inputTheme.border} ${inputTheme.text} ${inputTheme.focus}`;
+
+  const btnSecondary = getThemeColor(theme, colorConfig.button.secondary);
+  const buttonClearColors = `${btnSecondary}`;
+
+  const courseButtonSelectedColors = 'opacity-50 cursor-not-allowed';
+  const courseBtnBg = getThemeColor(theme, colorConfig.background);
+  const courseHoverBg = getThemeColor(theme, colorConfig.nav).hoverBg || '';
+  const courseButtonNormalColors = `${courseBtnBg.card} ${getThemeColor(theme, colorConfig.border)} ${courseHoverBg}`;
+
+  const pageBtnDisabled = getThemeColor(theme, colorConfig.border);
+  const pageButtonDisabledColors = `${pageBtnDisabled} ${getThemeColor(theme, colorConfig.text).muted || ''} cursor-not-allowed`;
+
+  const pageButtonActiveColors = `${getThemeColor(theme, colorConfig.border)} ${getThemeColor(theme, colorConfig.text).secondary || ''} ${getThemeColor(theme, colorConfig.nav).hoverBg || ''} ${getThemeColor(theme, colorConfig.nav).activeBg || ''}`;
+
+  const pageNumberColors = getThemeColor(theme, colorConfig.text).secondary || '';
+
+  const selectionPanelColors = `${getThemeColor(theme, colorConfig.background).card} ${getThemeColor(theme, colorConfig.background).secondary || ''}`;
+
+  const editingModeTextColors = getThemeColor(theme, colorConfig.text).secondary || '';
+
+  const noSlotsTextColors = getThemeColor(theme, colorConfig.text).muted || '';
+
+  const comboCheckboxSelectedColors = getThemeColor(theme, colorConfig.alert.info) || '';
+
+  const comboCheckboxNormalColors = `${getThemeColor(theme, colorConfig.background).card} ${getThemeColor(theme, colorConfig.border)} ${getThemeColor(theme, colorConfig.text).primary} ${getThemeColor(theme, colorConfig.nav).hoverBg || ''}`;
+
+  const addButtonEnabledColors = colorConfig.button.primary[theme === 'dark' ? 'dark' : 'light'];
+  const addButtonDisabledColors = '';
+
+  const cancelButtonColors = btnSecondary;
+
+  const courseNameTextColors = getThemeColor(theme, colorConfig.text).primary || '';
+  const courseCodeTextColors = getThemeColor(theme, colorConfig.text).secondary || '';
 
   // keep original ordering / structure as provided by courseData
   const uniqueCourses = useMemo(() => courseData || [], [courseData]);
@@ -111,6 +150,12 @@ export default function CourseSelector({
   const handleAdd = () => {
     if (!canAdd) return;
 
+    // Prevent adding beyond max when not editing
+    if (!isEditing && selectedCourses.length >= maxSubjects) {
+      if (typeof showToast === 'function') showToast(`Maximum of ${maxSubjects} subjects reached. Remove a course before adding another.`, 'error');
+      return;
+    }
+
     const alreadyAdded = selectedCourses.some(
       (s) => s.code === selecting.code && s.name === selecting.name
     );
@@ -167,6 +212,7 @@ export default function CourseSelector({
     setSelecting(null);
     setSelectedTheoryIdx(null);
     setSelectedLabIdx(null);
+    if (typeof showToast === 'function') showToast(isEditing ? 'Course updated' : 'Course added', 'success');
   };
 
   const handleCancel = () => {
@@ -195,26 +241,18 @@ export default function CourseSelector({
       {!selecting && (
         <>
           <div className="flex gap-2 items-center">
-            <input
+              <input
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
               placeholder="Search by code or name..."
-              className={`border px-3 py-2 w-full rounded-lg shadow-sm focus:outline-none focus:ring-2 transition ${
-                theme === 'dark'
-                  ? 'bg-gray-800 border-gray-700 text-gray-100 focus:ring-blue-500'
-                  : 'bg-white border-gray-300 focus:ring-blue-400'
-              }`}
+              className={`px-3 py-2 w-full rounded-lg shadow-sm focus:outline-none focus:ring-2 transition ${inputColors}`}
             />
             {searchTerm && (
               <button
-                className={`text-sm px-3 py-2 rounded-lg transition ${
-                  theme === 'dark'
-                    ? 'bg-gray-700 text-gray-200 hover:bg-gray-600'
-                    : 'bg-gray-200 hover:bg-gray-300 text-gray-700'
-                }`}
+                className={`text-sm px-3 py-2 rounded-lg transition ${buttonClearColors}`}
                 onClick={() => {
                   setSearchTerm('');
                   setCurrentPage(1);
@@ -225,7 +263,7 @@ export default function CourseSelector({
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-96 overflow-y-auto border p-2 rounded-lg">
+          <div className={`grid grid-cols-1 md:grid-cols-2 gap-3 max-h-96 overflow-y-auto p-2 rounded-lg border ${getThemeColor(theme, colorConfig.border)}`}>
             {paginatedCourses.map((c) => {
               const isSelected = selectedCourses.some(
                 (s) => s.code === c.code && s.name === c.name
@@ -241,21 +279,19 @@ export default function CourseSelector({
                   }}
                   className={`border p-3 rounded-lg text-left transition-all flex flex-col justify-center items-start ${
                     isSelected && !isEditing
-                      ? 'opacity-50 cursor-not-allowed'
-                      : theme === 'dark'
-                      ? 'bg-gray-800 border-gray-700 hover:bg-blue-900/30'
-                      : 'bg-white border-gray-200 hover:bg-blue-50'
+                      ? courseButtonSelectedColors
+                      : courseButtonNormalColors
                   }`}
                 >
-                  <div className="font-semibold">{c.name}</div>
-                  <div className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                  <div className={`font-semibold ${courseNameTextColors}`}>{c.name}</div>
+                  <div className={`text-sm ${courseCodeTextColors}`}>
                     {c.code}
                   </div>
                 </button>
               );
             })}
             {paginatedCourses.length === 0 && (
-              <div className="col-span-full text-center text-sm text-gray-500 p-4">
+              <div className={`col-span-full text-center text-sm p-4 ${noSlotsTextColors}`}>
                 No courses found.
               </div>
             )}
@@ -266,32 +302,22 @@ export default function CourseSelector({
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                className={`p-2 border rounded-lg transition-colors ${
-                  theme === 'dark'
-                    ? currentPage === 1
-                      ? 'border-gray-700 text-gray-600 cursor-not-allowed'
-                      : 'border-gray-700 text-gray-200 hover:bg-gray-700 active:bg-gray-800'
-                    : currentPage === 1
-                    ? 'border-gray-200 text-gray-400 cursor-not-allowed'
-                    : 'border-gray-200 hover:bg-gray-100 active:bg-gray-200'
+                className={`p-2 rounded-lg transition-colors ${getThemeColor(theme, colorConfig.border)} ${
+                  currentPage === 1 ? pageButtonDisabledColors : pageButtonActiveColors
                 }`}
               >
                 Prev
               </button>
-              <span className={`p-2 ${theme === 'dark' ? 'text-gray-200' : ''}`}>
+              <span className={`p-2 ${pageNumberColors}`}>
                 Page {currentPage} / {Math.max(1, Math.ceil(filteredCourses.length / coursesPerPage))}
               </span>
               <button
                 disabled={currentPage === Math.ceil(filteredCourses.length / coursesPerPage)}
                 onClick={() => setCurrentPage((p) => p + 1)}
-                className={`p-2 border rounded-lg transition-colors ${
-                  theme === 'dark'
-                    ? currentPage === Math.ceil(filteredCourses.length / coursesPerPage)
-                      ? 'border-gray-700 text-gray-600 cursor-not-allowed'
-                      : 'border-gray-700 text-gray-200 hover:bg-gray-700 active:bg-gray-800'
-                    : currentPage === Math.ceil(filteredCourses.length / coursesPerPage)
-                    ? 'border-gray-200 text-gray-400 cursor-not-allowed'
-                    : 'border-gray-200 hover:bg-gray-100 active:bg-gray-200'
+                className={`p-2 rounded-lg transition-colors ${getThemeColor(theme, colorConfig.border)} ${
+                  currentPage === Math.ceil(filteredCourses.length / coursesPerPage)
+                    ? pageButtonDisabledColors
+                    : pageButtonActiveColors
                 }`}
               >
                 Next
@@ -302,13 +328,13 @@ export default function CourseSelector({
       )}
 
       {selecting && (
-        <div className={`border p-4 rounded-lg ${theme === 'dark' ? 'bg-blue-900/20 border-blue-800' : 'bg-blue-50'}`}>
-          <div className={`mb-2 font-semibold ${theme === 'dark' ? 'text-gray-100' : ''}`}>
+        <div className={`p-4 rounded-lg ${getThemeColor(theme, colorConfig.border)} ${selectionPanelColors}`}>
+          <div className={`mb-2 font-semibold ${courseNameTextColors}`}>
             {selecting.name} ({selecting.code})
           </div>
 
           {isEditing && (
-            <div className={`mb-2 text-sm font-medium ${theme === 'dark' ? 'text-blue-300' : 'text-blue-600'}`}>
+            <div className={`mb-2 text-sm font-medium ${editingModeTextColors}`}>
               Editing mode - modify the slot selection below
             </div>
           )}
@@ -326,12 +352,18 @@ export default function CourseSelector({
             if (allNill) {
               return (
                 <>
-                  <div className={`mb-2 text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>
+                  <div className={`mb-2 text-sm ${noSlotsTextColors}`}>
                     This course has no slots (Project/Internship).
                   </div>
                   <div className="flex gap-2 mt-4">
                     <button
                       onClick={() => {
+                        // Prevent adding beyond max when not editing
+                        if (!isEditing && selectedCourses.length >= maxSubjects) {
+                          if (typeof showToast === 'function') showToast(`Maximum of ${maxSubjects} subjects reached. Remove a course before adding another.`, 'error');
+                          return;
+                        }
+
                         setSelectedCourses((prev) => {
                           if (isEditing) {
                             const filtered = prev.filter(
@@ -362,18 +394,15 @@ export default function CourseSelector({
                         setSelecting(null);
                         setSelectedTheoryIdx(null);
                         setSelectedLabIdx(null);
+                        if (typeof showToast === 'function') showToast(isEditing ? 'Course updated' : 'Course added', 'success');
                       }}
-                      className="px-3 py-2 bg-green-500 text-white rounded-lg cursor-pointer hover:bg-green-600"
+                      className={`px-3 py-2 rounded-lg cursor-pointer ${addButtonEnabledColors}`}
                     >
                       {isEditing ? 'Save Changes' : 'Add Course'}
                     </button>
                     <button
                       onClick={handleCancel}
-                      className={`px-3 py-2 rounded-lg transition-colors cursor-pointer ${
-                        theme === 'dark'
-                          ? 'bg-gray-700 text-gray-200 hover:bg-gray-600 active:bg-gray-800'
-                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300 active:bg-gray-400'
-                      }`}
+                      className={`px-3 py-2 rounded-lg transition-colors cursor-pointer ${cancelButtonColors}`}
                     >
                       Cancel
                     </button>
@@ -395,14 +424,8 @@ export default function CourseSelector({
                         return (
                           <label
                             key={`t-${combo.idx}`}
-                            className={`flex items-center gap-2 border px-3 py-2 rounded-lg cursor-pointer ${
-                              isChecked
-                                ? theme === 'dark'
-                                  ? 'bg-blue-800 border-blue-700 text-blue-100'
-                                  : 'bg-blue-100 border-blue-300'
-                                : theme === 'dark'
-                                  ? 'bg-gray-800 border-gray-700 text-gray-100 hover:bg-gray-700'
-                                  : 'bg-white hover:bg-blue-50'
+                            className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer ${getThemeColor(theme, colorConfig.border)} ${
+                              isChecked ? comboCheckboxSelectedColors : comboCheckboxNormalColors
                             }`}
                           >
                             <input
@@ -431,14 +454,8 @@ export default function CourseSelector({
                         return (
                           <label
                             key={`l-${combo.idx}`}
-                            className={`flex items-center gap-2 border px-3 py-2 rounded-lg cursor-pointer ${
-                              isChecked
-                                ? theme === 'dark'
-                                  ? 'bg-blue-800 border-blue-700 text-blue-100'
-                                  : 'bg-blue-100 border-blue-300'
-                                : theme === 'dark'
-                                  ? 'bg-gray-800 border-gray-700 text-gray-100 hover:bg-gray-700'
-                                  : 'bg-white hover:bg-blue-50'
+                            className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer ${getThemeColor(theme, colorConfig.border)} ${
+                              isChecked ? comboCheckboxSelectedColors : comboCheckboxNormalColors
                             }`}
                           >
                             <input
@@ -463,20 +480,14 @@ export default function CourseSelector({
                     disabled={!canAdd}
                     onClick={handleAdd}
                     className={`px-4 py-2 rounded-lg font-medium transition ${
-                      canAdd
-                        ? 'bg-green-500 text-white hover:bg-green-600 active:bg-green-700'
-                        : 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                      canAdd ? addButtonEnabledColors : addButtonDisabledColors
                     }`}
                   >
                     {isEditing ? 'Save Changes' : 'Add Course'}
                   </button>
                   <button
                     onClick={handleCancel}
-                    className={`px-4 py-2 rounded-lg font-medium transition ${
-                      theme === 'dark'
-                        ? 'bg-gray-700 text-gray-200 hover:bg-gray-600'
-                        : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
-                    }`}
+                    className={`px-4 py-2 rounded-lg font-medium transition ${cancelButtonColors}`}
                   >
                     Cancel
                   </button>

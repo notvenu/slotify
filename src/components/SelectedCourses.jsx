@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import * as XLSX from 'xlsx-js-style';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { colorConfig, getThemeColor } from '../utils/colors';
 
 export default function SelectedCourses({
   groupedCourses,
@@ -14,6 +15,30 @@ export default function SelectedCourses({
 }) {
   const [selectedIndices, setSelectedIndices] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Centralized color variables using getThemeColor and colorConfig
+  const textTheme = getThemeColor(theme, colorConfig.text);
+  const inputTheme = getThemeColor(theme, colorConfig.input);
+  const btnDanger = colorConfig.button.danger[theme === 'dark' ? 'dark' : 'light'];
+  const btnPrimary = colorConfig.button.primary[theme === 'dark' ? 'dark' : 'light'];
+  const btnSecondary = colorConfig.button.secondary[theme === 'dark' ? 'dark' : 'light'];
+  
+  const headingTextClass = textTheme.primary || '';
+  const searchInputBgClass = `${inputTheme.bg} ${inputTheme.border} ${inputTheme.text} ${inputTheme.focus}`;
+  const clearButtonClass = btnSecondary;
+  const removeSelectedButtonClass = btnDanger;
+  const removeAllButtonClass = btnDanger;
+  const downloadButtonClass = btnPrimary;
+  const noCourseTextClass = textTheme.muted || '';
+  const bgTheme = getThemeColor(theme, colorConfig.background);
+  const courseCardBgSelected = 'bg-amber-50 border-amber-200';
+  const courseCardBgDefault = `${bgTheme.secondary || ''} ${getThemeColor(theme, colorConfig.border)}`;
+  const courseCardTextClass = textTheme.primary || '';
+  const courseSecondaryTextClass = textTheme.secondary || '';
+  const courseLabelTextClass = textTheme.primary || '';
+  const creditsTextClass = 'text-blue-600';
+  const editButtonClass = colorConfig.button.warning[theme === 'dark' ? 'dark' : 'light'];
+  const removeButtonClass = btnDanger;
 
   const toggleSelection = (idx) => {
     setSelectedIndices((prev) =>
@@ -165,7 +190,7 @@ export default function SelectedCourses({
 
   return (
     <div className="my-6">
-      <h2 className={`text-xl font-bold mb-4 ${theme === 'dark' ? 'text-gray-100' : 'text-gray-800'}`}>
+      <h2 className={`text-xl font-bold mb-4 ${headingTextClass}`}>
         Selected Courses
       </h2>
 
@@ -176,21 +201,13 @@ export default function SelectedCourses({
           <input
             type="text"
             placeholder="Search by name or code..."
-            className={`border px-3 py-2 rounded-lg w-full md:w-72 focus:outline-none focus:ring-2 ${
-              theme === 'dark' 
-                ? 'bg-gray-800 border-gray-700 text-gray-100 placeholder-gray-400 focus:ring-blue-500/50' 
-                : 'bg-white border-gray-300 focus:ring-blue-500/30'
-            }`}
+            className={`border px-3 py-2 rounded-lg w-full md:w-72 focus:outline-none focus:ring-2 ${searchInputBgClass}`}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           {searchTerm && (
             <button
-              className={`px-3 py-2 rounded-lg cursor-pointer transition-colors ${
-                theme === 'dark'
-                  ? 'bg-gray-700 text-gray-100 hover:bg-gray-600 active:bg-gray-800'
-                  : 'bg-gray-200 hover:bg-gray-300 active:bg-gray-400'
-              }`}
+              className={`px-3 py-2 rounded-lg cursor-pointer transition-colors ${clearButtonClass}`}
               onClick={() => setSearchTerm('')}
             >
               Clear
@@ -202,11 +219,7 @@ export default function SelectedCourses({
         <div className="flex gap-2 flex-wrap">
           {selectionMode && (
             <button
-              className={`px-3 py-2 text-white rounded-lg cursor-pointer transition-colors ${
-                theme === 'dark'
-                  ? 'bg-red-800 hover:bg-red-700 active:bg-red-900'
-                  : 'bg-red-500 hover:bg-red-600 active:bg-red-700'
-              }`}
+              className={`px-3 py-2 text-white rounded-lg cursor-pointer transition-colors ${removeSelectedButtonClass}`}
               onClick={() => {
                 onRemoveMultiple(selectedIndices);
                 setSelectedIndices([]);
@@ -216,31 +229,19 @@ export default function SelectedCourses({
             </button>
           )}
           <button
-            className={`px-3 py-2 text-white rounded-lg cursor-pointer transition-colors ${
-              theme === 'dark'
-                ? 'bg-red-800 hover:bg-red-700 active:bg-red-900'
-                : 'bg-red-500 hover:bg-red-600 active:bg-red-700'
-            }`}
+            className={`px-3 py-2 text-white rounded-lg cursor-pointer transition-colors ${removeAllButtonClass}`}
             onClick={onRemoveAll}
           >
             Remove All
           </button>
           <button
-            className={`px-3 py-2 text-white rounded-lg cursor-pointer transition-colors ${
-              theme === 'dark'
-                ? 'bg-emerald-700 hover:bg-emerald-600 active:bg-emerald-800'
-                : 'bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700'
-            }`}
+            className={`px-3 py-2 text-white rounded-lg cursor-pointer transition-colors font-medium ${downloadButtonClass}`}
             onClick={handleDownloadExcel}
           >
             Download Excel
           </button>
           <button
-            className={`px-3 py-2 text-white rounded-lg cursor-pointer transition-colors ${
-              theme === 'dark'
-                ? 'bg-blue-700 hover:bg-blue-600 active:bg-blue-800'
-                : 'bg-blue-600 hover:bg-blue-500 active:bg-blue-700'
-            }`}
+            className={`px-3 py-2 text-white rounded-lg cursor-pointer transition-colors font-medium ${downloadButtonClass}`}
             onClick={handleDownloadPDF}
           >
             Download PDF
@@ -259,14 +260,8 @@ export default function SelectedCourses({
           <div
             key={idx}
             className={`flex flex-col md:flex-row md:items-center gap-4 border p-4 rounded-lg transition-colors ${
-              theme === 'dark'
-                ? isSelected(idx)
-                  ? 'bg-amber-900/20 border-amber-700/50'
-                  : 'bg-gray-800 border-gray-700 hover:border-gray-600'
-                : isSelected(idx)
-                ? 'bg-amber-50 border-amber-200'
-                : 'bg-gray-50 hover:bg-gray-100 border-gray-200'
-            } ${theme === 'dark' ? 'text-gray-100' : ''}`}
+              isSelected(idx) ? courseCardBgSelected : courseCardBgDefault
+            } ${courseCardTextClass}`}
           >
             <div className="flex items-center gap-3 flex-1">
               <input
@@ -300,21 +295,13 @@ export default function SelectedCourses({
             {!selectionMode && (
               <div className="flex gap-2">
                 <button
-                  className={`px-3 py-2 rounded-lg cursor-pointer transition-colors ${
-                    theme === 'dark'
-                      ? 'bg-amber-700 text-amber-50 hover:bg-amber-600 active:bg-amber-800'
-                      : 'bg-amber-100 text-amber-700 hover:bg-amber-200 active:bg-amber-300'
-                  }`}
+                  className={`px-3 py-2 rounded-lg cursor-pointer transition-colors ${editButtonClass}`}
                   onClick={() => onEditCourse(course)}
                 >
                   Edit
                 </button>
                 <button
-                  className={`px-3 py-2 rounded-lg cursor-pointer transition-colors ${
-                    theme === 'dark'
-                      ? 'bg-red-800/50 text-red-100 hover:bg-red-700/50 active:bg-red-900/50'
-                      : 'bg-red-100 text-red-700 hover:bg-red-200 active:bg-red-300'
-                  }`}
+                  className={`px-3 py-2 rounded-lg cursor-pointer transition-colors ${removeButtonClass}`}
                   onClick={() => onRemoveCourse(course)}
                 >
                   Remove
