@@ -44,9 +44,9 @@ export default function CourseSelector({
 
   const noSlotsTextColors = getThemeColor(theme, colorConfig.text).muted || '';
 
-  const comboCheckboxSelectedColors = getThemeColor(theme, colorConfig.alert.info) || '';
+  const comboCheckboxSelectedColors = `${getThemeColor(theme, colorConfig.background).card} ${getThemeColor(theme, colorConfig.border)} border-2 border-[#4988C4] bg-[#BDE8F5]/20`;
 
-  const comboCheckboxNormalColors = `${getThemeColor(theme, colorConfig.background).card} ${getThemeColor(theme, colorConfig.border)} ${getThemeColor(theme, colorConfig.text).primary} ${getThemeColor(theme, colorConfig.nav).hoverBg || ''}`;
+  const comboCheckboxNormalColors = `${getThemeColor(theme, colorConfig.background).card} ${getThemeColor(theme, colorConfig.border)} border-2 ${getThemeColor(theme, colorConfig.text).primary} ${getThemeColor(theme, colorConfig.nav).hoverBg || ''}`;
 
   const addButtonEnabledColors = colorConfig.button.primary[theme === 'dark' ? 'dark' : 'light'];
   const addButtonDisabledColors = '';
@@ -302,7 +302,7 @@ export default function CourseSelector({
               <button
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                className={`p-2 rounded-lg transition-colors ${getThemeColor(theme, colorConfig.border)} ${
+                className={`p-2 rounded-lg border transition-colors ${
                   currentPage === 1 ? pageButtonDisabledColors : pageButtonActiveColors
                 }`}
               >
@@ -314,7 +314,7 @@ export default function CourseSelector({
               <button
                 disabled={currentPage === Math.ceil(filteredCourses.length / coursesPerPage)}
                 onClick={() => setCurrentPage((p) => p + 1)}
-                className={`p-2 rounded-lg transition-colors ${getThemeColor(theme, colorConfig.border)} ${
+                className={`p-2 rounded-lg border transition-colors ${
                   currentPage === Math.ceil(filteredCourses.length / coursesPerPage)
                     ? pageButtonDisabledColors
                     : pageButtonActiveColors

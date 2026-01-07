@@ -1,42 +1,42 @@
 import React from 'react';
 import { colorConfig, getThemeColor } from '../utils/colors';
 
-const TYPE_ICONS = {
-  info: 'ℹ️',
-  success: '✅',
-  warning: '⚠️',
-  error: '❌',
-};
 
 export default function Toast({ message, type = 'info', visible, theme = 'light' }) {
-  const alertClasses = getThemeColor(theme, colorConfig.alert[type] || colorConfig.alert.info) || '';
-  const icon = TYPE_ICONS[type] || TYPE_ICONS.info;
-
-  // derive parts from the combined alert classes
-  const bgClass = (alertClasses.match(/bg-[^\s]+/g) || []).join(' ');
-  const borderClass = (alertClasses.match(/border-[^\s]+/g) || []).join(' ');
-  const textClass = (alertClasses.match(/text-[^\s]+/g) || []).join(' ');
-
-  // icon background choices per type (stronger contrast)
-  const iconBgMap = {
-    info: theme === 'dark' ? 'bg-blue-500' : 'bg-blue-600',
-    success: theme === 'dark' ? 'bg-emerald-500' : 'bg-emerald-600',
-    warning: theme === 'dark' ? 'bg-amber-500' : 'bg-amber-600',
-    error: theme === 'dark' ? 'bg-red-500' : 'bg-red-600',
+  const isDark = theme === 'dark';
+  
+  // Theme-specific toast styling using exact palette colors
+  const toastStyles = {
+    info: {
+      light: `bg-white border-2 border-[#4988C4] text-[#0F2854] shadow-xl`,
+      dark: `bg-[#0F2854] border-2 border-[#4988C4] text-[#BDE8F5] shadow-xl`,
+    },
+    success: {
+      light: `bg-white border-2 border-[#1C4D8D] text-[#0F2854] shadow-xl`,
+      dark: `bg-[#1C4D8D] border-2 border-[#4988C4] text-white shadow-xl`,
+    },
+    warning: {
+      light: `bg-white border-2 border-amber-500 text-amber-900 shadow-xl`,
+      dark: `bg-amber-900 border-2 border-amber-500 text-amber-100 shadow-xl`,
+    },
+    error: {
+      light: `bg-white border-2 border-red-500 text-red-900 shadow-xl`,
+      dark: `bg-red-900 border-2 border-red-500 text-red-100 shadow-xl`,
+    },
   };
-  const iconBg = iconBgMap[type] || iconBgMap.info;
+
+  const toastClass = toastStyles[type]?.[isDark ? 'dark' : 'light'] || toastStyles.info[isDark ? 'dark' : 'light'];
 
   return (
     <div className="fixed bottom-6 right-6 z-50 pointer-events-none">
       <div
         role="status"
         aria-live="polite"
-        className={`pointer-events-auto px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 ${bgClass} ${borderClass} ${textClass} transition-all duration-500 ease-out transform ${
-          visible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-24'
+        className={`pointer-events-auto px-4 py-3 rounded-xl flex items-center gap-3 max-w-sm ${toastClass} transition-all duration-500 ease-out transform ${
+          visible ? 'opacity-100 translate-x-0 scale-100' : 'opacity-0 translate-x-24 scale-95'
         }`}
       >
-        <div className={`${iconBg} rounded-full w-9 h-9 flex items-center justify-center text-white shrink-0`}>{icon}</div>
-        <div className="text-sm">{message}</div>
+        <div className="text-sm font-medium">{message}</div>
       </div>
     </div>
   );

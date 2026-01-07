@@ -84,12 +84,12 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
             setTimeout(async () => {
               if (defaultFileNameRef.current !== found) return;
               try {
-                if (typeof showToast === 'function') showToast(`Loading default ${found}...`, 'info');
+                if (typeof showToast === 'function') showToast(`Loading default... `, 'info');
                 await onExtract({ loadDefault: found });
                 if (defaultFileNameRef.current === found) {
                   setFileURL(`/${found}`);
                   setIsUploaded(true);
-                  if (typeof showToast === 'function') showToast(`Default loaded: ${found}`, 'success');
+                  if (typeof showToast === 'function') showToast(`Default loaded`, 'success');
                 }
               } catch (e) {
                 if (typeof showToast === 'function') showToast('Failed to load default', 'error');
@@ -147,7 +147,7 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
       setFileName(fn);
       setFileURL(`/${fn}`);
       setIsUploaded(true);
-      if (typeof showToast === 'function') showToast(`Default loaded: ${fn}`, 'success');
+      if (typeof showToast === 'function') showToast(`Default loaded`, 'success');
     }
   }, [defaultReloadSignal]);
 

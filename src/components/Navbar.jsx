@@ -24,6 +24,7 @@ export default function Navbar({ theme, toggleTheme }) {
   const navItems = [
     { path: '/', label: 'Home' },
     { path: '/course-selector', label: 'Course Selector' },
+    //{ path: '/faculty-ranker', label: 'Faculty Ranker' },
     { path: '/contact', label: 'Contact Us' },
   ];
 
@@ -42,12 +43,12 @@ export default function Navbar({ theme, toggleTheme }) {
           </Link>
 
           {/* Navigation Items */}
-          <div className="hidden sm:flex items-center gap-6">
+          <div className="hidden sm:flex items-center">
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`text-sm font-medium transition-colors ${
+                className={`px-3 py-2 text-sm font-medium transition-colors ${
                   isActive(item.path)
                     ? navActiveTextClass
                     : navTextClass
@@ -97,15 +98,15 @@ export default function Navbar({ theme, toggleTheme }) {
                 key={item.path}
                 to={item.path}
                 onClick={() => setMobileOpen(false)}
-                className={`block px-3 py-2 rounded-lg text-base font-medium transition-colors ${
+                className={`block px-3 py-2 text-base font-medium transition-colors ${
                   isActive(item.path)
-                    ? `${navActiveBgClass} ${navActiveTextClass}`
-                    : `${navTextClass} ${navHoverBgClass}`
+                    ? navActiveTextClass
+                    : navTextClass
                 }`}
               >
                 {item.label}
               </Link>
-            ))}
+            ))})
           </div>
         </div>
       )}

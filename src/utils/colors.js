@@ -1,81 +1,78 @@
 /**
- * Centralized modern color configuration (Fresh UI/UX – 2025)
+ * Centralized modern color configuration (Refined UI/UX – 2025)
  */
 
 export const colorConfig = {
-  // Primary Brand – Vibrant Emerald Green
+  /* =========================
+     SOCIAL / BRAND
+  ========================== */
+  brand: {
+    github: {
+      base: '#6B7280',
+      hoverLight: '#333',
+      hoverDark: '#fff',
+    },
+    linkedin: { base: '#6B7280', hover: '#0A66C2' },
+    instagram: { base: '#6B7280', hover: '#E4405F' },
+    gmail: { base: '#6B7280', hover: '#EA4335' },
+  },
+
+  /* =========================
+     CORE PALETTE
+  ========================== */
   primary: {
-    light: '#059669',     // emerald-600
-    main: '#10B981',      // emerald-500
-    dark: '#047857',      // emerald-700
-    extraLight: '#A7F3D0',// emerald-200
-    extraDark: '#064E3B', // emerald-900
+    light: '#4988C4',
+    main: '#1C4D8D',
+    dark: '#0F2854',
+    extraLight: '#BDE8F5',
+    extraDark: '#0A1A3A',
   },
 
-  // Secondary – Vibrant Blue
   secondary: {
-    light: '#0EA5E9',     // sky-500
-    main: '#0284C7',      // sky-600
-    dark: '#0369A1',      // sky-700
-    extraLight: '#BAE6FD',// sky-200
-    extraDark: '#082F49', // sky-950
+    light: '#BDE8F5',
+    main: '#4988C4',
+    dark: '#1C4D8D',
+    extraLight: '#E6F7FB',
+    extraDark: '#0F2854',
   },
 
-  // Slot Type Colors (vibrant and distinct)
+  /* =========================
+     SLOT TYPES
+  ========================== */
   slotTypes: {
     theory: {
-      light: {
-        bg: 'bg-emerald-500',
-        text: 'text-white',
-        class: 'bg-emerald-500 text-white',
-      },
-      dark: {
-        bg: 'bg-emerald-600',
-        text: 'text-emerald-50',
-        class: 'bg-emerald-600 text-emerald-50',
-      },
+      light: 'bg-emerald-600 text-white',
+      dark: 'bg-emerald-700 text-emerald-50',
     },
     lab: {
-      light: {
-        bg: 'bg-blue-500',
-        text: 'text-white',
-        class: 'bg-blue-500 text-white',
-      },
-      dark: {
-        bg: 'bg-blue-600',
-        text: 'text-blue-50',
-        class: 'bg-blue-600 text-blue-50',
-      },
+      light: 'bg-orange-500 text-white',
+      dark: 'bg-orange-600 text-orange-50',
     },
     project: {
-      light: {
-        bg: 'bg-purple-500',
-        text: 'text-white',
-        class: 'bg-purple-500 text-white',
-      },
-      dark: {
-        bg: 'bg-purple-600',
-        text: 'text-purple-50',
-        class: 'bg-purple-600 text-purple-50',
-      },
+      light: 'bg-purple-500 text-white',
+      dark: 'bg-purple-600 text-purple-50',
     },
   },
 
-  // Backgrounds – vibrant yet sophisticated
+  /* =========================
+     BACKGROUND
+  ========================== */
   background: {
     light: {
-      page: 'bg-gradient-to-br from-slate-50 via-white to-blue-50',
+      page: 'bg-white',
       card: 'bg-white',
-      secondary: 'bg-slate-50',
+      secondary: 'bg-[#BDE8F5]/20',
     },
     dark: {
-      page: 'bg-gradient-to-br from-slate-900 to-slate-800',
+      page: 'bg-slate-900',
       card: 'bg-slate-800',
       secondary: 'bg-slate-700',
     },
   },
 
-  // Text Colors – high contrast
+  /* =========================
+     TEXT
+  ========================== */
   text: {
     light: {
       primary: 'text-slate-900',
@@ -89,67 +86,85 @@ export const colorConfig = {
     },
   },
 
-  // Borders
+  /* =========================
+     BORDERS
+  ========================== */
   border: {
     light: 'border-slate-300',
     dark: 'border-slate-600',
   },
 
-  // Buttons – bold and interactive
+  /* =========================
+     BUTTONS
+  ========================== */
   button: {
     primary: {
-      light: 'bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white font-medium',
-      dark: 'bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-medium',
+      light:
+        'bg-[#1C4D8D] hover:bg-[#0F2854] active:bg-[#0A1A3A] text-white font-medium',
+      dark:
+        'bg-[#4988C4] hover:bg-[#1C4D8D] active:bg-[#0F2854] text-white font-medium',
     },
     secondary: {
-      light: 'bg-slate-200 hover:bg-slate-300 active:bg-slate-400 text-slate-900 font-medium',
-      dark: 'bg-slate-700 hover:bg-slate-600 active:bg-slate-800 text-slate-100 font-medium',
+      light:
+        'bg-slate-200 hover:bg-slate-300 active:bg-slate-400 text-slate-900 font-medium',
+      dark:
+        'bg-slate-700 hover:bg-slate-600 active:bg-slate-800 text-slate-100 font-medium',
     },
     danger: {
-      light: 'bg-red-500 hover:bg-red-600 active:bg-red-700 text-white font-medium',
-      dark: 'bg-red-600 hover:bg-red-500 active:bg-red-700 text-white font-medium',
+      light:
+        'bg-red-500 hover:bg-red-600 active:bg-red-700 text-white font-medium',
+      dark:
+        'bg-red-600 hover:bg-red-500 active:bg-red-700 text-white font-medium',
     },
     warning: {
-      light: 'bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-white font-medium',
-      dark: 'bg-amber-600 hover:bg-amber-500 active:bg-amber-700 text-white font-medium',
+      light:
+        'bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-white font-medium',
+      dark:
+        'bg-amber-600 hover:bg-amber-500 active:bg-amber-700 text-white font-medium',
     },
   },
 
-  // Navigation – modern and clean
+  /* =========================
+     NAVIGATION
+  ========================== */
   nav: {
     light: {
       bg: 'bg-white/90 backdrop-blur-sm',
       border: 'border-slate-200',
-      activeBg: 'bg-emerald-50',
-      activeText: 'text-emerald-600',
-      hoverBg: 'bg-slate-100',
       text: 'text-slate-700',
+      activeText: 'text-[#4988C4] font-semibold',
     },
     dark: {
       bg: 'bg-slate-800/90 backdrop-blur-sm',
       border: 'border-slate-700',
-      activeBg: 'bg-slate-700',
-      activeText: 'text-emerald-400',
-      hoverBg: 'bg-slate-700/50',
       text: 'text-slate-200',
+      activeText: 'text-[#4988C4] font-semibold',
     },
   },
 
-  // Links
+  /* =========================
+     LINKS
+  ========================== */
   link: {
-    light: 'text-emerald-600 hover:text-emerald-700',
-    dark: 'text-emerald-400 hover:text-emerald-300',
+    light: 'text-[#1C4D8D] hover:text-[#0F2854]',
+    dark: 'text-[#4988C4] hover:text-[#BDE8F5]',
   },
 
-  // Alerts – vibrant and clear
+  /* =========================
+     ALERTS
+  ========================== */
   alert: {
     info: {
-      light: 'bg-blue-50 border-blue-300 text-blue-900',
-      dark: 'bg-blue-900/30 border-blue-600 text-blue-200',
+      light:
+        'bg-[#BDE8F5]/20 border-[#4988C4] text-[#0F2854]',
+      dark:
+        'bg-[#0F2854]/30 border-[#4988C4] text-[#BDE8F5]',
     },
     success: {
-      light: 'bg-emerald-50 border-emerald-300 text-emerald-900',
-      dark: 'bg-emerald-900/30 border-emerald-600 text-emerald-200',
+      light:
+        'bg-[#BDE8F5]/20 border-[#4988C4] text-[#0F2854]',
+      dark:
+        'bg-[#0F2854]/30 border-[#4988C4] text-[#BDE8F5]',
     },
     warning: {
       light: 'bg-amber-50 border-amber-300 text-amber-900',
@@ -161,29 +176,31 @@ export const colorConfig = {
     },
   },
 
-  // Inputs – clean and modern
+  /* =========================
+     INPUTS
+  ========================== */
   input: {
     light: {
       bg: 'bg-white',
       border: 'border-slate-300',
       text: 'text-slate-900',
-      focus: 'focus:ring-emerald-500 focus:border-emerald-500',
+      focus: 'focus:ring-[#4988C4] focus:border-[#4988C4]',
     },
     dark: {
       bg: 'bg-slate-700',
       border: 'border-slate-600',
       text: 'text-slate-100',
-      focus: 'focus:ring-emerald-500 focus:border-emerald-500',
+      focus: 'focus:ring-[#4988C4] focus:border-[#4988C4]',
     },
   },
 };
 
-/* Helpers remain unchanged */
-export const getThemeColor = (theme, colorMap) =>
-  colorMap[theme === 'dark' ? 'dark' : 'light'];
+/* =========================
+   HELPERS
+========================== */
+export const getThemeColor = (theme, map) =>
+  map[theme === 'dark' ? 'dark' : 'light'];
 
-export const getSlotTypeColor = (slotType, theme = 'light') => {
-  const slot = colorConfig.slotTypes[slotType];
-  if (!slot) return colorConfig.slotTypes.theory[theme];
-  return slot[theme === 'dark' ? 'dark' : 'light'].class;
-};
+export const getSlotTypeColor = (slotType, theme = 'light') =>
+  colorConfig.slotTypes[slotType]?.[theme] ??
+  colorConfig.slotTypes.theory[theme];

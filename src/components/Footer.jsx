@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faInstagram,
@@ -24,16 +24,19 @@ export default function Footer({ theme = 'light' }) {
       icon: faGithub,
       href: 'https://github.com/notvenu',
       label: 'GitHub',
+      gradient: 'from-gray-700 via-gray-900 to-black',
     },
     {
       icon: faLinkedin,
       href: 'https://linkedin.com/in/venu-kasibhatla',
       label: 'LinkedIn',
+      gradient: 'from-[#0A66C2] to-[#094799]',
     },
     {
       icon: faInstagram,
       href: 'https://instagram.com/veeennnuuu',
       label: 'Instagram',
+      gradient: 'from-pink-500 via-red-500 to-yellow-500',
     },  
   ];
 
@@ -56,18 +59,43 @@ export default function Footer({ theme = 'light' }) {
           </p>
 
           <div className="flex justify-center gap-6 text-xl order-1 sm:order-2">
-            {socialLinks.map(({ icon, href, label }) => (
-              <a
-                key={href}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`transition-colors hover:text-[${colorConfig.primary.main}] ${socialLinkClass}`}
-                aria-label={label}
-              >
-                <FontAwesomeIcon icon={icon} />
-              </a>
-            ))}
+            {socialLinks.map(({ icon, href, label }) => {
+              let base = colorConfig.brand.github.base;
+              let hover = colorConfig.brand.github.hoverLight;
+              let hoverDark = colorConfig.brand.github.hoverDark;
+              if (label === 'LinkedIn') {
+                base = colorConfig.brand.linkedin.base;
+                hover = colorConfig.brand.linkedin.hover;
+                hoverDark = colorConfig.brand.linkedin.hover;
+              } else if (label === 'Instagram') {
+                base = colorConfig.brand.instagram.base;
+                hover = colorConfig.brand.instagram.hover;
+                hoverDark = colorConfig.brand.instagram.hover;
+              }
+              const [isHovered, setIsHovered] = useState(false);
+              return (
+                <a
+                  key={href}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors"
+                  aria-label={label}
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
+                >
+                  <span
+                    style={{
+                      color: isHovered ? (isDark ? hoverDark : hover) : base,
+                      transition: 'color 0.2s',
+                    }}
+                    className="text-2xl"
+                  >
+                    <FontAwesomeIcon icon={icon} />
+                  </span>
+                </a>
+              );
+            })}
           </div>
         </div>
       </div>

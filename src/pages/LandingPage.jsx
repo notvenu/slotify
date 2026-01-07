@@ -23,30 +23,32 @@ export default function LandingPage({ theme }) {
 
   const pageBg = bgTheme.page || '';
   const pageText = textTheme.primary || '';
-  const headingGradient = 'bg-gradient-to-r from-emerald-400 to-emerald-500 bg-clip-text text-transparent';
+  const headingGradient = isDark ? 
+    `text-[#4988C4]` : 
+    `text-[#1C4D8D]`;
   const subtextColor = textTheme.secondary || '';
-  const accentColor = 'text-emerald-500';
+  const accentColor = isDark ? `text-[${colorConfig.primary.light}]` : `text-[#1C4D8D]`;
   const ctaBg = colorConfig.button.primary[theme === 'dark' ? 'dark' : 'light'] || '';
   const featuresSectionBg = isDark ? 'bg-slate-900' : 'bg-slate-50';
-  const featureHeadingColor = 'text-emerald-500';
+  const featureHeadingColor = isDark ? `text-[${colorConfig.primary.light}]` : `text-[#0F2854]`;
   const featuresDescColor = textTheme.muted || '';
   const featureCardBg = bgTheme.card || '';
   const featureCardBorder = colorConfig.border[theme] || '';
-  const featureCardIconBg = isDark ? 'bg-slate-800' : 'bg-emerald-50';
-  const featureCardIconColor = isDark ? 'text-emerald-400' : 'text-emerald-500';
-  const featureCardTitleColor = 'text-emerald-500';
+  const featureCardIconBg = isDark ? 'bg-slate-800' : `bg-[#BDE8F5]/30`;
+  const featureCardIconColor = isDark ? `text-[${colorConfig.primary.light}]` : `text-[#0F2854]`;
+  const featureCardTitleColor = isDark ? `text-[${colorConfig.primary.light}]` : `text-[#1C4D8D]`;
   const featureCardDescColor = textTheme.muted || '';
   const testimonialSectionBg = bgTheme.page || '';
   const testimonialCardBg = bgTheme.card || '';
   const testimonialCardBorder = colorConfig.border[theme] || '';
-  const testimonialNameColor = 'text-emerald-500';
+  const testimonialNameColor = isDark ? `text-[${colorConfig.primary.light}]` : `text-[#4988C4]`;
 
   return (
     <div
       className={`min-h-screen flex flex-col transition-colors duration-500 ${pageBg} ${pageText}`}
     >
       {/* Hero Section */}
-      <section className="flex-1 flex flex-col items-center justify-center text-center px-6 py-20 md:py-28 space-y-8">
+      <section className="flex-1 flex flex-col items-center justify-center text-center px-6 py-20 md:py-28 space-y-8 pt-24">
         <div className="space-y-6 max-w-4xl">
           <h1 className={`text-5xl md:text-7xl font-extrabold leading-tight ${headingGradient}`}>
             Plan Smarter. Stress Less.

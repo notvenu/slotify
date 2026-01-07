@@ -36,7 +36,7 @@ export default function SelectedCourses({
   const courseCardTextClass = textTheme.primary || '';
   const courseSecondaryTextClass = textTheme.secondary || '';
   const courseLabelTextClass = textTheme.primary || '';
-  const creditsTextClass = 'text-blue-600';
+  const creditsTextClass = theme === 'dark' ? 'text-[#4988C4]' : 'text-[#1C4D8D]'; // medium blue / medium dark blue
   const editButtonClass = colorConfig.button.warning[theme === 'dark' ? 'dark' : 'light'];
   const removeButtonClass = btnDanger;
 
@@ -268,7 +268,7 @@ export default function SelectedCourses({
                 type="checkbox"
                 checked={isSelected(idx)}
                 onChange={() => toggleSelection(idx)}
-                className="cursor-pointer w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className="cursor-pointer w-4 h-4 rounded border-gray-300 text-[#4988C4] focus:ring-[#4988C4]"
               />
               <div className="space-y-1">
                 <div className="font-semibold text-lg">{course.name}</div>
@@ -287,7 +287,7 @@ export default function SelectedCourses({
                     {course.lab.length ? course.lab.join(' + ') : 'None'}
                   </span>
                 </div>
-                <div className={`text-sm font-bold ${theme === 'dark' ? 'text-blue-300' : 'text-blue-600'}`}>
+                <div className={`text-sm font-bold ${theme === 'dark' ? 'text-[#4988C4]' : 'text-[#1C4D8D]'}`}>
                   Credits: {getCourseCredits(course)}
                 </div>
               </div>
