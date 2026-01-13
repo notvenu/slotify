@@ -6,6 +6,7 @@ import SlotGrid from '../components/SlotGrid';
 import ClashWarning from '../components/ClashWarning';
 import SelectedCourses from '../components/SelectedCourses';
 import Toast from '../components/Toast';
+import SEO from '../components/SEO';
 import { parseCourseData } from '../utils/parser';
 import slotMapping from '../data/slotMapping';
 import { colorConfig } from '../utils/colors';
@@ -219,9 +220,15 @@ export default function CourseScheduler({ theme, toggleTheme }) {
   const alertBg = theme === 'dark' ? colorConfig.alert.info.dark : colorConfig.alert.info.light;
 
   return (
-    <div
-      className={`min-h-screen theme-transition transition-colors duration-500 ease-in-out ${pageBg} ${pageText}`}
-    >
+    <>
+      <SEO 
+        title="Course Scheduler - Slotify | VIT-AP Timetable Generator"
+        description="Upload your course data and create optimized timetables with intelligent clash detection. Select courses, avoid conflicts, and build your perfect VIT-AP schedule."
+        keywords="course scheduler, timetable generator, VIT-AP courses, academic planning, schedule optimization, clash detection"
+      />
+      <div
+        className={`min-h-screen theme-transition transition-colors duration-500 ease-in-out ${pageBg} ${pageText}`}
+      >
       <div className="p-6 pt-20 max-w-5xl mx-auto">
 
         <FileUploader
@@ -312,6 +319,7 @@ export default function CourseScheduler({ theme, toggleTheme }) {
         <SlotGrid selectedCourses={selectedCourses} theme={theme} showToast={showToast} />
 
       </div>
-    </div>
+      </div>
+    </>
   );
 }

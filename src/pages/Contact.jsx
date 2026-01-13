@@ -7,6 +7,7 @@ import {
 } from '@fortawesome/free-brands-svg-icons';
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { colorConfig, getThemeColor } from '../utils/colors';
+import SEO from '../components/SEO';
 
 export default function Contact({ theme = 'light' }) {
   const isDark = theme === 'dark';
@@ -14,7 +15,13 @@ export default function Contact({ theme = 'light' }) {
   const textTheme = getThemeColor(theme, colorConfig.text);
 
   return (
-    <div className={`min-h-screen pt-20 pb-24 transition-colors ${bgTheme.page} ${textTheme.primary}`}>
+    <>
+      <SEO 
+        title="Contact Us - Slotify | Get Help with Your VIT-AP Timetable"
+        description="Need help with Slotify timetable scheduler? Contact our team for support, feedback, or questions about course scheduling and clash detection features."
+        keywords="contact, support, help, VIT-AP, timetable scheduler, slotify support, course scheduling help"
+      />
+      <div className={`min-h-screen pt-20 pb-24 transition-colors ${bgTheme.page} ${textTheme.primary}`}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className={`p-8 rounded-2xl ${
           isDark 
@@ -218,6 +225,7 @@ export default function Contact({ theme = 'light' }) {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

@@ -1,15 +1,104 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Basic Meta Tags -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    
+    <!-- SEO Meta Tags -->
+    <title>Slotify - Smart Timetable Scheduler for VIT-AP Students | Course Clash Detection</title>
+    <meta name="description" content="Slotify helps VIT-AP students create optimal timetables with intelligent course scheduling, clash detection, and faculty ranking. Build your perfect academic schedule in minutes." />
+    <meta name="keywords" content="VIT-AP, timetable, course scheduler, student planner, academic schedule, course clash detection, faculty ranking, time table generator, VIT Andhra Pradesh" />
+    <meta name="author" content="Slotify" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow" />
+    <link rel="canonical" href="https://slotify-vitap.vercel.app/" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Slotify" />
+    <meta property="og:title" content="Slotify - Smart Timetable Scheduler for VIT-AP Students" />
+    <meta property="og:description" content="Create optimal timetables with intelligent course scheduling and clash detection. Perfect for VIT-AP students to build their ideal academic schedule." />
+    <meta property="og:url" content="https://slotify-vitap.vercel.app/" />
+    <meta property="og:image" content="https://slotify-vitap.vercel.app/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Slotify - Smart Timetable Scheduler Interface" />
+    <meta property="og:locale" content="en_US" />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@Slotify" />
+    <meta name="twitter:creator" content="@Slotify" />
+    <meta name="twitter:title" content="Slotify - Smart Timetable Scheduler for VIT-AP Students" />
+    <meta name="twitter:description" content="Create optimal timetables with intelligent course scheduling and clash detection. Perfect for VIT-AP students." />
+    <meta name="twitter:image" content="https://slotify-vitap.vercel.app/twitter-card.jpg" />
+    <meta name="twitter:image:alt" content="Slotify Timetable Scheduler" />
+    
+    <!-- Favicon and App Icons -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#3B82F6" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Slotify" />
+    
+    <!-- Performance Optimization -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <title>Slotify</title>
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Slotify",
+      "description": "Smart Timetable Scheduler for VIT-AP Students with course clash detection and faculty ranking",
+      "url": "https://slotify-vitap.vercel.app/",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Web Browser",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Slotify",
+        "url": "https://slotify-vitap.vercel.app/"
+      },
+      "audience": {
+        "@type": "EducationalAudience",
+        "educationalRole": "student"
+      },
+      "educationalUse": "assignment",
+      "interactivityType": "active",
+      "learningResourceType": "tool"
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- Google Analytics (replace with your GA4 tracking ID) -->
+    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=GA_TRACKING_ID"></script> -->
+    <!-- <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'GA_TRACKING_ID');
+    </script> -->
   </body>
 </html>

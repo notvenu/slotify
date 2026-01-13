@@ -13,6 +13,7 @@ import {
   faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { colorConfig, getThemeColor } from '../utils/colors';
+import SEO from '../components/SEO';
 
 export default function LandingPage({ theme }) {
   const isDark = theme === "dark";
@@ -44,9 +45,15 @@ export default function LandingPage({ theme }) {
   const testimonialNameColor = isDark ? `text-[${colorConfig.primary.light}]` : `text-[#4988C4]`;
 
   return (
-    <div
-      className={`min-h-screen flex flex-col transition-colors duration-500 ${pageBg} ${pageText}`}
-    >
+    <>
+      <SEO 
+        title="Slotify - Smart Timetable Scheduler for VIT-AP Students | Course Clash Detection"
+        description="Create optimal timetables with intelligent course scheduling, clash detection, and faculty ranking. Perfect for VIT-AP students to build their ideal academic schedule in minutes."
+        keywords="VIT-AP, timetable, course scheduler, student planner, academic schedule, course clash detection, faculty ranking, time table generator, VIT Andhra Pradesh"
+      />
+      <div
+        className={`min-h-screen flex flex-col transition-colors duration-500 ${pageBg} ${pageText}`}
+      >
       {/* Hero Section */}
       <section className="flex-1 flex flex-col items-center justify-center text-center px-6 py-20 md:py-28 space-y-8 pt-24">
         <div className="space-y-6 max-w-4xl">
@@ -172,6 +179,7 @@ export default function LandingPage({ theme }) {
       </section>
 
       {/* Footer is handled globally by App to ensure consistency */}
-    </div>
+      </div>
+    </>
   );
 }
