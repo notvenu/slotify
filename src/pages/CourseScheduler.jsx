@@ -8,7 +8,7 @@ import SelectedCourses from '../components/SelectedCourses';
 import Toast from '../components/Toast';
 import SEO from '../components/SEO';
 import { parseCourseData } from '../utils/parser';
-import slotMapping from '../data/slotMapping';
+import { getSlotMappingForSemester } from '../utils/slotMappingUtils';
 import { colorConfig } from '../utils/colors';
 
 export default function CourseScheduler({ theme, toggleTheme }) {
@@ -20,6 +20,10 @@ export default function CourseScheduler({ theme, toggleTheme }) {
   const [hasLoadedSelected, setHasLoadedSelected] = useState(false);
   const [defaultTag, setDefaultTag] = useState(null);
   const [defaultReloadSignal, setDefaultReloadSignal] = useState(0);
+  const [currentSemester, setCurrentSemester] = useState(() => {
+    // Load saved semester from localStorage, fallback to 'win'
+    return localStorage.getItem('currentSemester') || 'win';
+  }); // Track current semester
   const [toast, setToast] = useState({ visible: false, message: '', type: 'info' });
   const toastTimerRef = React.useRef(null);
 
@@ -34,7 +38,7 @@ export default function CourseScheduler({ theme, toggleTheme }) {
 
   const loadDefaultTimetable = async (fileName = 'winter_25-26.pdf') => {
     try {
-      const response = await fetch(`/${fileName}`);
+      const response = await fetch(`/course-lists/${fileName}`);
       const blob = await response.blob();
       const defaultFile = new File([blob], fileName, {
         type: 'application/pdf',
@@ -142,6 +146,7 @@ export default function CourseScheduler({ theme, toggleTheme }) {
   };
 
   const hasClash = () => {
+    const slotMapping = getSlotMappingForSemester(currentSemester);
     const occupiedTimes = new Set();
     for (let course of selectedCourses) {
       const allSlots = [...(course.theory || []), ...(course.lab || [])];
@@ -236,6 +241,7 @@ export default function CourseScheduler({ theme, toggleTheme }) {
           defaultReloadSignal={defaultReloadSignal}
           theme={theme}
           showToast={showToast}
+          onSemesterChange={setCurrentSemester}
           onRemove={() => {
             setCourseData([]);
             setSelectedCourses([]);
@@ -272,6 +278,7 @@ export default function CourseScheduler({ theme, toggleTheme }) {
           setEditingCourse={setEditingCourse}
           theme={theme}
           showToast={showToast}
+          currentSemester={currentSemester}
         />
 
         {hasClash() && <ClashWarning theme={theme} />}
@@ -316,7 +323,12 @@ export default function CourseScheduler({ theme, toggleTheme }) {
           </div>
         </div>
 
-        <SlotGrid selectedCourses={selectedCourses} theme={theme} showToast={showToast} />
+        <SlotGrid 
+          selectedCourses={selectedCourses} 
+          theme={theme} 
+          showToast={showToast}
+          currentSemester={currentSemester}
+        />
 
       </div>
       </div>

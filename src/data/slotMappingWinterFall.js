@@ -1,5 +1,9 @@
-const slotMapping = {
-    A1: [
+const slotMappingWinterFall = {
+  Lunch: [
+        { time: '12:50-14:00' },
+  ],
+  // 2 CREDIT SLOTS (Theory slots)
+  A1: [
     { day: 'TUE', time: '09:00-09:50' },
     { day: 'SAT', time: '12:00-12:50' }
   ],
@@ -55,7 +59,8 @@ const slotMapping = {
     { day: 'TUE', time: '17:00-17:50' },
     { day: 'WED', time: '15:00-15:50' }
   ],
-  
+
+  // 1 CREDIT SLOTS (Tutorial slots)
   TA1: [{ day: 'FRI', time: '10:00-10:50' }],
   TA2: [{ day: 'FRI', time: '16:00-16:50' }],
   TB1: [{ day: 'FRI', time: '09:00-09:50' }],
@@ -84,7 +89,8 @@ const slotMapping = {
   TFF2: [{ day: 'SAT', time: '18:00-18:50' }],
   TGG1: [{ day: 'WED', time: '08:00-08:50' }],
   TGG2: [{ day: 'THU', time: '18:00-18:50' }],
-  
+
+  // SHARED/SPECIAL SLOTS
   SC1: [{ day: 'WED', time: '16:00-16:50' }],
   SC2: [{ day: 'WED', time: '11:00-11:50' }],
   SD1: [{ day: 'SAT', time: '15:00-15:50' }],
@@ -92,92 +98,81 @@ const slotMapping = {
   SE1: [{ day: 'THU', time: '14:00-14:50' }],
   SE2: [{ day: 'SAT', time: '09:00-09:50' }],
   
-    CLUB: [
+  CLUB: [
     { day: 'THU', time: '12:00-12:50' },
     { day: 'SAT', time: '17:00-17:50' }
   ],
-    ECS: [
+  ECS: [
     { day: 'THU', time: '11:00-11:50' },
     { day: 'SAT', time: '16:00-16:50' }
   ],
-  
-  Lunch: [
-    { day: "TUE", time: '13:30-14:00'},
-    { day: "WED", time: '13:30-14:00'},
-    { day: "THU", time: '13:30-14:00'},
-    { day: "FRI", time: '13:30-14:00'},
-    { day: "SAT", time: '13:30-14:00'},
-  ],
-  
-  L1:  [{ day: 'TUE', time: '08:00-08:50' }],
-  L2:  [{ day: 'TUE', time: '09:00-09:50' }],
-  L3:  [{ day: 'TUE', time: '10:00-10:50' }],
-  L4:  [{ day: 'TUE', time: '11:00-11:50' }],
-  L5:  [{ day: 'TUE', time: '12:00-12:50' }],
-  L6:  [{ day: 'TUE', time: '12:50-13:30' }],
-  
-  L7:  [{ day: 'WED', time: '08:00-08:50' }],
-  L8:  [{ day: 'WED', time: '09:00-09:50' }],
-  L9:  [{ day: 'WED', time: '10:00-10:50' }],
-  L10: [{ day: 'WED', time: '11:00-11:50' }],
-  L11: [{ day: 'WED', time: '12:00-12:50' }],
-  L12: [{ day: 'WED', time: '12:50-13:30' }],
 
+  // LUNCH BREAK
+
+  // LAB SLOTS - TUESDAY
+  L1: [{ day: 'TUE', time: '08:00-08:50' }],
+  L2: [{ day: 'TUE', time: '09:00-09:50' }],
+  L3: [{ day: 'TUE', time: '09:50-10:40' }],
+  L4: [{ day: 'TUE', time: '11:00-11:50' }],
+  L5: [{ day: 'TUE', time: '11:50-12:40' }],
+  L31: [{ day: 'TUE', time: '14:00-14:50' }],
+  L32: [{ day: 'TUE', time: '14:50-15:40' }],
+  L33: [{ day: 'TUE', time: '16:00-16:50' }],
+  L34: [{ day: 'TUE', time: '16:50-17:40' }],
+  L35: [{ day: 'TUE', time: '18:00-18:50' }],
+  L36: [{ day: 'TUE', time: '18:50-19:40' }],
+
+  // LAB SLOTS - WEDNESDAY
+  L7: [{ day: 'WED', time: '08:00-08:50' }],
+  L8: [{ day: 'WED', time: '09:00-09:50' }],
+  L9: [{ day: 'WED', time: '09:50-10:40' }],
+  L10: [{ day: 'WED', time: '11:00-11:50' }],
+  L11: [{ day: 'WED', time: '11:50-12:40' }],
+  L37: [{ day: 'WED', time: '14:00-14:50' }],
+  L38: [{ day: 'WED', time: '14:50-15:40' }],
+  L39: [{ day: 'WED', time: '16:00-16:50' }],
+  L40: [{ day: 'WED', time: '16:50-17:40' }],
+  L41: [{ day: 'WED', time: '18:00-18:50' }],
+  L42: [{ day: 'WED', time: '18:50-19:40' }],
+
+  // LAB SLOTS - THURSDAY
   L13: [{ day: 'THU', time: '08:00-08:50' }],
   L14: [{ day: 'THU', time: '09:00-09:50' }],
-  L15: [{ day: 'THU', time: '10:00-10:50' }],
+  L15: [{ day: 'THU', time: '09:50-10:40' }],
   L16: [{ day: 'THU', time: '11:00-11:50' }],
-  L17: [{ day: 'THU', time: '12:00-12:50' }],
-  L18: [{ day: 'THU', time: '12:50-13:30' }],
+  L17: [{ day: 'THU', time: '11:50-12:40' }],
+  L43: [{ day: 'THU', time: '14:00-14:50' }],
+  L44: [{ day: 'THU', time: '14:50-15:40' }],
+  L45: [{ day: 'THU', time: '16:00-16:50' }],
+  L46: [{ day: 'THU', time: '16:50-17:40' }],
+  L47: [{ day: 'THU', time: '18:00-18:50' }],
+  L48: [{ day: 'THU', time: '18:50-19:40' }],
 
+  // LAB SLOTS - FRIDAY
   L19: [{ day: 'FRI', time: '08:00-08:50' }],
   L20: [{ day: 'FRI', time: '09:00-09:50' }],
-  L21: [{ day: 'FRI', time: '10:00-10:50' }],
+  L21: [{ day: 'FRI', time: '09:50-10:40' }],
   L22: [{ day: 'FRI', time: '11:00-11:50' }],
-  L23: [{ day: 'FRI', time: '12:00-12:50' }],
-  L24: [{ day: 'FRI', time: '12:50-13:30' }],
+  L23: [{ day: 'FRI', time: '11:50-12:40' }],
+  L49: [{ day: 'FRI', time: '14:00-14:50' }],
+  L50: [{ day: 'FRI', time: '14:50-15:40' }],
+  L51: [{ day: 'FRI', time: '16:00-16:50' }],
+  L52: [{ day: 'FRI', time: '16:50-17:40' }],
+  L53: [{ day: 'FRI', time: '18:00-18:50' }],
+  L54: [{ day: 'FRI', time: '18:50-19:40' }],
 
+  // LAB SLOTS - SATURDAY
   L25: [{ day: 'SAT', time: '08:00-08:50' }],
   L26: [{ day: 'SAT', time: '09:00-09:50' }],
-  L27: [{ day: 'SAT', time: '10:00-10:50' }],
+  L27: [{ day: 'SAT', time: '09:50-10:40' }],
   L28: [{ day: 'SAT', time: '11:00-11:50' }],
-  L29: [{ day: 'SAT', time: '12:00-12:50' }],
-  L30: [{ day: 'SAT', time: '12:50-13:30' }],
-
-  L31: [{ day: 'TUE', time: '14:00-14:50' }],
-  L32: [{ day: 'TUE', time: '15:00-15:50' }],
-  L33: [{ day: 'TUE', time: '16:00-16:50' }],
-  L34: [{ day: 'TUE', time: '17:00-17:50' }],
-  L35: [{ day: 'TUE', time: '18:00-18:50' }],
-  L36: [{ day: 'TUE', time: '19:00-19:30' }],
-
-  L37: [{ day: 'WED', time: '14:00-14:50' }],
-  L38: [{ day: 'WED', time: '15:00-15:50' }],
-  L39: [{ day: 'WED', time: '16:00-16:50' }],
-  L40: [{ day: 'WED', time: '17:00-17:50' }],
-  L41: [{ day: 'WED', time: '18:00-18:50' }],
-  L42: [{ day: 'WED', time: '19:00-19:30' }],
-
-  L43: [{ day: 'THU', time: '14:00-14:50' }],
-  L44: [{ day: 'THU', time: '15:00-15:50' }],
-  L45: [{ day: 'THU', time: '16:00-16:50' }],
-  L46: [{ day: 'THU', time: '17:00-17:50' }],
-  L47: [{ day: 'THU', time: '18:00-18:50' }],
-  L48: [{ day: 'THU', time: '19:00-19:30' }],
-
-  L49: [{ day: 'FRI', time: '14:00-14:50' }],
-  L50: [{ day: 'FRI', time: '15:00-15:50' }],
-  L51: [{ day: 'FRI', time: '16:00-16:50' }],
-  L52: [{ day: 'FRI', time: '17:00-17:50' }],
-  L53: [{ day: 'FRI', time: '18:00-18:50' }],
-  L54: [{ day: 'FRI', time: '19:00-19:30' }],
-
+  L29: [{ day: 'SAT', time: '11:50-12:40' }],
   L55: [{ day: 'SAT', time: '14:00-14:50' }],
-  L56: [{ day: 'SAT', time: '15:00-15:50' }],
+  L56: [{ day: 'SAT', time: '14:50-15:40' }],
   L57: [{ day: 'SAT', time: '16:00-16:50' }],
-  L58: [{ day: 'SAT', time: '17:00-17:50' }],
+  L58: [{ day: 'SAT', time: '16:50-17:40' }],
   L59: [{ day: 'SAT', time: '18:00-18:50' }],
-  L60: [{ day: 'SAT', time: '19:00-19:30' }],
+  L60: [{ day: 'SAT', time: '18:50-19:40' }]
 };
 
-export default slotMapping;
+export default slotMappingWinterFall;

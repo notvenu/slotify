@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { colorConfig, getThemeColor } from '../utils/colors';
+import { getSlotMappingForSemester } from '../utils/slotMappingUtils';
 
 export default function CourseSelector({
   courseData,
@@ -9,7 +10,8 @@ export default function CourseSelector({
   editingCourse,
   setEditingCourse,
   theme = 'light',
-  showToast
+  showToast,
+  currentSemester = 'win'
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -147,6 +149,67 @@ export default function CourseSelector({
       : selectedTheoryIdx !== null || selectedLabIdx !== null) &&
     (isEditing || selectedCourses.length < maxSubjects);
 
+  const checkForClash = (newCourse, existingCourses) => {
+    const slotMapping = getSlotMappingForSemester(currentSemester);
+    const occupiedTimes = new Map(); // Map to track which course occupies each time slot
+    
+    // First, map all existing courses (excluding the one being edited)
+    for (let course of existingCourses) {
+      if (isEditing && 
+          course.code === editingCourse.code && 
+          course.name === editingCourse.name &&
+          JSON.stringify((course.theory || []).slice().sort()) === JSON.stringify((editingCourse.theory || []).slice().sort()) &&
+          JSON.stringify((course.lab || []).slice().sort()) === JSON.stringify((editingCourse.lab || []).slice().sort())) {
+        continue; // Skip the course being edited
+      }
+      
+      const allSlots = [...(course.theory || []), ...(course.lab || [])];
+      for (let slot of allSlots) {
+        const mappings = slotMapping[slot];
+        if (mappings && Array.isArray(mappings)) {
+          for (let mapping of mappings) {
+            const day = mapping.day;
+            const time = mapping.time;
+            if (day && time) {
+              const key = `${day}-${time}`;
+              occupiedTimes.set(key, { course: course.code, slot });
+            }
+          }
+        }
+      }
+    }
+    
+    // Now check if the new course clashes with any existing time slots
+    const newSlots = [...(newCourse.theory || []), ...(newCourse.lab || [])];
+    for (let slot of newSlots) {
+      const mappings = slotMapping[slot];
+      if (mappings && Array.isArray(mappings)) {
+        for (let mapping of mappings) {
+          const day = mapping.day;
+          const time = mapping.time;
+          if (day && time) {
+            const key = `${day}-${time}`;
+            if (occupiedTimes.has(key)) {
+              const existing = occupiedTimes.get(key);
+              return {
+                hasClash: true,
+                details: {
+                  newSlot: slot,
+                  existingCourse: existing.course,
+                  existingSlot: existing.slot,
+                  day,
+                  time
+                }
+              };
+            }
+          }
+        }
+      }
+    }
+    
+    return { hasClash: false };
+  };
+
   const handleAdd = () => {
     if (!canAdd) return;
 
@@ -161,7 +224,7 @@ export default function CourseSelector({
     );
 
     if (alreadyAdded && !isEditing) {
-      alert('This course has already been added.');
+      if (typeof showToast === 'function') showToast('This course has already been added.', 'error');
       return;
     }
 
@@ -191,6 +254,19 @@ export default function CourseSelector({
       theory: combinedTheory,
       lab: combinedLab,
     };
+
+    // Check for clashes before adding
+    const clashCheck = checkForClash(newCourse, selectedCourses);
+    if (clashCheck.hasClash) {
+      const { existingCourse, existingSlot, newSlot, day, time } = clashCheck.details;
+      if (typeof showToast === 'function') {
+        showToast(
+          `Clash detected! ${newCourse.code} slot ${newSlot} conflicts with ${existingCourse} slot ${existingSlot} on ${day} at ${time}`,
+          'error'
+        );
+      }
+      return; // Don't add the course
+    }
 
     setSelectedCourses((prev) => {
       if (isEditing) {

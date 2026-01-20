@@ -1,108 +1,201 @@
 import React, { useRef } from 'react';
 import domtoimage from 'dom-to-image';
-import slotMapping from '../data/slotMapping';
-import { getSlotTypeColor, colorConfig, getThemeColor } from '../utils/colors';
+import { getSlotMappingForSemester } from '../utils/slotMappingUtils';
+import { colorConfig, getThemeColor } from '../utils/colors';
 
-export default function SlotGrid({ selectedCourses, theme = 'light', showToast }) {
+export default function SlotGrid({
+  selectedCourses,
+  theme = 'light',
+  showToast,
+  currentSemester = 'win'
+}) {
   const timetableRef = useRef(null);
-  
-  // Centralized color variables using getThemeColor
+
   const bgTheme = getThemeColor(theme, colorConfig.background);
   const textTheme = getThemeColor(theme, colorConfig.text);
-  
+
   const headingTextClass = textTheme.primary || '';
-  const downloadBtnClass = theme === 'dark' 
-    ? colorConfig.button.primary.dark 
-    : colorConfig.button.primary.light;
-  const tableBgClass = bgTheme.page || '';
-  const tableBorderClass = getThemeColor(theme, colorConfig.border);
-  const headerBgClass = 'bg-emerald-600';
-  const headerTextClass = 'text-white';
-  const dayRowBgClass = bgTheme.secondary || '';
-  const dayRowTextClass = textTheme.primary || '';
-  const emptySlotTextClass = textTheme.muted || '';
-  const legendTheoryBg = 'bg-emerald-600';
-  const legendLabBg = 'bg-orange-500';
-  const legendTextClass = textTheme.primary || '';
+  const downloadBtnClass =
+    theme === 'dark'
+      ? colorConfig.button.primary.dark
+      : colorConfig.button.primary.light;
 
+  const slotMapping = getSlotMappingForSemester(currentSemester);
+
+  // ---------------- BUILD TIMETABLE MAP ----------------
   const timetable = {};
-
   for (let course of selectedCourses) {
     for (let slot of [...(course.theory || []), ...(course.lab || [])]) {
       timetable[slot] = {
         code: course.code,
-        name: course.name,
-        type: course.type,
-        theory: course.theory || [],
-        lab: course.lab || []
+        slot
       };
     }
   }
 
-  const timeSlots = [
-    '08:00-08:50', '09:00-09:50', '10:00-10:50',
-    '11:00-11:50', '12:00-12:50', '12:50-13:30', '13:30-14:00',
-    '14:00-14:50', '15:00-15:50', '16:00-16:50', '17:00-17:50',
-    '18:00-18:50', '19:00-19:30'
-  ];
-
-  const days = ['TUE', 'WED', 'THU', 'FRI', 'SAT'];
-
-  const dayTimeToSlots = {};
-  Object.entries(slotMapping).forEach(([slot, timeSlots]) => {
-    timeSlots.forEach(({ day, time }) => {
-      const key = `${day.toUpperCase()}-${time}`;
-      if (!dayTimeToSlots[key]) {
-        dayTimeToSlots[key] = [];
-      }
-      dayTimeToSlots[key].push(slot);
-    });
-  });
-
-  const getSlotsForDayTime = (day, time) => {
-    const key = `${day}-${time}`;
-    return dayTimeToSlots[key] || [];
+  // ---------------- TIME HELPERS ----------------
+  const timeToMinutes = (timeStr) => {
+    const [h, m] = timeStr.split(':').map(Number);
+    return h * 60 + m;
   };
 
-  const getCoursesForCell = (day, time) => {
-    const slots = getSlotsForDayTime(day, time);
-    const entries = [];
-    for (let slot of slots) {
-      if (timetable[slot]) {
-        entries.push({
-          ...timetable[slot],
-          slot
+  // ---------------- GROUP TIMES ----------------
+  const groupOverlappingTimes = (theoryTimes, labTimes) => {
+    const groups = [];
+
+    for (const theoryTime of theoryTimes) {
+      const [s, e] = theoryTime.split('-');
+      groups.push({
+        times: [{
+          original: theoryTime,
+          startMin: timeToMinutes(s),
+          endMin: timeToMinutes(e),
+          isTheory: true,
+          isLab: false
+        }],
+        theoryTimes: [theoryTime],
+        labTimes: []
+      });
+    }
+
+    for (const labTime of labTimes) {
+      const [labStart, labEnd] = labTime.split('-').map(timeToMinutes);
+      let assigned = false;
+
+      for (const group of groups) {
+        const theory = group.theoryTimes[0];
+        if (!theory) continue;
+
+        const [ts, te] = theory.split('-').map(timeToMinutes);
+        if (labEnd > ts && labEnd <= te + 10) {
+          const [s, e] = labTime.split('-');
+          group.times.push({
+            original: labTime,
+            startMin: timeToMinutes(s),
+            endMin: timeToMinutes(e),
+            isTheory: false,
+            isLab: true
+          });
+          group.labTimes.push(labTime);
+          assigned = true;
+          break;
+        }
+      }
+
+      if (!assigned) {
+        const [s, e] = labTime.split('-');
+        groups.push({
+          times: [{
+            original: labTime,
+            startMin: timeToMinutes(s),
+            endMin: timeToMinutes(e),
+            isTheory: false,
+            isLab: true
+          }],
+          theoryTimes: [],
+          labTimes: [labTime]
         });
       }
     }
-    return entries;
+
+    return groups.sort(
+      (a, b) =>
+        Math.min(...a.times.map(t => t.startMin)) -
+        Math.min(...b.times.map(t => t.startMin))
+    );
   };
 
-  const getSlotColor = (slotType) => getSlotTypeColor(slotType, theme);
+  const extractTimeAndDay = () => {
+    const theoryTimes = new Set();
+    const labTimes = new Set();
+    const days = new Set();
 
-  const detectSlotType = (slot) => {
-    if (/^L\d+/i.test(slot)) return 'lab';
-    if (/^P/i.test(slot)) return 'project';
-    return 'theory';
+    Object.entries(slotMapping).forEach(([slot, schedules]) => {
+      if (slot === 'Lunch') return;
+      const isLab = /^L\d+/i.test(slot);
+
+      schedules.forEach(({ day, time }) => {
+        if (day) days.add(day);
+        if (time) {
+          isLab ? labTimes.add(time) : theoryTimes.add(time);
+        }
+      });
+    });
+
+    const order = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+
+    return {
+      days: [...days].sort((a, b) => order.indexOf(a) - order.indexOf(b)),
+      timeGroups: groupOverlappingTimes([...theoryTimes], [...labTimes])
+    };
+  };
+
+  const { days, timeGroups } = extractTimeAndDay();
+
+  const allTimeGroups = (() => {
+    const groups = [...timeGroups];
+    const lunchTimes = slotMapping.Lunch?.map(l => l.time) || [];
+
+    if (lunchTimes.length) {
+      groups.push({
+        isLunch: true,
+        lunchCount: lunchTimes.length,
+        times: lunchTimes.map(t => ({ original: t })),
+        theoryTimes: [],
+        labTimes: []
+      });
+    }
+
+    return groups.sort(
+      (a, b) =>
+        timeToMinutes(a.times[0].original.split('-')[0]) -
+        timeToMinutes(b.times[0].original.split('-')[0])
+    );
+  })();
+
+  const getSlotsForDayAndGroup = (day, group, isLab) => {
+    if (group.isLunch) return [];
+
+    return Object.entries(slotMapping)
+      .filter(([slot, schedules]) => {
+        if (slot === 'Lunch') return false;
+        if (/^L\d+/i.test(slot) !== isLab) return false;
+
+        return schedules.some(
+          s => s.day === day && group.times.some(t => t.original === s.time)
+        );
+      })
+      .map(([slot]) => slot);
+  };
+
+  const getCourseForSlot = (day, group, isLab) => {
+    if (group.isLunch) return null;
+
+    for (const [slot, schedules] of Object.entries(slotMapping)) {
+      if (slot === 'Lunch') continue;
+      if (/^L\d+/i.test(slot) !== isLab) continue;
+
+      if (
+        schedules.some(
+          s => s.day === day && group.times.some(t => t.original === s.time)
+        )
+      ) {
+        return timetable[slot] || null;
+      }
+    }
+    return null;
   };
 
   const handleDownload = () => {
-    if (!timetableRef.current) return;
-    if (typeof showToast === 'function') showToast('Preparing timetable download...', 'info');
-    domtoimage.toPng(timetableRef.current)
-      .then((dataUrl) => {
-        const link = document.createElement('a');
-        link.download = `Timetable-${Date.now()}.png`;
-        link.href = dataUrl;
-        link.click();
-        if (typeof showToast === 'function') showToast('Timetable downloaded', 'success');
-      })
-      .catch((error) => {
-        console.error('Screenshot failed:', error);
-        if (typeof showToast === 'function') showToast('Failed to download timetable', 'error');
-      });
+    domtoimage.toPng(timetableRef.current).then(url => {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Timetable-${Date.now()}.png`;
+      a.click();
+    });
   };
 
+  // ================= RENDER =================
   return (
     <div className="mt-6">
       <h2 className={`text-xl font-bold mb-4 ${headingTextClass}`}>
@@ -111,104 +204,138 @@ export default function SlotGrid({ selectedCourses, theme = 'light', showToast }
 
       <button
         onClick={handleDownload}
-        className={`mb-4 px-3 py-2 text-white rounded-lg transition-colors font-medium ${downloadBtnClass}`}
+        className={`mb-4 px-3 py-2 text-white rounded ${downloadBtnClass}`}
       >
         Download Timetable
       </button>
 
-      <div className="max-w-full overflow-x-auto md:overflow-x-hidden">
-        <table ref={timetableRef} className={`w-full min-w-[768px] md:min-w-0 md:table-fixed border-collapse border ${
-            tableBgClass} ${tableBorderClass}`}>
+      {/* NO SCROLL */}
+      <div className="overflow-x-hidden">
+        <table
+          ref={timetableRef}
+          className="w-full border-collapse table-fixed"
+          style={{ width: '100%' }}
+        >
           <thead>
-            <tr className={headerBgClass}>
-              <th className={`border p-2 text-sm font-bold ${headerTextClass} ${
-                theme === 'dark' ? 'border-gray-700' : 'border-gray-300'
+            <tr>
+              <th rowSpan="3" className={`border p-3 font-semibold ${
+                theme === 'dark' 
+                  ? 'border-gray-600 bg-teal-600 text-white' 
+                  : 'border-gray-300 bg-green-600 text-white'
               }`}>Day</th>
-              {timeSlots.map((time) => (
-                <th
-                  key={time}
-                  className={`border p-2 text-sm font-bold min-w-[90px] md:min-w-0 ${headerTextClass} ${
-                    theme === 'dark' ? 'border-gray-700' : 'border-gray-300'
-                  }`}
-                >
-                  {time}
+              <th rowSpan="3" className={`border p-3 font-semibold ${
+                theme === 'dark' 
+                  ? 'border-gray-600 bg-teal-600 text-white' 
+                  : 'border-gray-300 bg-green-600 text-white'
+              }`}>Type</th>
+              
+            </tr>
+
+            <tr>
+              {allTimeGroups.map((g, i) => (
+                <th key={i} colSpan={g.isLunch ? g.lunchCount : 1} className={`border p-2 text-xs ${
+                  theme === 'dark'
+                    ? 'border-gray-600 bg-teal-500 text-white'
+                    : 'border-gray-300 bg-green-500 text-white'
+                }`}>
+                  {g.isLunch ? 'LUNCH' : g.theoryTimes.join(', ') || '-'}
+                </th>
+              ))}
+            </tr>
+
+            <tr>
+              {allTimeGroups.map((g, i) => (
+                <th key={i} colSpan={g.isLunch ? g.lunchCount : 1} className={`border p-2 text-xs ${
+                  theme === 'dark'
+                    ? 'border-gray-600 bg-teal-500 text-white'
+                    : 'border-gray-300 bg-green-500 text-white'
+                }`}>
+                  {g.isLunch ? 'LUNCH' : g.labTimes.join(', ') || '-'}
                 </th>
               ))}
             </tr>
           </thead>
-          <tbody>
-            {days.map((day) => (
-              <tr key={day}>
-                <td className={`border p-2 text-xs font-medium text-center ${
-                  dayRowBgClass} ${tableBorderClass} ${dayRowTextClass}`}>
-                  {day}
-                </td>
-                {timeSlots.map((time) => {
-                  const entries = getCoursesForCell(day, time);
-                  const slotsInCell = getSlotsForDayTime(day, time);
 
-                  return (
-                    <td
-                      key={`${day}-${time}`}
-                      className={`border p-0 text-center relative ${tableBorderClass}`}
-                    >
-                      {entries.length > 0 ? (
-                        <div className="flex flex-col justify-center items-center h-full w-full">
-                          {entries.map((entry, idx) => {
-                            const slotType = detectSlotType(entry.slot);
-                            return (
-                              <div
-                                key={idx}
-                                className={`w-full h-full flex flex-col justify-center items-center px-1 py-2 ${getSlotColor(slotType)}`}
-                              >
-                                <div className="font-bold text-xs">
-                                  {entry.code}
-                                </div>
-                                <div className="text-[10px]">{entry.name}</div>
-                                <div className="text-xs font-semibold">
-                                  ({entry.slot})
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      ) : (
-                        slotsInCell.length > 0 && (() => {
-                          const theorySlots = slotsInCell.filter(s => !/^L\d+/i.test(s));
-                          const labSlots = slotsInCell.filter(s => /^L\d+/i.test(s));
-                          return (
-                            <div className={`text-xs h-16 flex flex-col items-center justify-center leading-tight ${emptySlotTextClass}`}>
-                              {theorySlots.length > 0 && (
-                                <div className={`text-[10px] font-medium ${emptySlotTextClass}`}>
-                                  {theorySlots.join('/')}
-                                </div>
-                              )}
-                              {labSlots.length > 0 && (
-                                <div className={`text-[10px] ${emptySlotTextClass}`}>
-                                  {labSlots.join('/')}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })()
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
+          <tbody>
+            {days.map(day => (
+              <React.Fragment key={day}>
+                <tr>
+                  <td rowSpan="2" className={`border p-3 font-semibold text-center ${
+                    theme === 'dark'
+                      ? 'border-gray-600 bg-slate-700 text-white'
+                      : 'border-gray-300 bg-gray-100 text-gray-800'
+                  }`}>
+                    {day}
+                  </td>
+                  <td className={`border p-2 text-center font-semibold ${
+                    theme === 'dark'
+                      ? 'border-gray-600 bg-slate-600 text-white'
+                      : 'border-gray-300 bg-white text-gray-700'
+                  }`}>Theory</td>
+
+                  {allTimeGroups.map((g, i) =>
+                    g.isLunch ? (
+                      <td key={i} rowSpan="2" colSpan={g.lunchCount} className={`border text-center font-semibold text-sm ${
+                        theme === 'dark'
+                          ? 'border-gray-600 bg-slate-600 text-white'
+                          : 'border-gray-300 bg-gray-200 text-gray-700'
+                      }`}>
+                        Lunch
+                      </td>
+                    ) : (
+                      <td key={i} className={`border text-center ${
+                        theme === 'dark'
+                          ? 'border-gray-600 bg-slate-700 text-slate-200'
+                          : 'border-gray-300 bg-white text-gray-800'
+                      }`}>
+                        {(() => {
+                          const course = getCourseForSlot(day, g, false);
+                          const slots = getSlotsForDayAndGroup(day, g, false);
+                          return course
+                            ? <div className={theme === 'dark' ? 'bg-teal-500 text-white rounded text-xs p-1' : 'bg-green-500 text-white rounded text-xs p-1'}>{course.code}<br />{course.slot}</div>
+                            : slots.length ? <span className="text-xs">{slots.join(', ')}</span> : '-';
+                        })()}
+                      </td>
+                    )
+                  )}
+                </tr>
+
+                <tr>
+                  <td className={`border p-2 text-center font-semibold ${
+                    theme === 'dark'
+                      ? 'border-gray-600 bg-slate-600 text-white'
+                      : 'border-gray-300 bg-white text-gray-700'
+                  }`}>Lab</td>
+                  {allTimeGroups.map((g, i) =>
+                    g.isLunch ? null : (
+                      <td key={i} className={`border text-center ${
+                        theme === 'dark'
+                          ? 'border-gray-600 bg-slate-700 text-slate-200'
+                          : 'border-gray-300 bg-white text-gray-800'
+                      }`}>
+                        {(() => {
+                          const course = getCourseForSlot(day, g, true);
+                          const slots = getSlotsForDayAndGroup(day, g, true);
+                          return course
+                            ? <div className="bg-orange-500 text-white rounded text-xs p-1">{course.code}<br />{course.slot}</div>
+                            : slots.length ? <span className="text-xs">{slots.join(', ')}</span> : '-';
+                        })()}
+                      </td>
+                    )
+                  )}
+                </tr>
+              </React.Fragment>
             ))}
           </tbody>
         </table>
       </div>
 
-      <div className="mt-4 grid grid-cols-2 md:grid-cols-3 text-sm">
-        <div className="flex items-center gap-1">
-          <div className={`w-4 h-4 rounded-lg ${legendTheoryBg}`} />
-          <span className={legendTextClass}>Theory Slot</span>
+      <div className={`mt-4 flex gap-6 text-sm ${theme === 'dark' ? 'text-gray-200' : 'text-gray-800'}`}>
+        <div className="flex gap-2 items-center">
+          <div className={`w-4 h-4 rounded-full ${theme === 'dark' ? 'bg-teal-500' : 'bg-green-500'}`} /> Theory Slot
         </div>
-        <div className="flex items-center gap-1">
-          <div className={`w-4 h-4 rounded-lg ${legendLabBg}`} />
-          <span className={legendTextClass}>Lab Slot</span>
+        <div className="flex gap-2 items-center">
+          <div className="w-4 h-4 bg-orange-500 rounded-full" /> Lab Slot
         </div>
       </div>
     </div>

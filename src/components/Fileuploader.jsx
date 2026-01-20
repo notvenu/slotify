@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { colorConfig, getThemeColor } from '../utils/colors';
 
-export default function FileUploader({ onExtract, onRemove, defaultReloadSignal, theme = 'light', showToast }) {
+export default function FileUploader({ onExtract, onRemove, defaultReloadSignal, theme = 'light', showToast, onSemesterChange }) {
   const [year, setYear] = useState('25-26');
-  const [semester, setSemester] = useState('win');
+  const [semester, setSemester] = useState(() => {
+    // Load saved semester from localStorage, fallback to 'win'
+    return localStorage.getItem('currentSemester') || 'win';
+  });
   const [fileName, setFileName] = useState('');
   const [fileURL, setFileURL] = useState('');
   const [isUploaded, setIsUploaded] = useState(false);
@@ -50,7 +53,7 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
         let found = '';
         for (const cand of candidates) {
           try {
-            const resp = await fetch(`/${cand}`, { method: 'HEAD' });
+            const resp = await fetch(`/course-lists/${cand}`, { method: 'HEAD' });
             if (!resp.ok) continue;
             const ct = resp.headers.get('content-type') || '';
             if (ct.toLowerCase().includes('pdf')) {
@@ -60,7 +63,7 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
             // fallback probe if HEAD didn't return content-type
             if (!ct) {
               try {
-                const getResp = await fetch(`/${cand}`, { method: 'GET' });
+                const getResp = await fetch(`/course-lists/${cand}`, { method: 'GET' });
                 const getCt = getResp.headers.get('content-type') || '';
                 if (getResp.ok && getCt.toLowerCase().includes('pdf')) {
                   found = cand;
@@ -87,7 +90,7 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
                 if (typeof showToast === 'function') showToast(`Loading default... `, 'info');
                 await onExtract({ loadDefault: found });
                 if (defaultFileNameRef.current === found) {
-                  setFileURL(`/${found}`);
+                  setFileURL(`/course-lists/${found}`);
                   setIsUploaded(true);
                   if (typeof showToast === 'function') showToast(`Default loaded`, 'success');
                 }
@@ -122,6 +125,15 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
     checkPublicFile();
   }, [year, semester]);
 
+  // Notify parent component of semester changes
+  useEffect(() => {
+    if (typeof onSemesterChange === 'function') {
+      onSemesterChange(semester);
+    }
+    // Save current semester selection to localStorage
+    localStorage.setItem('currentSemester', semester);
+  }, [semester, onSemesterChange]);
+
   useEffect(() => {
     const savedData = localStorage.getItem('uploadedCourseData');
     if (savedData) {
@@ -145,7 +157,7 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
     const fn = defaultFileNameRef.current || getFileNameFromSelection(year, semester);
     if (fn) {
       setFileName(fn);
-      setFileURL(`/${fn}`);
+      setFileURL(`/course-lists/${fn}`);
       setIsUploaded(true);
       if (typeof showToast === 'function') showToast(`Default loaded`, 'success');
     }
@@ -181,7 +193,7 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
         try {
           await onExtract({ loadDefault: fn });
           setFileName(fn);
-          setFileURL(`/${fn}`);
+          setFileURL(`/course-lists/${fn}`);
           setIsUploaded(true);
           if (typeof showToast === 'function') showToast(`Default loaded: ${fn}`, 'success');
         } catch (err) {
