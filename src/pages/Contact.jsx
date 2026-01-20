@@ -43,19 +43,20 @@ export default function Contact({ theme = 'light' }) {
                 return (
                   <a
                     href="mailto:venu.kasibhatla@gmail.com"
-                    className={`flex items-center gap-4 p-4 rounded-xl transition-all hover:scale-105 ${
-                      isDark
-                        ? 'bg-gray-700/50 hover:bg-gray-700'
-                        : 'bg-gray-50 hover:bg-gray-100'
-                    }`}
+                    className="flex items-center gap-4 p-4 rounded-xl hover:scale-105"
+                    style={{
+                      backgroundColor: isHovered 
+                        ? 'rgba(234, 67, 53, 0.15)' 
+                        : isDark ? 'rgba(55, 65, 81, 0.5)' : 'rgb(249, 250, 251)',
+                      transition: 'all 0.3s ease',
+                    }}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
                   >
                     <div
                       className="text-2xl"
                       style={{
-                        color: isHovered ? colorConfig.brand.gmail.hover : colorConfig.brand.gmail.base,
-                        transition: 'color 0.2s',
+                        color: colorConfig.brand.gmail.hover,
                       }}
                     >
                       <FontAwesomeIcon icon={faEnvelope} />
@@ -77,19 +78,20 @@ export default function Contact({ theme = 'light' }) {
                     href="https://github.com/notvenu"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`flex items-center gap-4 p-4 rounded-xl transition-all hover:scale-105 ${
-                      isDark
-                        ? 'bg-gray-700/50 hover:bg-gray-700'
-                        : 'bg-gray-50 hover:bg-gray-100'
-                    }`}
+                    className="flex items-center gap-4 p-4 rounded-xl hover:scale-105"
+                    style={{
+                      backgroundColor: isHovered 
+                        ? (isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(51, 51, 51, 0.1)')
+                        : isDark ? 'rgba(55, 65, 81, 0.5)' : 'rgb(249, 250, 251)',
+                      transition: 'all 0.3s ease',
+                    }}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
                   >
                     <div
                       className="text-2xl"
                       style={{
-                        color: isHovered ? (isDark ? colorConfig.brand.github.hoverDark : colorConfig.brand.github.hoverLight) : colorConfig.brand.github.base,
-                        transition: 'color 0.2s',
+                        color: isDark ? colorConfig.brand.github.hoverDark : colorConfig.brand.github.hoverLight,
                       }}
                     >
                       <FontAwesomeIcon icon={faGithub} />
@@ -111,19 +113,20 @@ export default function Contact({ theme = 'light' }) {
                     href="https://linkedin.com/in/venu-kasibhatla"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`flex items-center gap-4 p-4 rounded-xl transition-all hover:scale-105 ${
-                      isDark
-                        ? 'bg-gray-700/50 hover:bg-gray-700'
-                        : 'bg-gray-50 hover:bg-gray-100'
-                    }`}
+                    className="flex items-center gap-4 p-4 rounded-xl hover:scale-105"
+                    style={{
+                      backgroundColor: isHovered 
+                        ? 'rgba(10, 102, 194, 0.15)'
+                        : isDark ? 'rgba(55, 65, 81, 0.5)' : 'rgb(249, 250, 251)',
+                      transition: 'all 0.3s ease',
+                    }}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
                   >
                     <div
                       className="text-2xl"
                       style={{
-                        color: isHovered ? colorConfig.brand.linkedin.hover : colorConfig.brand.linkedin.base,
-                        transition: 'color 0.2s',
+                        color: colorConfig.brand.linkedin.hover,
                       }}
                     >
                       <FontAwesomeIcon icon={faLinkedin} />
@@ -145,19 +148,20 @@ export default function Contact({ theme = 'light' }) {
                     href="https://instagram.com/veeennnuuu"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`flex items-center gap-4 p-4 rounded-xl transition-all hover:scale-105 ${
-                      isDark
-                        ? 'bg-gray-700/50 hover:bg-gray-700'
-                        : 'bg-gray-50 hover:bg-gray-100'
-                    }`}
+                    className="flex items-center gap-4 p-4 rounded-xl hover:scale-105"
+                    style={{
+                      backgroundColor: isHovered 
+                        ? 'rgba(228, 64, 95, 0.15)'
+                        : isDark ? 'rgba(55, 65, 81, 0.5)' : 'rgb(249, 250, 251)',
+                      transition: 'all 0.3s ease',
+                    }}
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
                   >
                     <div
                       className="text-2xl"
                       style={{
-                        color: isHovered ? colorConfig.brand.instagram.hover : colorConfig.brand.instagram.base,
-                        transition: 'color 0.2s',
+                        color: colorConfig.brand.instagram.hover,
                       }}
                     >
                       <FontAwesomeIcon icon={faInstagram} />

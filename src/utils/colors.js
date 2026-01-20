@@ -55,17 +55,63 @@ export const colorConfig = {
   },
 
   /* =========================
+     TIMETABLE GRID
+  ========================== */
+  timetable: {
+    light: {
+      header: {
+        primary: 'border-slate-300 bg-slate-700 text-white',
+        secondary: 'border-slate-300 bg-slate-600 text-white',
+      },
+      cell: {
+        day: 'border-slate-300 bg-slate-100 text-slate-800',
+        type: 'border-slate-300 bg-slate-50 text-slate-700',
+        lunch: 'border-slate-300 bg-slate-100 text-slate-700',
+        slot: 'border-slate-300 bg-white text-slate-800',
+      },
+      course: {
+        theory: 'bg-emerald-600 text-white',
+        lab: 'bg-orange-400 text-white',
+      },
+      slotName: {
+        theory: 'text-emerald-700',
+        lab: 'text-orange-500',
+      },
+    },
+    dark: {
+      header: {
+        primary: 'border-slate-500 bg-slate-700 text-slate-100',
+        secondary: 'border-slate-500 bg-slate-600 text-slate-200',
+      },
+      cell: {
+        day: 'border-slate-500 bg-slate-800 text-slate-100',
+        type: 'border-slate-500 bg-slate-700 text-slate-200',
+        lunch: 'border-slate-500 bg-slate-700 text-slate-200',
+        slot: 'border-slate-500 bg-slate-800 text-slate-200',
+      },
+      course: {
+        theory: 'bg-emerald-600 text-emerald-50',
+        lab: 'bg-orange-500 text-orange-50',
+      },
+      slotName: {
+        theory: 'text-emerald-400',
+        lab: 'text-orange-300',
+      },
+    },
+  },
+
+  /* =========================
      BACKGROUND
   ========================== */
   background: {
     light: {
       page: 'bg-white',
-      card: 'bg-white',
+      card: 'bg-slate-50',
       secondary: 'bg-[#BDE8F5]/20',
     },
     dark: {
       page: 'bg-slate-900',
-      card: 'bg-slate-800',
+      card: 'bg-slate-900',
       secondary: 'bg-slate-700',
     },
   },

@@ -17,8 +17,8 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
 
   const years = ['25-26', '26-27', '27-28'];
   const semesters = [
-    { value: 'win', label: 'Winter Semester' },
     { value: 'win_freshers', label: 'Winter Semester Freshers' },
+    { value: 'win', label: 'Winter Semester' },
     { value: 'fall', label: 'Fall Semester' },
     { value: 'fall_freshers', label: 'Fall Semester Freshers' },
     { value: 'summ1', label: 'Short Summer-1 Semester' },

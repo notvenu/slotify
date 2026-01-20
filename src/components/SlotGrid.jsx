@@ -13,6 +13,7 @@ export default function SlotGrid({
 
   const bgTheme = getThemeColor(theme, colorConfig.background);
   const textTheme = getThemeColor(theme, colorConfig.text);
+  const timetableTheme = getThemeColor(theme, colorConfig.timetable);
 
   const headingTextClass = textTheme.primary || '';
   const downloadBtnClass =
@@ -197,47 +198,36 @@ export default function SlotGrid({
 
   // ================= RENDER =================
   return (
-    <div className="mt-6">
-      <h2 className={`text-xl font-bold mb-4 ${headingTextClass}`}>
-        Generated Timetable
-      </h2>
+    <div className="mt-6 w-full">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+        <h2 className={`text-lg sm:text-xl font-bold ${headingTextClass}`}>
+          Generated Timetable
+        </h2>
 
-      <button
-        onClick={handleDownload}
-        className={`mb-4 px-3 py-2 text-white rounded ${downloadBtnClass}`}
-      >
-        Download Timetable
-      </button>
+        <button
+          onClick={handleDownload}
+          className={`px-3 py-2 text-sm sm:text-base text-white rounded ${downloadBtnClass} whitespace-nowrap`}
+        >
+          Download Timetable
+        </button>
+      </div>
 
-      {/* NO SCROLL */}
-      <div className="overflow-x-hidden">
+      {/* Horizontal scroll for small screens only */}
+      <div className="overflow-x-auto lg:overflow-x-visible lg:flex lg:justify-center">
         <table
           ref={timetableRef}
-          className="w-full border-collapse table-fixed"
-          style={{ width: '100%' }}
+          className="w-full border-collapse min-w-[800px] lg:min-w-0 lg:w-auto table-auto rounded-md overflow-hidden"
         >
           <thead>
             <tr>
-              <th rowSpan="3" className={`border p-3 font-semibold ${
-                theme === 'dark' 
-                  ? 'border-gray-600 bg-teal-600 text-white' 
-                  : 'border-gray-300 bg-green-600 text-white'
-              }`}>Day</th>
-              <th rowSpan="3" className={`border p-3 font-semibold ${
-                theme === 'dark' 
-                  ? 'border-gray-600 bg-teal-600 text-white' 
-                  : 'border-gray-300 bg-green-600 text-white'
-              }`}>Type</th>
+              <th rowSpan="3" className={`border px-2 py-1 sm:px-3 sm:py-1 lg:px-3 font-semibold text-xs sm:text-sm w-16 sm:w-20 ${timetableTheme.header.primary}`}>Day</th>
+              <th rowSpan="3" className={`border px-2 py-1 sm:px-3 sm:py-1 lg:px-3 font-semibold text-xs sm:text-sm w-16 sm:w-20 ${timetableTheme.header.primary}`}>Type</th>
               
             </tr>
 
             <tr>
               {allTimeGroups.map((g, i) => (
-                <th key={i} colSpan={g.isLunch ? g.lunchCount : 1} className={`border p-2 text-xs ${
-                  theme === 'dark'
-                    ? 'border-gray-600 bg-teal-500 text-white'
-                    : 'border-gray-300 bg-green-500 text-white'
-                }`}>
+                <th key={i} colSpan={g.isLunch ? g.lunchCount : 1} className={`border px-1.5 py-0.5 sm:px-2 sm:py-0.5 lg:px-3 text-[10px] sm:text-xs font-medium min-w-[60px] sm:min-w-[70px] ${timetableTheme.header.secondary}`}>
                   {g.isLunch ? 'LUNCH' : g.theoryTimes.join(', ') || '-'}
                 </th>
               ))}
@@ -245,11 +235,7 @@ export default function SlotGrid({
 
             <tr>
               {allTimeGroups.map((g, i) => (
-                <th key={i} colSpan={g.isLunch ? g.lunchCount : 1} className={`border p-2 text-xs ${
-                  theme === 'dark'
-                    ? 'border-gray-600 bg-teal-500 text-white'
-                    : 'border-gray-300 bg-green-500 text-white'
-                }`}>
+                <th key={i} colSpan={g.isLunch ? g.lunchCount : 1} className={`border px-1.5 py-0.5 sm:px-2 sm:py-0.5 lg:px-3 text-[10px] sm:text-xs font-medium min-w-[60px] sm:min-w-[70px] ${timetableTheme.header.secondary}`}>
                   {g.isLunch ? 'LUNCH' : g.labTimes.join(', ') || '-'}
                 </th>
               ))}
@@ -260,66 +246,46 @@ export default function SlotGrid({
             {days.map(day => (
               <React.Fragment key={day}>
                 <tr>
-                  <td rowSpan="2" className={`border p-3 font-semibold text-center ${
-                    theme === 'dark'
-                      ? 'border-gray-600 bg-slate-700 text-white'
-                      : 'border-gray-300 bg-gray-100 text-gray-800'
-                  }`}>
+                  <td rowSpan="2" className={`border px-2 py-1 sm:px-3 sm:py-1 lg:px-3 font-semibold text-center text-xs sm:text-sm ${timetableTheme.cell.day}`}>
                     {day}
                   </td>
-                  <td className={`border p-2 text-center font-semibold ${
-                    theme === 'dark'
-                      ? 'border-gray-600 bg-slate-600 text-white'
-                      : 'border-gray-300 bg-white text-gray-700'
-                  }`}>Theory</td>
+                  <td className={`border px-2 py-1 sm:px-3 sm:py-1 lg:px-3 text-center font-semibold text-xs sm:text-sm ${timetableTheme.cell.type}`}>Theory</td>
 
                   {allTimeGroups.map((g, i) =>
                     g.isLunch ? (
-                      <td key={i} rowSpan="2" colSpan={g.lunchCount} className={`border text-center font-semibold text-sm ${
-                        theme === 'dark'
-                          ? 'border-gray-600 bg-slate-600 text-white'
-                          : 'border-gray-300 bg-gray-200 text-gray-700'
-                      }`}>
+                      <td key={i} rowSpan="2" colSpan={g.lunchCount} className={`border text-center font-semibold px-2 py-1 sm:px-3 lg:px-3 text-xs sm:text-sm ${timetableTheme.cell.lunch}`}>
                         Lunch
                       </td>
                     ) : (
-                      <td key={i} className={`border text-center ${
-                        theme === 'dark'
-                          ? 'border-gray-600 bg-slate-700 text-slate-200'
-                          : 'border-gray-300 bg-white text-gray-800'
-                      }`}>
-                        {(() => {
-                          const course = getCourseForSlot(day, g, false);
-                          const slots = getSlotsForDayAndGroup(day, g, false);
-                          return course
-                            ? <div className={theme === 'dark' ? 'bg-teal-500 text-white rounded text-xs p-1' : 'bg-green-500 text-white rounded text-xs p-1'}>{course.code}<br />{course.slot}</div>
-                            : slots.length ? <span className="text-xs">{slots.join(', ')}</span> : '-';
-                        })()}
+                      <td key={i} className={`border text-center px-1.5 py-1 sm:px-2 sm:py-1 lg:px-2 align-middle min-w-[60px] sm:min-w-[70px] ${timetableTheme.cell.slot}`}>
+                        <div className="flex items-center justify-center">
+                          {(() => {
+                            const course = getCourseForSlot(day, g, false);
+                            const slots = getSlotsForDayAndGroup(day, g, false);
+                            return course
+                              ? <div className={`${timetableTheme.course.theory} rounded text-[10px] sm:text-xs px-2 py-0.5 font-medium`}>{course.code}<br />{course.slot}</div>
+                              : slots.length ? <span className={`text-[10px] sm:text-xs font-semibold ${timetableTheme.slotName.theory}`}>{slots.join(', ')}</span> : <span className="text-xs sm:text-sm">-</span>;
+                          })()}
+                        </div>
                       </td>
                     )
                   )}
                 </tr>
 
                 <tr>
-                  <td className={`border p-2 text-center font-semibold ${
-                    theme === 'dark'
-                      ? 'border-gray-600 bg-slate-600 text-white'
-                      : 'border-gray-300 bg-white text-gray-700'
-                  }`}>Lab</td>
+                  <td className={`border px-2 py-1 sm:px-3 sm:py-1 lg:px-3 text-center font-semibold text-xs sm:text-sm ${timetableTheme.cell.type}`}>Lab</td>
                   {allTimeGroups.map((g, i) =>
                     g.isLunch ? null : (
-                      <td key={i} className={`border text-center ${
-                        theme === 'dark'
-                          ? 'border-gray-600 bg-slate-700 text-slate-200'
-                          : 'border-gray-300 bg-white text-gray-800'
-                      }`}>
-                        {(() => {
-                          const course = getCourseForSlot(day, g, true);
-                          const slots = getSlotsForDayAndGroup(day, g, true);
-                          return course
-                            ? <div className="bg-orange-500 text-white rounded text-xs p-1">{course.code}<br />{course.slot}</div>
-                            : slots.length ? <span className="text-xs">{slots.join(', ')}</span> : '-';
-                        })()}
+                      <td key={i} className={`border text-center px-1.5 py-1 sm:px-2 sm:py-1 lg:px-2 align-middle min-w-[60px] sm:min-w-[70px] ${timetableTheme.cell.slot}`}>
+                        <div className="flex items-center justify-center">
+                          {(() => {
+                            const course = getCourseForSlot(day, g, true);
+                            const slots = getSlotsForDayAndGroup(day, g, true);
+                            return course
+                              ? <div className={`${timetableTheme.course.lab} rounded text-[10px] sm:text-xs px-2 py-0.5 font-medium`}>{course.code}<br />{course.slot}</div>
+                              : slots.length ? <span className={`text-[10px] sm:text-xs font-semibold ${timetableTheme.slotName.lab}`}>{slots.join(', ')}</span> : <span className="text-xs sm:text-sm">-</span>;
+                          })()}
+                        </div>
                       </td>
                     )
                   )}
@@ -330,12 +296,14 @@ export default function SlotGrid({
         </table>
       </div>
 
-      <div className={`mt-4 flex gap-6 text-sm ${theme === 'dark' ? 'text-gray-200' : 'text-gray-800'}`}>
+      <div className={`mt-4 flex flex-wrap gap-4 sm:gap-6 text-xs sm:text-sm ${textTheme.primary}`}>
         <div className="flex gap-2 items-center">
-          <div className={`w-4 h-4 rounded-full ${theme === 'dark' ? 'bg-teal-500' : 'bg-green-500'}`} /> Theory Slot
+          <div className={`w-3 h-3 sm:w-4 sm:h-4 rounded-full ${timetableTheme.course.theory}`} /> 
+          <span>Theory Slot</span>
         </div>
         <div className="flex gap-2 items-center">
-          <div className="w-4 h-4 bg-orange-500 rounded-full" /> Lab Slot
+          <div className={`w-3 h-3 sm:w-4 sm:h-4 rounded-full ${timetableTheme.course.lab}`} /> 
+          <span>Lab Slot</span>
         </div>
       </div>
     </div>

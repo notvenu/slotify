@@ -6,7 +6,6 @@ export default function CourseSelector({
   courseData,
   selectedCourses,
   setSelectedCourses,
-  maxSubjects,
   editingCourse,
   setEditingCourse,
   theme = 'light',
@@ -146,8 +145,7 @@ export default function CourseSelector({
     selecting &&
     (requiresBoth
       ? selectedTheoryIdx !== null && selectedLabIdx !== null
-      : selectedTheoryIdx !== null || selectedLabIdx !== null) &&
-    (isEditing || selectedCourses.length < maxSubjects);
+      : selectedTheoryIdx !== null || selectedLabIdx !== null);
 
   const checkForClash = (newCourse, existingCourses) => {
     const slotMapping = getSlotMappingForSemester(currentSemester);
@@ -212,12 +210,6 @@ export default function CourseSelector({
 
   const handleAdd = () => {
     if (!canAdd) return;
-
-    // Prevent adding beyond max when not editing
-    if (!isEditing && selectedCourses.length >= maxSubjects) {
-      if (typeof showToast === 'function') showToast(`Maximum of ${maxSubjects} subjects reached. Remove a course before adding another.`, 'error');
-      return;
-    }
 
     const alreadyAdded = selectedCourses.some(
       (s) => s.code === selecting.code && s.name === selecting.name
@@ -434,12 +426,6 @@ export default function CourseSelector({
                   <div className="flex gap-2 mt-4">
                     <button
                       onClick={() => {
-                        // Prevent adding beyond max when not editing
-                        if (!isEditing && selectedCourses.length >= maxSubjects) {
-                          if (typeof showToast === 'function') showToast(`Maximum of ${maxSubjects} subjects reached. Remove a course before adding another.`, 'error');
-                          return;
-                        }
-
                         setSelectedCourses((prev) => {
                           if (isEditing) {
                             const filtered = prev.filter(

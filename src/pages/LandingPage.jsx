@@ -30,7 +30,7 @@ export default function LandingPage({ theme }) {
   const subtextColor = textTheme.secondary || '';
   const accentColor = isDark ? `text-[${colorConfig.primary.light}]` : `text-[#1C4D8D]`;
   const ctaBg = colorConfig.button.primary[theme === 'dark' ? 'dark' : 'light'] || '';
-  const featuresSectionBg = isDark ? 'bg-slate-900' : 'bg-slate-50';
+  const featuresSectionBg = isDark ? 'bg-slate-800' : 'bg-slate-100';
   const featureHeadingColor = isDark ? `text-[${colorConfig.primary.light}]` : `text-[#0F2854]`;
   const featuresDescColor = textTheme.muted || '';
   const featureCardBg = bgTheme.card || '';

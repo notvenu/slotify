@@ -14,8 +14,6 @@ import { colorConfig } from '../utils/colors';
 export default function CourseScheduler({ theme, toggleTheme }) {
   const [courseData, setCourseData] = useState([]);
   const [selectedCourses, setSelectedCourses] = useState([]);
-  const [numSubjects, setNumSubjects] = useState(5);
-  const [numSubjectsInput, setNumSubjectsInput] = useState("5");
   const [editingCourse, setEditingCourse] = useState(null);
   const [hasLoadedSelected, setHasLoadedSelected] = useState(false);
   const [defaultTag, setDefaultTag] = useState(null);
@@ -61,7 +59,6 @@ export default function CourseScheduler({ theme, toggleTheme }) {
   useEffect(() => {
     const savedParsedData = localStorage.getItem('uploadedCourseData');
     const savedSelected = localStorage.getItem('selectedCourses');
-    const savedNumSubjects = localStorage.getItem('numSubjects');
 
     if (savedParsedData) {
       setCourseData(JSON.parse(savedParsedData));
@@ -80,22 +77,6 @@ export default function CourseScheduler({ theme, toggleTheme }) {
       setSelectedCourses(JSON.parse(savedSelected));
     }
 
-    if (savedNumSubjects) {
-      try {
-        const parsed = JSON.parse(savedNumSubjects);
-        if (typeof parsed === 'number' && !isNaN(parsed)) {
-          setNumSubjects(parsed);
-          setNumSubjectsInput(parsed.toString());
-        } else {
-          setNumSubjects(5);
-          setNumSubjectsInput("5");
-        }
-      } catch {
-        setNumSubjects(5);
-        setNumSubjectsInput("5");
-      }
-    }
-
     setHasLoadedSelected(true);
   }, []);
 
@@ -105,9 +86,14 @@ export default function CourseScheduler({ theme, toggleTheme }) {
     }
   }, [selectedCourses, hasLoadedSelected]);
 
+  // Clear selected courses when semester changes
   useEffect(() => {
-    localStorage.setItem('numSubjects', JSON.stringify(numSubjects));
-  }, [numSubjects]);
+    if (hasLoadedSelected) {
+      setSelectedCourses([]);
+      localStorage.setItem('currentSemester', currentSemester);
+      showToast(`Switched to ${currentSemester.toUpperCase()} semester. Selected courses cleared.`, 'info');
+    }
+  }, [currentSemester]);
 
   const handleFile = async (fileOrParsed) => {
     // Support calls from FileUploader using an object payload: { loadDefault: filename|null }
@@ -249,23 +235,6 @@ export default function CourseScheduler({ theme, toggleTheme }) {
           }}
         />
 
-        <div className="my-4">
-          <label className="font-medium mr-2">Number of Subjects:</label>
-          <input
-            type="number"
-            className={`${inputBg} ${inputBorder} border p-2 w-20 rounded-lg focus:outline-none focus:ring-2 ${inputFocus}`}
-            value={numSubjectsInput}
-            onChange={(e) => {
-              const val = e.target.value;
-              setNumSubjectsInput(val);
-              const parsed = parseInt(val, 10);
-              if (!isNaN(parsed)) {
-                setNumSubjects(parsed);
-              }
-            }}
-          />
-        </div>
-
         <CourseSelector
           courseData={courseData}
           selectedCourses={selectedCourses}
@@ -273,7 +242,6 @@ export default function CourseScheduler({ theme, toggleTheme }) {
             setSelectedCourses(courses);
             setEditingCourse(null);
           }}
-          maxSubjects={numSubjects}
           editingCourse={editingCourse}
           setEditingCourse={setEditingCourse}
           theme={theme}

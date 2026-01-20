@@ -1,8 +1,9 @@
 const slotMappingFreshers = {
   Lunch: [
-        { time: '13:10-14:00' },
+    { time: '13:10-14:00' },
   ],
-  // Theory Slots
+  
+  // Theory Slots (Blue in timetable)
   A1: [
     { day: 'TUE', time: '09:00-09:50' },
     { day: 'THU', time: '11:00-11:50' },
@@ -11,7 +12,7 @@ const slotMappingFreshers = {
   A2: [
     { day: 'TUE', time: '15:00-15:50' },
     { day: 'THU', time: '16:00-16:50' },
-    { day: 'FRI', time: '15:00-15:50' }
+    { day: 'FRI', time: '16:00-16:50' }
   ],
   B1: [
     { day: 'TUE', time: '10:00-10:50' },
@@ -21,7 +22,7 @@ const slotMappingFreshers = {
   B2: [
     { day: 'TUE', time: '16:00-16:50' },
     { day: 'WED', time: '16:00-16:50' },
-    { day: 'FRI', time: '14:00-14:50' }
+    { day: 'FRI', time: '15:00-15:50' }
   ],
   C1: [
     { day: 'TUE', time: '11:00-11:50' },
@@ -41,27 +42,27 @@ const slotMappingFreshers = {
   D2: [
     { day: 'WED', time: '14:00-14:50' },
     { day: 'THU', time: '17:00-17:50' },
-    { day: 'SAT', time: '14:00-14:50' }
+    { day: 'SAT', time: '15:00-15:50' }
   ],
   E1: [
-    { day: 'MON', time: '09:00-09:50' },
-    { day: 'MON', time: '10:00-10:50' },
+    { day: 'MON', time: '11:00-11:50' },
+    { day: 'MON', time: '12:00-12:50' },
     { day: 'FRI', time: '12:00-12:50' }
   ],
   E2: [
-    { day: 'MON', time: '14:00-14:50' },
-    { day: 'MON', time: '15:00-15:50' },
+    { day: 'MON', time: '17:00-17:50' },
+    { day: 'MON', time: '16:00-16:50' },
     { day: 'THU', time: '14:00-14:50' }
   ],
   F1: [
     { day: 'WED', time: '10:00-10:50' },
-    { day: 'THU', time: '11:00-11:50' },
+    { day: 'THU', time: '12:00-12:50' },
     { day: 'SAT', time: '10:00-10:50' }
   ],
   F2: [
     { day: 'TUE', time: '14:00-14:50' },
     { day: 'WED', time: '15:00-15:50' },
-    { day: 'SAT', time: '15:00-15:50' }
+    { day: 'SAT', time: '16:00-16:50' }
   ],
   G1: [
     { day: 'WED', time: '11:00-11:50' },
@@ -71,24 +72,24 @@ const slotMappingFreshers = {
   G2: [
     { day: 'WED', time: '17:00-17:50' },
     { day: 'FRI', time: '17:00-17:50' },
-    { day: 'SAT', time: '12:00-12:50' }
+    { day: 'SAT', time: '14:00-14:50' }
   ],
 
   // Tutorial Slots
-  TA1: [{ day: 'MON', time: '08:00-08:50' }],
+  TA1: [{ day: 'MON', time: '09:00-09:50' }],
   TA2: [{ day: 'MON', time: '14:00-14:50' }],
-  TB1: [{ day: 'MON', time: '09:00-09:50' }],
+  TB1: [{ day: 'MON', time: '10:00-10:50' }],
   TB2: [{ day: 'MON', time: '15:00-15:50' }],
   TC1: [{ day: 'SAT', time: '08:00-08:50' }],
   TC2: [{ day: 'FRI', time: '14:00-14:50' }],
   TD1: [{ day: 'SAT', time: '11:00-11:50' }],
-  TD2: [{ day: 'SAT', time: '12:00-12:50' }],
+  TD2: [{ day: 'SAT', time: '14:00-14:50' }],
   TE1: [{ day: 'WED', time: '11:00-11:50' }],
   TE2: [{ day: 'WED', time: '17:00-17:50' }],
   TF1: [{ day: 'FRI', time: '11:00-11:50' }],
   TF2: [{ day: 'FRI', time: '17:00-17:50' }],
   TG1: [{ day: 'THU', time: '08:00-08:50' }],
-  TG2: [{ day: 'WED', time: '17:00-17:50' }],
+  TG2: [{ day: 'WED', time: '18:00-18:50' }],
   TDD1: [{ day: 'FRI', time: '08:00-08:50' }],
   TDD2: [{ day: 'TUE', time: '18:00-18:50' }],
   TEE1: [{ day: 'WED', time: '08:00-08:50' }],
@@ -97,7 +98,7 @@ const slotMappingFreshers = {
   TFF2: [{ day: 'THU', time: '18:00-18:50' }],
 
   // Shared Theory/Tutorial Combination Slots
-  SA1: [{ day: 'FRI', time: '14:00-14:50' }],
+  SA1: [{ day: 'FRI', time: '15:00-15:50' }],
   SA2: [{ day: 'FRI', time: '09:00-09:50' }],
   SB1: [{ day: 'THU', time: '16:00-16:50' }],
   SB2: [{ day: 'THU', time: '11:00-11:50' }],
@@ -105,12 +106,12 @@ const slotMappingFreshers = {
   SC2: [{ day: 'WED', time: '12:00-12:50' }],
   SD1: [{ day: 'WED', time: '16:00-16:50' }],
   SD2: [{ day: 'TUE', time: '10:00-10:50' }],
-  SE1: [{ day: 'FRI', time: '15:00-15:50' }],
+  SE1: [{ day: 'FRI', time: '16:00-16:50' }],
   SE2: [{ day: 'TUE', time: '09:00-09:50' }],
   SF1: [{ day: 'TUE', time: '15:00-15:50' }],
   SF2: [{ day: 'FRI', time: '10:00-10:50' }],
 
-  // Lab Slots - Monday
+  // Lab Slots - Monday (Red in timetable)
   L61: [{ day: 'MON', time: '08:00-08:50' }],
   L62: [{ day: 'MON', time: '08:50-09:40' }],
   L63: [{ day: 'MON', time: '09:50-10:40' }],
@@ -124,7 +125,7 @@ const slotMappingFreshers = {
   L71: [{ day: 'MON', time: '17:40-18:30' }],
   L72: [{ day: 'MON', time: '18:30-19:10' }],
 
-  // Lab Slots - Tuesday
+  // Lab Slots - Tuesday (Red in timetable)
   L1: [{ day: 'TUE', time: '08:00-08:50' }],
   L2: [{ day: 'TUE', time: '08:50-09:40' }],
   L3: [{ day: 'TUE', time: '09:50-10:40' }],
@@ -138,7 +139,7 @@ const slotMappingFreshers = {
   L35: [{ day: 'TUE', time: '17:40-18:30' }],
   L36: [{ day: 'TUE', time: '18:30-19:10' }],
 
-  // Lab Slots - Wednesday
+  // Lab Slots - Wednesday (Red in timetable)
   L7: [{ day: 'WED', time: '08:00-08:50' }],
   L8: [{ day: 'WED', time: '08:50-09:40' }],
   L9: [{ day: 'WED', time: '09:50-10:40' }],
@@ -152,7 +153,7 @@ const slotMappingFreshers = {
   L41: [{ day: 'WED', time: '17:40-18:30' }],
   L42: [{ day: 'WED', time: '18:30-19:10' }],
 
-  // Lab Slots - Thursday
+  // Lab Slots - Thursday (Red in timetable)
   L13: [{ day: 'THU', time: '08:00-08:50' }],
   L14: [{ day: 'THU', time: '08:50-09:40' }],
   L15: [{ day: 'THU', time: '09:50-10:40' }],
@@ -166,7 +167,7 @@ const slotMappingFreshers = {
   L47: [{ day: 'THU', time: '17:40-18:30' }],
   L48: [{ day: 'THU', time: '18:30-19:10' }],
 
-  // Lab Slots - Friday
+  // Lab Slots - Friday (Red in timetable)
   L19: [{ day: 'FRI', time: '08:00-08:50' }],
   L20: [{ day: 'FRI', time: '08:50-09:40' }],
   L21: [{ day: 'FRI', time: '09:50-10:40' }],
@@ -180,7 +181,7 @@ const slotMappingFreshers = {
   L53: [{ day: 'FRI', time: '17:40-18:30' }],
   L54: [{ day: 'FRI', time: '18:30-19:10' }],
 
-  // Lab Slots - Saturday
+  // Lab Slots - Saturday (Red in timetable)
   L25: [{ day: 'SAT', time: '08:00-08:50' }],
   L26: [{ day: 'SAT', time: '08:50-09:40' }],
   L27: [{ day: 'SAT', time: '09:50-10:40' }],
