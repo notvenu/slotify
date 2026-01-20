@@ -19,8 +19,8 @@ export default function CourseScheduler({ theme, toggleTheme }) {
   const [defaultTag, setDefaultTag] = useState(null);
   const [defaultReloadSignal, setDefaultReloadSignal] = useState(0);
   const [currentSemester, setCurrentSemester] = useState(() => {
-    // Load saved semester from localStorage, fallback to 'win'
-    return localStorage.getItem('currentSemester') || 'win';
+    // Load saved semester from localStorage, fallback to 'win_freshers'
+    return localStorage.getItem('currentSemester') || 'win_freshers';
   }); // Track current semester
   const [toast, setToast] = useState({ visible: false, message: '', type: 'info' });
   const toastTimerRef = React.useRef(null);
