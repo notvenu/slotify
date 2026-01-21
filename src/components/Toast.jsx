@@ -5,7 +5,6 @@ import { colorConfig, getThemeColor } from '../utils/colors';
 export default function Toast({ message, type = 'info', visible, theme = 'light' }) {
   const isDark = theme === 'dark';
   
-  // Theme-specific toast styling using exact palette colors
   const toastStyles = {
     info: {
       light: `bg-white border-2 border-[#4988C4] text-[#0F2854] shadow-xl`,

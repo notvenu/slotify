@@ -17,6 +17,6 @@ export const getSlotMappingForSemester = (semester) => {
     case 'long-summ':
       return slotMappingLongSummer;
     default:
-      return slotMappingWinterFall; // fallback to winter/fall mapping
+      return slotMappingWinterFall;
   }
 };

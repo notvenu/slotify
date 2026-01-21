@@ -13,6 +13,7 @@ export default function CourseSelector({
   currentSemester = 'win'
 }) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [slotSearchTerm, setSlotSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [selecting, setSelecting] = useState(null);
   const [selectedTheoryIdx, setSelectedTheoryIdx] = useState(null);
@@ -20,7 +21,6 @@ export default function CourseSelector({
 
   const coursesPerPage = 10;
 
-  // Centralized theme colors using colorConfig
   const inputTheme = getThemeColor(theme, colorConfig.input);
   const inputColors = `${inputTheme.bg} ${inputTheme.border} ${inputTheme.text} ${inputTheme.focus}`;
 
@@ -57,17 +57,19 @@ export default function CourseSelector({
   const courseNameTextColors = getThemeColor(theme, colorConfig.text).primary || '';
   const courseCodeTextColors = getThemeColor(theme, colorConfig.text).secondary || '';
 
-  // keep original ordering / structure as provided by courseData
   const uniqueCourses = useMemo(() => courseData || [], [courseData]);
 
   const filteredCourses = useMemo(() => {
     const q = searchTerm.trim().toLowerCase();
-    if (!q) return uniqueCourses;
-    return uniqueCourses.filter(
+    let filtered = q ? uniqueCourses.filter(
       (c) =>
         (c.name || '').toLowerCase().includes(q) ||
         (c.code || '').toLowerCase().includes(q)
-    );
+    ) : uniqueCourses;
+    
+    return [...filtered].sort((a, b) => {
+      return (a.name || '').localeCompare(b.name || '');
+    });
   }, [searchTerm, uniqueCourses]);
 
   const paginatedCourses = useMemo(() => {
@@ -80,7 +82,6 @@ export default function CourseSelector({
     const labCombos = [];
 
     (course?.slotCombos || []).forEach((combo, idx) => {
-      // ensure arrays exist
       const theory = Array.isArray(combo.theory) ? combo.theory : [];
       const lab = Array.isArray(combo.lab) ? combo.lab : [];
       const c = { theory, lab, idx };
@@ -95,7 +96,49 @@ export default function CourseSelector({
       }
     });
 
-    return { theoryCombos, labCombos };
+    const sortSlots = (a, b) => {
+      const parseSlot = (slot) => {
+        const match = slot.match(/^([a-zA-Z]+)(\d+)$/);
+        if (match) {
+          return { letter: match[1].toLowerCase(), number: parseInt(match[2]) };
+        }
+        return { letter: slot.toLowerCase(), number: 0 };
+      };
+      
+      const slotsA = [...a.theory, ...a.lab].sort((x, y) => {
+        const parsedX = parseSlot(x);
+        const parsedY = parseSlot(y);
+        if (parsedX.letter !== parsedY.letter) {
+          return parsedX.letter.localeCompare(parsedY.letter);
+        }
+        return parsedX.number - parsedY.number;
+      });
+      const slotsB = [...b.theory, ...b.lab].sort((x, y) => {
+        const parsedX = parseSlot(x);
+        const parsedY = parseSlot(y);
+        if (parsedX.letter !== parsedY.letter) {
+          return parsedX.letter.localeCompare(parsedY.letter);
+        }
+        return parsedX.number - parsedY.number;
+      });
+      
+      for (let i = 0; i < Math.min(slotsA.length, slotsB.length); i++) {
+        const parsedA = parseSlot(slotsA[i]);
+        const parsedB = parseSlot(slotsB[i]);
+        if (parsedA.letter !== parsedB.letter) {
+          return parsedA.letter.localeCompare(parsedB.letter);
+        }
+        if (parsedA.number !== parsedB.number) {
+          return parsedA.number - parsedB.number;
+        }
+      }
+      return slotsA.length - slotsB.length;
+    };
+
+    return { 
+      theoryCombos: [...theoryCombos].sort(sortSlots), 
+      labCombos: [...labCombos].sort(sortSlots) 
+    };
   }
 
   useEffect(() => {
@@ -149,16 +192,15 @@ export default function CourseSelector({
 
   const checkForClash = (newCourse, existingCourses) => {
     const slotMapping = getSlotMappingForSemester(currentSemester);
-    const occupiedTimes = new Map(); // Map to track which course occupies each time slot
+    const occupiedTimes = new Map();
     
-    // First, map all existing courses (excluding the one being edited)
     for (let course of existingCourses) {
       if (isEditing && 
           course.code === editingCourse.code && 
           course.name === editingCourse.name &&
           JSON.stringify((course.theory || []).slice().sort()) === JSON.stringify((editingCourse.theory || []).slice().sort()) &&
           JSON.stringify((course.lab || []).slice().sort()) === JSON.stringify((editingCourse.lab || []).slice().sort())) {
-        continue; // Skip the course being edited
+        continue;
       }
       
       const allSlots = [...(course.theory || []), ...(course.lab || [])];
@@ -177,7 +219,6 @@ export default function CourseSelector({
       }
     }
     
-    // Now check if the new course clashes with any existing time slots
     const newSlots = [...(newCourse.theory || []), ...(newCourse.lab || [])];
     for (let slot of newSlots) {
       const mappings = slotMapping[slot];
@@ -247,7 +288,6 @@ export default function CourseSelector({
       lab: combinedLab,
     };
 
-    // Check for clashes before adding
     const clashCheck = checkForClash(newCourse, selectedCourses);
     if (clashCheck.hasClash) {
       const { existingCourse, existingSlot, newSlot, day, time } = clashCheck.details;
@@ -257,7 +297,7 @@ export default function CourseSelector({
           'error'
         );
       }
-      return; // Don't add the course
+      return;
     }
 
     setSelectedCourses((prev) => {
@@ -290,6 +330,7 @@ export default function CourseSelector({
     setSelecting(null);
     setSelectedTheoryIdx(null);
     setSelectedLabIdx(null);
+    setSlotSearchTerm('');
   };
 
   const handleTheorySelection = (idx) => {
@@ -308,19 +349,19 @@ export default function CourseSelector({
 
       {!selecting && (
         <>
-          <div className="flex gap-2 items-center">
-              <input
+          <div className="flex gap-2">
+            <input
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
               placeholder="Search by code or name..."
-              className={`px-3 py-2 w-full rounded-lg shadow-sm focus:outline-none focus:ring-2 transition ${inputColors}`}
+              className={`px-3 py-2 flex-1 rounded-lg shadow-sm focus:outline-none focus:ring-2 transition ${inputColors}`}
             />
             {searchTerm && (
               <button
-                className={`text-sm px-3 py-2 rounded-lg transition ${buttonClearColors}`}
+                className={`px-4 py-2 rounded-lg transition whitespace-nowrap ${buttonClearColors}`}
                 onClick={() => {
                   setSearchTerm('');
                   setCurrentPage(1);
@@ -475,67 +516,105 @@ export default function CourseSelector({
 
             return (
               <>
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    placeholder="Search slots..."
+                    className={`px-3 py-2 w-full rounded-lg shadow-sm focus:outline-none focus:ring-2 transition ${inputColors}`}
+                    value={slotSearchTerm}
+                    onChange={(e) => setSlotSearchTerm(e.target.value)}
+                  />
+                </div>
+
                 <div className="mb-2 font-medium">Select Slot Combination(s):</div>
 
-                {tCombos.length > 0 && (
-                  <div className="mb-4">
-                    <div className="font-semibold mb-1">Theory Slots</div>
-                    <div className="flex flex-col gap-2">
-                      {tCombos.map((combo) => {
-                        const isChecked = selectedTheoryIdx === combo.idx;
-                        return (
-                          <label
-                            key={`t-${combo.idx}`}
-                            className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer ${getThemeColor(theme, colorConfig.border)} ${
-                              isChecked ? comboCheckboxSelectedColors : comboCheckboxNormalColors
-                            }`}
-                          >
-                            <input
-                              type="radio"
-                              name="theoryCombo"
-                              checked={isChecked}
-                              onChange={() => handleTheorySelection(combo.idx)}
-                            />
-                            <span className="text-sm">
-                              Theory: {combo.theory.join('+')}
-                              {combo.lab.length > 0 ? ` | Lab: ${combo.lab.join('+')}` : ''}
-                            </span>
-                          </label>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
+                {(() => {
+                  const searchLower = slotSearchTerm.toLowerCase();
+                  const filteredTheory = tCombos.filter(combo => {
+                    if (!searchLower) return true;
+                    const combinedSlots = [...combo.theory, ...combo.lab].join('+').toLowerCase();
+                    return combinedSlots.includes(searchLower) ||
+                           combo.theory.some(s => s.toLowerCase().includes(searchLower)) ||
+                           combo.lab.some(s => s.toLowerCase().includes(searchLower));
+                  });
+                  const filteredLab = lCombos.filter(combo => {
+                    if (!searchLower) return true;
+                    const combinedSlots = [...combo.theory, ...combo.lab].join('+').toLowerCase();
+                    return combinedSlots.includes(searchLower) ||
+                           combo.lab.some(s => s.toLowerCase().includes(searchLower)) ||
+                           combo.theory.some(s => s.toLowerCase().includes(searchLower));
+                  });
 
-                {lCombos.length > 0 && (
-                  <div className="mb-2">
-                    <div className="font-semibold mb-1">Lab Slots</div>
-                    <div className="flex flex-col gap-2">
-                      {lCombos.map((combo) => {
-                        const isChecked = selectedLabIdx === combo.idx;
-                        return (
-                          <label
-                            key={`l-${combo.idx}`}
-                            className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer ${getThemeColor(theme, colorConfig.border)} ${
-                              isChecked ? comboCheckboxSelectedColors : comboCheckboxNormalColors
-                            }`}
-                          >
-                            <input
-                              type="radio"
-                              name="labCombo"
-                              checked={isChecked}
-                              onChange={() => handleLabSelection(combo.idx)}
-                            />
-                            <span className="text-sm">
-                              Lab: {combo.lab.join('+')}
-                              {combo.theory.length > 0 ? ` | Theory: ${combo.theory.join('+')}` : ''}
-                            </span>
-                          </label>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
+                  return (
+                    <>
+                      {filteredTheory.length > 0 && (
+                        <div className="mb-4">
+                          <div className="font-semibold mb-1">Theory Slots</div>
+                          <div className="flex flex-col gap-2 max-h-64 overflow-y-auto">
+                            {filteredTheory.map((combo) => {
+                              const isChecked = selectedTheoryIdx === combo.idx;
+                              return (
+                                <label
+                                  key={`t-${combo.idx}`}
+                                  className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer ${getThemeColor(theme, colorConfig.border)} ${
+                                    isChecked ? comboCheckboxSelectedColors : comboCheckboxNormalColors
+                                  }`}
+                                >
+                                  <input
+                                    type="radio"
+                                    name="theoryCombo"
+                                    checked={isChecked}
+                                    onChange={() => handleTheorySelection(combo.idx)}
+                                  />
+                                  <span className="text-sm">
+                                    Theory: {combo.theory.join('+')}
+                                    {combo.lab.length > 0 ? ` | Lab: ${combo.lab.join('+')}` : ''}
+                                  </span>
+                                </label>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {filteredLab.length > 0 && (
+                        <div className="mb-2">
+                          <div className="font-semibold mb-1">Lab Slots</div>
+                          <div className="flex flex-col gap-2 max-h-64 overflow-y-auto">
+                            {filteredLab.map((combo) => {
+                              const isChecked = selectedLabIdx === combo.idx;
+                              return (
+                                <label
+                                  key={`l-${combo.idx}`}
+                                  className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer ${getThemeColor(theme, colorConfig.border)} ${
+                                    isChecked ? comboCheckboxSelectedColors : comboCheckboxNormalColors
+                                  }`}
+                                >
+                                  <input
+                                    type="radio"
+                                    name="labCombo"
+                                    checked={isChecked}
+                                    onChange={() => handleLabSelection(combo.idx)}
+                                  />
+                                  <span className="text-sm">
+                                    Lab: {combo.lab.join('+')}
+                                    {combo.theory.length > 0 ? ` | Theory: ${combo.theory.join('+')}` : ''}
+                                  </span>
+                                </label>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {slotSearchTerm && filteredTheory.length === 0 && filteredLab.length === 0 && (
+                        <div className={`text-sm text-center py-4 ${noSlotsTextColors}`}>
+                          No slots found matching "{slotSearchTerm}"
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
 
                 <div className="flex gap-3 mt-4">
                   <button

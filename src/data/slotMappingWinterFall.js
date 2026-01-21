@@ -2,7 +2,6 @@ const slotMappingWinterFall = {
   Lunch: [
         { time: '12:50-14:00' },
   ],
-  // 2 CREDIT SLOTS (Theory slots)
   A1: [
     { day: 'TUE', time: '09:00-09:50' },
     { day: 'SAT', time: '12:00-12:50' }
@@ -60,7 +59,6 @@ const slotMappingWinterFall = {
     { day: 'WED', time: '15:00-15:50' }
   ],
 
-  // 1 CREDIT SLOTS (Tutorial slots)
   TA1: [{ day: 'FRI', time: '10:00-10:50' }],
   TA2: [{ day: 'FRI', time: '16:00-16:50' }],
   TB1: [{ day: 'FRI', time: '09:00-09:50' }],
@@ -90,7 +88,6 @@ const slotMappingWinterFall = {
   TGG1: [{ day: 'WED', time: '08:00-08:50' }],
   TGG2: [{ day: 'THU', time: '18:00-18:50' }],
 
-  // SHARED/SPECIAL SLOTS
   SC1: [{ day: 'WED', time: '16:00-16:50' }],
   SC2: [{ day: 'WED', time: '11:00-11:50' }],
   SD1: [{ day: 'SAT', time: '15:00-15:50' }],
@@ -107,9 +104,6 @@ const slotMappingWinterFall = {
     { day: 'SAT', time: '16:00-16:50' }
   ],
 
-  // LUNCH BREAK
-
-  // LAB SLOTS - TUESDAY
   L1: [{ day: 'TUE', time: '08:00-08:50' }],
   L2: [{ day: 'TUE', time: '09:00-09:50' }],
   L3: [{ day: 'TUE', time: '09:50-10:40' }],
@@ -122,7 +116,6 @@ const slotMappingWinterFall = {
   L35: [{ day: 'TUE', time: '18:00-18:50' }],
   L36: [{ day: 'TUE', time: '18:50-19:40' }],
 
-  // LAB SLOTS - WEDNESDAY
   L7: [{ day: 'WED', time: '08:00-08:50' }],
   L8: [{ day: 'WED', time: '09:00-09:50' }],
   L9: [{ day: 'WED', time: '09:50-10:40' }],
@@ -135,7 +128,6 @@ const slotMappingWinterFall = {
   L41: [{ day: 'WED', time: '18:00-18:50' }],
   L42: [{ day: 'WED', time: '18:50-19:40' }],
 
-  // LAB SLOTS - THURSDAY
   L13: [{ day: 'THU', time: '08:00-08:50' }],
   L14: [{ day: 'THU', time: '09:00-09:50' }],
   L15: [{ day: 'THU', time: '09:50-10:40' }],
@@ -148,7 +140,6 @@ const slotMappingWinterFall = {
   L47: [{ day: 'THU', time: '18:00-18:50' }],
   L48: [{ day: 'THU', time: '18:50-19:40' }],
 
-  // LAB SLOTS - FRIDAY
   L19: [{ day: 'FRI', time: '08:00-08:50' }],
   L20: [{ day: 'FRI', time: '09:00-09:50' }],
   L21: [{ day: 'FRI', time: '09:50-10:40' }],
@@ -161,7 +152,6 @@ const slotMappingWinterFall = {
   L53: [{ day: 'FRI', time: '18:00-18:50' }],
   L54: [{ day: 'FRI', time: '18:50-19:40' }],
 
-  // LAB SLOTS - SATURDAY
   L25: [{ day: 'SAT', time: '08:00-08:50' }],
   L26: [{ day: 'SAT', time: '09:00-09:50' }],
   L27: [{ day: 'SAT', time: '09:50-10:40' }],

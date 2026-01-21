@@ -23,7 +23,6 @@ export default function SlotGrid({
 
   const slotMapping = getSlotMappingForSemester(currentSemester);
 
-  // ---------------- BUILD TIMETABLE MAP ----------------
   const timetable = {};
   for (let course of selectedCourses) {
     for (let slot of [...(course.theory || []), ...(course.lab || [])]) {
@@ -34,13 +33,11 @@ export default function SlotGrid({
     }
   }
 
-  // ---------------- TIME HELPERS ----------------
   const timeToMinutes = (timeStr) => {
     const [h, m] = timeStr.split(':').map(Number);
     return h * 60 + m;
   };
 
-  // ---------------- GROUP TIMES ----------------
   const groupOverlappingTimes = (theoryTimes, labTimes) => {
     const groups = [];
 
@@ -196,7 +193,6 @@ export default function SlotGrid({
     });
   };
 
-  // ================= RENDER =================
   return (
     <div className="mt-6 w-full">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
@@ -206,7 +202,7 @@ export default function SlotGrid({
 
         <button
           onClick={handleDownload}
-          className={`px-3 py-2 text-sm sm:text-base text-white rounded ${downloadBtnClass} whitespace-nowrap`}
+          className={`px-3 py-2 text-sm sm:text-base text-white rounded-lg ${downloadBtnClass} whitespace-nowrap`}
         >
           Download Timetable
         </button>

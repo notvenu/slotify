@@ -3,7 +3,6 @@ const slotMappingFreshers = {
     { time: '13:10-14:00' },
   ],
   
-  // Theory Slots (Blue in timetable)
   A1: [
     { day: 'TUE', time: '09:00-09:50' },
     { day: 'THU', time: '11:00-11:50' },
@@ -75,7 +74,6 @@ const slotMappingFreshers = {
     { day: 'SAT', time: '14:00-14:50' }
   ],
 
-  // Tutorial Slots
   TA1: [{ day: 'MON', time: '09:00-09:50' }],
   TA2: [{ day: 'MON', time: '14:00-14:50' }],
   TB1: [{ day: 'MON', time: '10:00-10:50' }],
@@ -97,7 +95,6 @@ const slotMappingFreshers = {
   TFF1: [{ day: 'TUE', time: '08:00-08:50' }],
   TFF2: [{ day: 'THU', time: '18:00-18:50' }],
 
-  // Shared Theory/Tutorial Combination Slots
   SA1: [{ day: 'FRI', time: '15:00-15:50' }],
   SA2: [{ day: 'FRI', time: '09:00-09:50' }],
   SB1: [{ day: 'THU', time: '16:00-16:50' }],
@@ -111,7 +108,6 @@ const slotMappingFreshers = {
   SF1: [{ day: 'TUE', time: '15:00-15:50' }],
   SF2: [{ day: 'FRI', time: '10:00-10:50' }],
 
-  // Lab Slots - Monday (Red in timetable)
   L61: [{ day: 'MON', time: '08:00-08:50' }],
   L62: [{ day: 'MON', time: '08:50-09:40' }],
   L63: [{ day: 'MON', time: '09:50-10:40' }],
@@ -125,7 +121,6 @@ const slotMappingFreshers = {
   L71: [{ day: 'MON', time: '17:40-18:30' }],
   L72: [{ day: 'MON', time: '18:30-19:10' }],
 
-  // Lab Slots - Tuesday (Red in timetable)
   L1: [{ day: 'TUE', time: '08:00-08:50' }],
   L2: [{ day: 'TUE', time: '08:50-09:40' }],
   L3: [{ day: 'TUE', time: '09:50-10:40' }],
@@ -139,7 +134,6 @@ const slotMappingFreshers = {
   L35: [{ day: 'TUE', time: '17:40-18:30' }],
   L36: [{ day: 'TUE', time: '18:30-19:10' }],
 
-  // Lab Slots - Wednesday (Red in timetable)
   L7: [{ day: 'WED', time: '08:00-08:50' }],
   L8: [{ day: 'WED', time: '08:50-09:40' }],
   L9: [{ day: 'WED', time: '09:50-10:40' }],
@@ -153,7 +147,6 @@ const slotMappingFreshers = {
   L41: [{ day: 'WED', time: '17:40-18:30' }],
   L42: [{ day: 'WED', time: '18:30-19:10' }],
 
-  // Lab Slots - Thursday (Red in timetable)
   L13: [{ day: 'THU', time: '08:00-08:50' }],
   L14: [{ day: 'THU', time: '08:50-09:40' }],
   L15: [{ day: 'THU', time: '09:50-10:40' }],
@@ -167,7 +160,6 @@ const slotMappingFreshers = {
   L47: [{ day: 'THU', time: '17:40-18:30' }],
   L48: [{ day: 'THU', time: '18:30-19:10' }],
 
-  // Lab Slots - Friday (Red in timetable)
   L19: [{ day: 'FRI', time: '08:00-08:50' }],
   L20: [{ day: 'FRI', time: '08:50-09:40' }],
   L21: [{ day: 'FRI', time: '09:50-10:40' }],
@@ -181,7 +173,6 @@ const slotMappingFreshers = {
   L53: [{ day: 'FRI', time: '17:40-18:30' }],
   L54: [{ day: 'FRI', time: '18:30-19:10' }],
 
-  // Lab Slots - Saturday (Red in timetable)
   L25: [{ day: 'SAT', time: '08:00-08:50' }],
   L26: [{ day: 'SAT', time: '08:50-09:40' }],
   L27: [{ day: 'SAT', time: '09:50-10:40' }],

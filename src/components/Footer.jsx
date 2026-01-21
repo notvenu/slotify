@@ -10,7 +10,6 @@ import { colorConfig, getThemeColor } from '../utils/colors';
 export default function Footer({ theme = 'light' }) {
   const isDark = theme === 'dark';
 
-  // Centralized color variables from colorConfig
   const bgTheme = getThemeColor(theme, colorConfig.background);
   const textTheme = getThemeColor(theme, colorConfig.text);
   const footerBgClass = bgTheme.card || '';

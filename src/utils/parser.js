@@ -39,7 +39,15 @@ export async function parseCourseData(file) {
           slotCombos: []
         });
       }
-      courseMap.get(key).slotCombos.push({ theory, lab });
+      const comboKey = `${theory.sort().join(',')}|${lab.sort().join(',')}`;
+      const existingCombos = courseMap.get(key).slotCombos;
+      const isDuplicate = existingCombos.some(combo => {
+        const existingKey = `${(combo.theory || []).slice().sort().join(',')}|${(combo.lab || []).slice().sort().join(',')}`;
+        return existingKey === comboKey;
+      });
+      if (!isDuplicate) {
+        courseMap.get(key).slotCombos.push({ theory, lab });
+      }
     }
   }
 

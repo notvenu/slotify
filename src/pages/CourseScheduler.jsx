@@ -19,9 +19,8 @@ export default function CourseScheduler({ theme, toggleTheme }) {
   const [defaultTag, setDefaultTag] = useState(null);
   const [defaultReloadSignal, setDefaultReloadSignal] = useState(0);
   const [currentSemester, setCurrentSemester] = useState(() => {
-    // Load saved semester from localStorage, fallback to 'win_freshers'
     return localStorage.getItem('currentSemester') || 'win_freshers';
-  }); // Track current semester
+  });
   const [toast, setToast] = useState({ visible: false, message: '', type: 'info' });
   const toastTimerRef = React.useRef(null);
 
@@ -34,7 +33,7 @@ export default function CourseScheduler({ theme, toggleTheme }) {
     }, timeout);
   };
 
-  const loadDefaultTimetable = async (fileName = 'winter_25-26.pdf') => {
+  const loadDefaultTimetable = async (fileName = 'win_freshers_25-26.pdf') => {
     try {
       const response = await fetch(`/course-lists/${fileName}`);
       const blob = await response.blob();
@@ -86,7 +85,6 @@ export default function CourseScheduler({ theme, toggleTheme }) {
     }
   }, [selectedCourses, hasLoadedSelected]);
 
-  // Clear selected courses when semester changes
   useEffect(() => {
     if (hasLoadedSelected) {
       setSelectedCourses([]);
@@ -96,11 +94,9 @@ export default function CourseScheduler({ theme, toggleTheme }) {
   }, [currentSemester]);
 
   const handleFile = async (fileOrParsed) => {
-    // Support calls from FileUploader using an object payload: { loadDefault: filename|null }
     if (fileOrParsed && typeof fileOrParsed === 'object' && 'loadDefault' in fileOrParsed) {
       const val = fileOrParsed.loadDefault;
       if (val == null) {
-        // No default available for this selection — clear parsed and selected state
         setCourseData([]);
         setSelectedCourses([]);
         try { localStorage.removeItem('uploadedCourseData'); } catch (e) {}
@@ -202,7 +198,6 @@ export default function CourseScheduler({ theme, toggleTheme }) {
     return Array.from(map.values());
   };
 
-  // Centralized color configuration
   const pageBg = theme === 'dark' ? colorConfig.background.dark.page : colorConfig.background.light.secondary;
   const pageText = theme === 'dark' ? colorConfig.text.dark.primary : colorConfig.text.light.primary;
   const inputBg = theme === 'dark' ? colorConfig.input.dark.bg : colorConfig.input.light.bg;

@@ -1,11 +1,4 @@
-/**
- * Centralized modern color configuration (Refined UI/UX – 2025)
- */
-
 export const colorConfig = {
-  /* =========================
-     SOCIAL / BRAND
-  ========================== */
   brand: {
     github: {
       base: '#6B7280',
@@ -17,9 +10,6 @@ export const colorConfig = {
     gmail: { base: '#6B7280', hover: '#EA4335' },
   },
 
-  /* =========================
-     CORE PALETTE
-  ========================== */
   primary: {
     light: '#4988C4',
     main: '#1C4D8D',
@@ -36,9 +26,6 @@ export const colorConfig = {
     extraDark: '#0F2854',
   },
 
-  /* =========================
-     SLOT TYPES
-  ========================== */
   slotTypes: {
     theory: {
       light: 'bg-emerald-600 text-white',
@@ -54,9 +41,6 @@ export const colorConfig = {
     },
   },
 
-  /* =========================
-     TIMETABLE GRID
-  ========================== */
   timetable: {
     light: {
       header: {
@@ -100,9 +84,6 @@ export const colorConfig = {
     },
   },
 
-  /* =========================
-     BACKGROUND
-  ========================== */
   background: {
     light: {
       page: 'bg-white',
@@ -116,9 +97,6 @@ export const colorConfig = {
     },
   },
 
-  /* =========================
-     TEXT
-  ========================== */
   text: {
     light: {
       primary: 'text-slate-900',
@@ -132,17 +110,11 @@ export const colorConfig = {
     },
   },
 
-  /* =========================
-     BORDERS
-  ========================== */
   border: {
     light: 'border-slate-300',
     dark: 'border-slate-600',
   },
 
-  /* =========================
-     BUTTONS
-  ========================== */
   button: {
     primary: {
       light:
@@ -170,9 +142,6 @@ export const colorConfig = {
     },
   },
 
-  /* =========================
-     NAVIGATION
-  ========================== */
   nav: {
     light: {
       bg: 'bg-white/90 backdrop-blur-sm',
@@ -188,17 +157,11 @@ export const colorConfig = {
     },
   },
 
-  /* =========================
-     LINKS
-  ========================== */
   link: {
     light: 'text-[#1C4D8D] hover:text-[#0F2854]',
     dark: 'text-[#4988C4] hover:text-[#BDE8F5]',
   },
 
-  /* =========================
-     ALERTS
-  ========================== */
   alert: {
     info: {
       light:
@@ -222,9 +185,6 @@ export const colorConfig = {
     },
   },
 
-  /* =========================
-     INPUTS
-  ========================== */
   input: {
     light: {
       bg: 'bg-white',
@@ -241,9 +201,6 @@ export const colorConfig = {
   },
 };
 
-/* =========================
-   HELPERS
-========================== */
 export const getThemeColor = (theme, map) =>
   map[theme === 'dark' ? 'dark' : 'light'];
 

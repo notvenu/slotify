@@ -27,7 +27,6 @@ function AppContent() {
         if (saved === 'dark') document.documentElement.classList.add('dark');
         else document.documentElement.classList.remove('dark');
       } else {
-        // Use system preference if no saved theme
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const systemTheme = prefersDark ? 'dark' : 'light';
         setTheme(systemTheme);
@@ -36,7 +35,6 @@ function AppContent() {
         localStorage.setItem('theme', systemTheme);
       }
     } catch (e) {
-      // Fallback to system preference
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       const fallbackTheme = prefersDark ? 'dark' : 'light';
       setTheme(fallbackTheme);

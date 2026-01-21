@@ -16,7 +16,6 @@ export default function SelectedCourses({
   const [selectedIndices, setSelectedIndices] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Centralized color variables using getThemeColor and colorConfig
   const textTheme = getThemeColor(theme, colorConfig.text);
   const inputTheme = getThemeColor(theme, colorConfig.input);
   const btnDanger = colorConfig.button.danger[theme === 'dark' ? 'dark' : 'light'];
@@ -36,7 +35,7 @@ export default function SelectedCourses({
   const courseCardTextClass = textTheme.primary || '';
   const courseSecondaryTextClass = textTheme.secondary || '';
   const courseLabelTextClass = textTheme.primary || '';
-  const creditsTextClass = theme === 'dark' ? 'text-[#4988C4]' : 'text-[#1C4D8D]'; // medium blue / medium dark blue
+  const creditsTextClass = theme === 'dark' ? 'text-[#4988C4]' : 'text-[#1C4D8D]';
   const editButtonClass = colorConfig.button.warning[theme === 'dark' ? 'dark' : 'light'];
   const removeButtonClass = btnDanger;
 
@@ -195,19 +194,18 @@ export default function SelectedCourses({
       </h2>
 
       {groupedCourses.length > 0 && (
-      <div className="mb-4 flex flex-wrap justify-between gap-2 items-center">
-        {/* Left: Search */}
-        <div className="flex gap-2 items-center flex-wrap">
+      <div className="mb-4 space-y-3">
+        <div className="flex gap-2 items-center">
           <input
             type="text"
             placeholder="Search by name or code..."
-            className={`border px-3 py-2 rounded-lg w-full md:w-72 focus:outline-none focus:ring-2 ${searchInputBgClass}`}
+            className={`border px-3 py-2 rounded-lg flex-1 focus:outline-none focus:ring-2 ${searchInputBgClass}`}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           {searchTerm && (
             <button
-              className={`px-3 py-2 rounded-lg cursor-pointer transition-colors ${clearButtonClass}`}
+              className={`px-3 py-2 rounded-lg cursor-pointer transition-colors whitespace-nowrap ${clearButtonClass}`}
               onClick={() => setSearchTerm('')}
             >
               Clear
@@ -215,11 +213,10 @@ export default function SelectedCourses({
           )}
         </div>
 
-        {/* Right: Action Buttons */}
         <div className="flex gap-2 flex-wrap">
           {selectionMode && (
             <button
-              className={`px-3 py-2 text-white rounded-lg cursor-pointer transition-colors ${removeSelectedButtonClass}`}
+              className={`px-3 py-2 text-white rounded-lg cursor-pointer transition-colors whitespace-nowrap flex-shrink-0 ${removeSelectedButtonClass}`}
               onClick={() => {
                 onRemoveMultiple(selectedIndices);
                 setSelectedIndices([]);
@@ -229,19 +226,19 @@ export default function SelectedCourses({
             </button>
           )}
           <button
-            className={`px-3 py-2 text-white rounded-lg cursor-pointer transition-colors ${removeAllButtonClass}`}
+            className={`px-3 py-2 text-white rounded-lg cursor-pointer transition-colors whitespace-nowrap flex-shrink-0 ${removeAllButtonClass}`}
             onClick={onRemoveAll}
           >
             Remove All
           </button>
           <button
-            className={`px-3 py-2 text-white rounded-lg cursor-pointer transition-colors font-medium ${downloadButtonClass}`}
+            className={`px-3 py-2 text-white rounded-lg cursor-pointer transition-colors font-medium whitespace-nowrap flex-shrink-0 ${downloadButtonClass}`}
             onClick={handleDownloadExcel}
           >
             Download Excel
           </button>
           <button
-            className={`px-3 py-2 text-white rounded-lg cursor-pointer transition-colors font-medium ${downloadButtonClass}`}
+            className={`px-3 py-2 text-white rounded-lg cursor-pointer transition-colors font-medium whitespace-nowrap flex-shrink-0 ${downloadButtonClass}`}
             onClick={handleDownloadPDF}
           >
             Download PDF

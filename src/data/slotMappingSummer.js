@@ -1,10 +1,8 @@
 const slotMappingSummer = {
-  // ================= LUNCH =================
   Lunch: [
     { time: '12:50-14:00' }
   ],
 
-  // ================= THEORY (2 CREDIT) =================
   A:  [{ day: 'WED', time: '11:00-11:50' }, { day: 'THU', time: '14:00-14:50' }],
   A1: [{ day: 'WED', time: '12:00-12:50' }, { day: 'THU', time: '15:00-15:50' }],
 
@@ -27,7 +25,7 @@ const slotMappingSummer = {
     { day: 'FRI', time: '17:00-17:50' }
   ],
 
-  // ================= THEORY (1 CREDIT / TUTORIAL) =================
+
   TA:  [{ day: 'TUE', time: '11:00-11:50' }, { day: 'FRI', time: '09:00-09:50' }],
   TA1: [{ day: 'TUE', time: '12:00-12:50' }, { day: 'FRI', time: '10:00-10:50' }],
 
@@ -49,12 +47,6 @@ const slotMappingSummer = {
   TCC:  [{ day: 'MON', time: '14:00-14:50' }, { day: 'SAT', time: '14:00-14:50' }],
   TCC1: [{ day: 'MON', time: '15:00-15:50' }, { day: 'SAT', time: '15:00-15:50' }],
 
-  // ================= LAB SLOTS (RED) =================
-  // Pattern: 09:00-09:50 | 09:50-10:40 | 11:00-11:50 | 11:50-12:40
-  //          14:00-14:50 | 14:50-15:40 | 16:00-16:50 | 16:50-17:40
-  //          18:00-18:50 | 18:50-19:40
-
-  // MON
   L1:  [{ day: 'MON', time: '09:00-09:50' }],
   L2:  [{ day: 'MON', time: '09:50-10:40' }],
   L3:  [{ day: 'MON', time: '11:00-11:50' }],
@@ -66,7 +58,6 @@ const slotMappingSummer = {
   L49: [{ day: 'MON', time: '18:00-18:50' }],
   L50: [{ day: 'MON', time: '18:50-19:40' }],
 
-  // TUE
   L5:  [{ day: 'TUE', time: '09:00-09:50' }],
   L6:  [{ day: 'TUE', time: '09:50-10:40' }],
   L7:  [{ day: 'TUE', time: '11:00-11:50' }],
@@ -78,7 +69,6 @@ const slotMappingSummer = {
   L51: [{ day: 'TUE', time: '18:00-18:50' }],
   L52: [{ day: 'TUE', time: '18:50-19:40' }],
 
-  // WED
   L9:  [{ day: 'WED', time: '09:00-09:50' }],
   L10: [{ day: 'WED', time: '09:50-10:40' }],
   L11: [{ day: 'WED', time: '11:00-11:50' }],
@@ -90,7 +80,6 @@ const slotMappingSummer = {
   L53: [{ day: 'WED', time: '18:00-18:50' }],
   L54: [{ day: 'WED', time: '18:50-19:40' }],
 
-  // THU
   L13: [{ day: 'THU', time: '09:00-09:50' }],
   L14: [{ day: 'THU', time: '09:50-10:40' }],
   L15: [{ day: 'THU', time: '11:00-11:50' }],
@@ -102,7 +91,6 @@ const slotMappingSummer = {
   L55: [{ day: 'THU', time: '18:00-18:50' }],
   L56: [{ day: 'THU', time: '18:50-19:40' }],
 
-  // FRI
   L17: [{ day: 'FRI', time: '09:00-09:50' }],
   L18: [{ day: 'FRI', time: '09:50-10:40' }],
   L19: [{ day: 'FRI', time: '11:00-11:50' }],
@@ -114,7 +102,6 @@ const slotMappingSummer = {
   L57: [{ day: 'FRI', time: '18:00-18:50' }],
   L58: [{ day: 'FRI', time: '18:50-19:40' }],
 
-  // SAT
   L21: [{ day: 'SAT', time: '09:00-09:50' }],
   L22: [{ day: 'SAT', time: '09:50-10:40' }],
   L23: [{ day: 'SAT', time: '11:00-11:50' }],

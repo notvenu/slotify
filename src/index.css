@@ -1,14 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
-/* Font family for consistent cross-platform rendering matching the mobile design */
 * {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Ensure consistent font rendering across all text elements */
 html, body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
   font-feature-settings: 'cv11', 'ss01';
@@ -54,12 +52,46 @@ html, body {
 .theme-dark .text-gray-400 {
 	color: var(--app-muted) !important;
 }
+*::-webkit-scrollbar {
+  width: 12px;
+  height: 8px;
+}
 
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(107, 114, 128, 0.5);
+  border-radius: 4px;
+  border-left: 4px solid transparent;
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 114, 128, 0.7);
+}
+
+.dark *::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.3);
+}
+
+.dark *::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.5);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(107, 114, 128, 0.5) transparent;
+}
+
+.dark * {
+  scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+}
 :root, body, .theme-transition, .min-h-screen {
   transition: background-color 400ms ease-in-out, color 400ms ease-in-out, border-color 400ms ease-in-out;
 }
 
-/* Make buttons show pointer cursor by default; disabled buttons show not-allowed */
 button:not(:disabled), input[type="button"]:not(:disabled), input[type="submit"]:not(:disabled) {
 	cursor: pointer;
 }

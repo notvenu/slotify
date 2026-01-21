@@ -2,10 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { colorConfig, getThemeColor } from '../utils/colors';
 
 export default function FileUploader({ onExtract, onRemove, defaultReloadSignal, theme = 'light', showToast, onSemesterChange }) {
-  const [year, setYear] = useState('25-26');
   const [semester, setSemester] = useState(() => {
-    // Load saved semester from localStorage, fallback to 'win'
-    return localStorage.getItem('currentSemester') || 'win';
+    return localStorage.getItem('currentSemester') || 'win_freshers';
   });
   const [fileName, setFileName] = useState('');
   const [fileURL, setFileURL] = useState('');
@@ -15,7 +13,6 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
   const defaultFileNameRef = useRef('');
   const [expanded, setExpanded] = useState(false);
 
-  const years = ['25-26', '26-27', '27-28'];
   const semesters = [
     { value: 'win_freshers', label: 'Winter Semester Freshers' },
     { value: 'win', label: 'Winter Semester' },
@@ -26,29 +23,37 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
     { value: 'long-summ', label: 'Long Summer Semester' },
   ];
 
-  const getFileNameFromSelection = (selectedYear, selectedSemester) => {
-    const baseName = `${selectedSemester}_${selectedYear}`;
-    return `${baseName}.pdf`;
+  const getFileNameFromSelection = (selectedSemester) => {
+    return `${selectedSemester}.pdf`;
   };
 
   useEffect(() => {
     fileURLRef.current = fileURL;
   }, [fileURL]);
 
-  // Check if a file exists in public folder for the selected year/semester
   useEffect(() => {
     const checkPublicFile = async () => {
       try {
         const candidates = [];
-        const base = `${semester}_${year}`;
-        candidates.push(`${base}.pdf`);
-        // alternative names
+        const currentYear = '25-26';
+        candidates.push(`${semester}_${currentYear}.pdf`);
+        candidates.push(`${semester}.pdf`);
+        
         if (semester.includes('freshers')) {
           const alt = semester.replace('freshers', 'fresher');
-          candidates.push(`${alt}_${year}.pdf`);
+          candidates.push(`${alt}_${currentYear}.pdf`);
+          candidates.push(`${alt}.pdf`);
         }
-        if (semester === 'win') candidates.push(`winter_${year}.pdf`, `win_${year}.pdf`);
-        if (semester === 'fall') candidates.push(`fall_${year}.pdf`);
+        if (semester === 'win') {
+          candidates.push(`winter_${currentYear}.pdf`);
+          candidates.push(`win_${currentYear}.pdf`);
+          candidates.push(`winter.pdf`);
+          candidates.push(`win.pdf`);
+        }
+        if (semester === 'fall') {
+          candidates.push(`fall_${currentYear}.pdf`);
+          candidates.push(`fall.pdf`);
+        }
 
         let found = '';
         for (const cand of candidates) {
@@ -60,7 +65,6 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
               found = cand;
               break;
             }
-            // fallback probe if HEAD didn't return content-type
             if (!ct) {
               try {
                 const getResp = await fetch(`/course-lists/${cand}`, { method: 'GET' });
@@ -70,11 +74,9 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
                   break;
                 }
               } catch (e) {
-                // ignore
               }
             }
           } catch (e) {
-            // ignore
           }
         }
 
@@ -82,7 +84,6 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
           setHasPublicFile(true);
           setFileName(found);
           defaultFileNameRef.current = found;
-          // schedule parent load but guard against stale selection
           if (typeof onExtract === 'function') {
             setTimeout(async () => {
               if (defaultFileNameRef.current !== found) return;
@@ -116,21 +117,18 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
       }
     };
 
-    // Clear uploaded state when selection changes
     setIsUploaded(false);
     setFileName('');
     setFileURL('');
     defaultFileNameRef.current = '';
 
     checkPublicFile();
-  }, [year, semester]);
+  }, [semester]);
 
-  // Notify parent component of semester changes
   useEffect(() => {
     if (typeof onSemesterChange === 'function') {
       onSemesterChange(semester);
     }
-    // Save current semester selection to localStorage
     localStorage.setItem('currentSemester', semester);
   }, [semester, onSemesterChange]);
 
@@ -151,10 +149,9 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
     };
   }, []);
 
-  // If the app reloads the default data, update this component's UI
   useEffect(() => {
     if (!defaultReloadSignal) return;
-    const fn = defaultFileNameRef.current || getFileNameFromSelection(year, semester);
+    const fn = defaultFileNameRef.current || getFileNameFromSelection(semester);
     if (fn) {
       setFileName(fn);
       setFileURL(`/course-lists/${fn}`);
@@ -185,9 +182,8 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
     try {
       localStorage.removeItem('skipDefault');
     } catch (e) {}
-    // Ask parent to load default timetable
     if (typeof onExtract === 'function') {
-      const fn = defaultFileNameRef.current || getFileNameFromSelection(year, semester);
+      const fn = defaultFileNameRef.current || getFileNameFromSelection(semester);
       if (fn) {
         if (typeof showToast === 'function') showToast(`Loading default ${fn}...`, 'info');
         try {
@@ -221,7 +217,6 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
     if (typeof onRemove === 'function') onRemove();
   };
 
-  // Centralized theme colors using colorConfig
   const bgTheme = getThemeColor(theme, colorConfig.background);
   const textTheme = getThemeColor(theme, colorConfig.text);
   const inputTheme = getThemeColor(theme, colorConfig.input);
@@ -248,7 +243,7 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
       >
         <div className="flex items-center gap-3">
           <div className="font-semibold">Upload / Defaults</div>
-          <div className={`text-sm ${secondaryTextColors}`}>{year} • {semesters.find(s => s.value === semester)?.label}</div>
+          <div className={`text-sm ${secondaryTextColors}`}>{semesters.find(s => s.value === semester)?.label}</div>
         </div>
         <div className={`transform transition-transform duration-200 ${expanded ? 'rotate-180' : 'rotate-0'}`}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -260,40 +255,23 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
       <div className={`mb-4 border rounded-lg overflow-hidden transition-all duration-300 ${expanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
         <div className={`p-4 ${containerColors}`}>
           <p className={`text-sm mb-4 font-medium ${labelColors}`}>
-            Select your year and semester, then upload the course list file.
+            Select your semester, then upload the course list file.
           </p>
 
-          {/* Year and Semester Selectors */}
-          <div className="grid grid-cols-2 gap-4 mb-4">
-            <div>
-              <label className={`block text-sm font-semibold mb-2 ${labelColors}`}>
-                Select the Year
-              </label>
-              <select
-                value={year}
-                onChange={(e) => setYear(e.target.value)}
-                className={`w-full p-2 border rounded-lg ${selectColors}`}
-              >
-                {years.map((y) => (
-                  <option key={y} value={y}>{y}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className={`block text-sm font-semibold mb-2 ${labelColors}`}>
-                Select the Semester
-              </label>
-              <select
-                value={semester}
-                onChange={(e) => setSemester(e.target.value)}
-                className={`w-full p-2 border rounded-lg ${selectColors}`}
-              >
-                {semesters.map((s) => (
-                  <option key={s.value} value={s.value}>{s.label}</option>
-                ))}
-              </select>
-            </div>
+          {/* Semester Selector */}
+          <div className="mb-4">
+            <label className={`block text-sm font-semibold mb-2 ${labelColors}`}>
+              Select the Semester
+            </label>
+            <select
+              value={semester}
+              onChange={(e) => setSemester(e.target.value)}
+              className={`w-full p-2 border rounded-lg ${selectColors}`}
+            >
+              {semesters.map((s) => (
+                <option key={s.value} value={s.value}>{s.label}</option>
+              ))}
+            </select>
           </div>
 
           <p className={`text-sm mb-2 font-medium ${labelColors}`}>
@@ -334,7 +312,7 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
           )}
 
           {isUploaded && (
-            <div className="flex items-center justify-between mt-3">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-3">
               <div className={`font-medium ${successTextColors}`}>
                 ✅ Loaded:{' '}
                 <span className={fileNameTextColors}>
@@ -342,7 +320,7 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
                 </span>
               </div>
               <button
-                className={`px-4 py-2 rounded-lg cursor-pointer ${dangerButtonColors}`}
+                className={`px-4 py-2 rounded-lg cursor-pointer whitespace-nowrap ${dangerButtonColors}`}
                 onClick={handleRemove}
               >
                 Remove File

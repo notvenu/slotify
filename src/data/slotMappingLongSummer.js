@@ -1,10 +1,8 @@
 const slotMappingLongSummer = {
-  // ================= LUNCH =================
   Lunch: [
     { time: '12:50-14:00' }
   ],
 
-  // ================= THEORY (LONG SUMMER) =================
   TC: [{ day: 'MON', time: '09:00-09:50' }, { day: 'SAT', time: '15:00-15:50' }],
   TD: [{ day: 'MON', time: '10:00-10:50' }, { day: 'SAT', time: '14:00-14:50' }],
   TA: [{ day: 'MON', time: '11:00-11:50' }, { day: 'WED', time: '09:00-09:50' }],
@@ -42,8 +40,6 @@ const slotMappingLongSummer = {
     { day: 'FRI', time: '11:00-11:50' }
   ],
 
-  // ================= LAB SLOTS =================
-  // MON
   L1: [{ day: 'MON', time: '09:00-09:50' }],
   L2: [{ day: 'MON', time: '09:50-10:40' }],
   L3: [{ day: 'MON', time: '11:00-11:50' }],
@@ -55,7 +51,6 @@ const slotMappingLongSummer = {
   L49: [{ day: 'MON', time: '18:00-18:50' }],
   L50: [{ day: 'MON', time: '18:50-19:30' }],
 
-  // TUE
   L5: [{ day: 'TUE', time: '09:00-09:50' }],
   L6: [{ day: 'TUE', time: '09:50-10:40' }],
   L7: [{ day: 'TUE', time: '11:00-11:50' }],
@@ -67,7 +62,6 @@ const slotMappingLongSummer = {
   L51: [{ day: 'TUE', time: '18:00-18:50' }],
   L52: [{ day: 'TUE', time: '18:50-19:30' }],
 
-  // WED
   L9: [{ day: 'WED', time: '09:00-09:50' }],
   L10: [{ day: 'WED', time: '09:50-10:40' }],
   L11: [{ day: 'WED', time: '11:00-11:50' }],
@@ -79,7 +73,6 @@ const slotMappingLongSummer = {
   L53: [{ day: 'WED', time: '18:00-18:50' }],
   L54: [{ day: 'WED', time: '18:50-19:30' }],
 
-  // THU
   L13: [{ day: 'THU', time: '09:00-09:50' }],
   L14: [{ day: 'THU', time: '09:50-10:40' }],
   L15: [{ day: 'THU', time: '11:00-11:50' }],
@@ -91,7 +84,6 @@ const slotMappingLongSummer = {
   L55: [{ day: 'THU', time: '18:00-18:50' }],
   L56: [{ day: 'THU', time: '18:50-19:30' }],
 
-  // FRI
   L17: [{ day: 'FRI', time: '09:00-09:50' }],
   L18: [{ day: 'FRI', time: '09:50-10:40' }],
   L19: [{ day: 'FRI', time: '11:00-11:50' }],
@@ -103,7 +95,6 @@ const slotMappingLongSummer = {
   L57: [{ day: 'FRI', time: '18:00-18:50' }],
   L58: [{ day: 'FRI', time: '18:50-19:30' }],
 
-  // SAT
   L21: [{ day: 'SAT', time: '09:00-09:50' }],
   L22: [{ day: 'SAT', time: '09:50-10:40' }],
   L23: [{ day: 'SAT', time: '11:00-11:50' }],

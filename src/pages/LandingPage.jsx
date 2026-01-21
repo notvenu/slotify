@@ -18,7 +18,6 @@ import SEO from '../components/SEO';
 export default function LandingPage({ theme }) {
   const isDark = theme === "dark";
 
-  // Centralized color configuration via colorConfig
   const bgTheme = getThemeColor(theme, colorConfig.background);
   const textTheme = getThemeColor(theme, colorConfig.text);
 

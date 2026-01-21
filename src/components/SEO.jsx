@@ -12,23 +12,18 @@ const SEO = ({
   const currentUrl = `${baseUrl}${location.pathname}`;
 
   useEffect(() => {
-    // Update document title
     document.title = title;
 
-    // Update meta description
     updateMetaTag('description', description);
     updateMetaTag('keywords', keywords);
     
-    // Update Open Graph tags
     updateMetaTag('og:title', title, 'property');
     updateMetaTag('og:description', description, 'property');
     updateMetaTag('og:url', currentUrl, 'property');
     
-    // Update Twitter Card tags
     updateMetaTag('twitter:title', title);
     updateMetaTag('twitter:description', description);
     
-    // Update canonical URL
     updateCanonicalUrl(canonical || currentUrl);
     
   }, [title, description, keywords, canonical, currentUrl]);
@@ -53,7 +48,7 @@ const SEO = ({
     element.setAttribute('href', url);
   };
 
-  return null; // This component doesn't render anything
+  return null;
 };
 
 export default SEO;
