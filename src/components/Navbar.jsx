@@ -90,7 +90,7 @@ export default function Navbar({ theme, toggleTheme }) {
               </svg>
             </button>
             <a
-              href={`${githubRepoUrl}/stargazers`}
+              href={`${githubRepoUrl}`}
               target="_blank"
               rel="noopener noreferrer"
               className={`p-2 rounded-lg transition-colors ${themeToggleBgClass}`}
