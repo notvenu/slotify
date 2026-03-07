@@ -3,7 +3,6 @@ import { Analytics } from "@vercel/analytics/react";
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import CourseScheduler from './pages/CourseScheduler';
-import FacultyRanker from './pages/FacultyRanker';
 import Contact from './pages/Contact';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -59,10 +58,6 @@ function AppContent() {
             <Route 
               path="/course-selector" 
               element={<CourseScheduler theme={theme} />}
-            />
-            <Route 
-              path="/faculty-ranker" 
-              element={<FacultyRanker theme={theme} />}
             />
             <Route 
               path="/contact" 

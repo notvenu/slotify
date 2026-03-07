@@ -23,7 +23,7 @@ export default function Navbar({ theme, toggleTheme }) {
   const navItems = [
     { path: '/', label: 'Home' },
     { path: '/course-selector', label: 'Course Selector' },
-    //{ path: '/faculty-ranker', label: 'Faculty Ranker' },
+    { path: 'https://knowyourfaculty.vercel.app/faculty', label: 'Faculty Ranker', external: true },
     { path: '/contact', label: 'Contact Us' },
   ];
 
@@ -44,17 +44,29 @@ export default function Navbar({ theme, toggleTheme }) {
 
           <div className="hidden sm:flex items-center">
             {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`px-3 py-2 text-sm font-medium transition-colors ${
-                  isActive(item.path)
-                    ? navActiveTextClass
-                    : navTextClass
-                }`}
-              >
-                {item.label}
-              </Link>
+              item.external ? (
+                <a
+                  key={item.path}
+                  href={item.path}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`px-3 py-2 text-sm font-medium transition-colors ${navTextClass}`}
+                >
+                  {item.label}
+                </a>
+              ) : (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`px-3 py-2 text-sm font-medium transition-colors ${
+                    isActive(item.path)
+                      ? navActiveTextClass
+                      : navTextClass
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              )
             ))}
 
             <a
@@ -115,18 +127,31 @@ export default function Navbar({ theme, toggleTheme }) {
         <div className={`sm:hidden border-t transition-colors duration-300 ${navBorderClass}`}>
           <div className="px-2 py-3 space-y-1">
             {navItems.map((item) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                onClick={() => setMobileOpen(false)}
-                className={`block px-3 py-2 text-base font-medium transition-colors ${
-                  isActive(item.path)
-                    ? navActiveTextClass
-                    : navTextClass
-                }`}
-              >
-                {item.label}
-              </Link>
+              item.external ? (
+                <a
+                  key={item.path}
+                  href={item.path}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMobileOpen(false)}
+                  className={`block px-3 py-2 text-base font-medium transition-colors ${navTextClass}`}
+                >
+                  {item.label}
+                </a>
+              ) : (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setMobileOpen(false)}
+                  className={`block px-3 py-2 text-base font-medium transition-colors ${
+                    isActive(item.path)
+                      ? navActiveTextClass
+                      : navTextClass
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              )
             ))}
           </div>
         </div>
