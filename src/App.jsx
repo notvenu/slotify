@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import CourseScheduler from './pages/CourseScheduler';
@@ -48,6 +49,7 @@ function AppContent() {
   return (
     <>
       <Analytics />
+      <SpeedInsights />
       <Navbar theme={theme} toggleTheme={toggleTheme} />
       <div className="flex flex-col min-h-screen">
         <main className="flex-1">
