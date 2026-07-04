@@ -50,7 +50,7 @@ export default function CourseSelector({
   const comboCheckboxNormalColors = `${getThemeColor(theme, colorConfig.background).card} ${getThemeColor(theme, colorConfig.border)} border-2 ${getThemeColor(theme, colorConfig.text).primary} ${getThemeColor(theme, colorConfig.nav).hoverBg || ''}`;
 
   const addButtonEnabledColors = colorConfig.button.primary[theme === 'dark' ? 'dark' : 'light'];
-  const addButtonDisabledColors = '';
+  const addButtonDisabledColors = `${btnSecondary} opacity-50 cursor-not-allowed`;
 
   const cancelButtonColors = btnSecondary;
 

@@ -7,8 +7,8 @@ import ClashWarning from '../components/ClashWarning';
 import SelectedCourses from '../components/SelectedCourses';
 import Toast from '../components/Toast';
 import SEO from '../components/SEO';
-import { parseCourseData } from '../utils/parser';
-import { getSlotMappingForSemester } from '../utils/slotMappingUtils';
+import { parseCourseData, parseUpload } from '../utils/parser';
+import { getSlotMappingForSemester, saveCustomSlotMapping } from '../utils/slotMappingUtils';
 import { colorConfig } from '../utils/colors';
 
 export default function CourseScheduler({ theme, toggleTheme }) {
@@ -19,7 +19,7 @@ export default function CourseScheduler({ theme, toggleTheme }) {
   const [defaultTag, setDefaultTag] = useState(null);
   const [defaultReloadSignal, setDefaultReloadSignal] = useState(0);
   const [currentSemester, setCurrentSemester] = useState(() => {
-    return localStorage.getItem('currentSemester') || 'win_freshers';
+    return localStorage.getItem('currentSemester') || 'win';
   });
   const [toast, setToast] = useState({ visible: false, message: '', type: 'info' });
   const toastTimerRef = React.useRef(null);
@@ -33,7 +33,7 @@ export default function CourseScheduler({ theme, toggleTheme }) {
     }, timeout);
   };
 
-  const loadDefaultTimetable = async (fileName = 'win_freshers_25-26.pdf') => {
+  const loadDefaultTimetable = async (fileName = 'win_26-27.pdf') => {
     try {
       const response = await fetch(`/course-lists/${fileName}`);
       const blob = await response.blob();
@@ -93,7 +93,7 @@ export default function CourseScheduler({ theme, toggleTheme }) {
     }
   }, [currentSemester]);
 
-  const handleFile = async (fileOrParsed) => {
+  const handleFile = async (fileOrParsed, expected = 'courseList') => {
     if (fileOrParsed && typeof fileOrParsed === 'object' && 'loadDefault' in fileOrParsed) {
       const val = fileOrParsed.loadDefault;
       if (val == null) {
@@ -121,10 +121,27 @@ export default function CourseScheduler({ theme, toggleTheme }) {
       return fileOrParsed;
     }
 
-    const parsed = await parseCourseData(fileOrParsed);
-    setCourseData(parsed);
-    localStorage.setItem('uploadedCourseData', JSON.stringify(parsed));
-    return parsed;
+    const parsed = await parseUpload(fileOrParsed);
+
+    if (expected === 'slotTimetable') {
+      if (parsed.type !== 'slotTimetable') {
+        throw new Error('This does not look like a slot timetable PDF (ANNEXURE)');
+      }
+      saveCustomSlotMapping(currentSemester, parsed.mapping);
+      showToast('Slot timings updated from the uploaded slot timetable', 'success');
+      return parsed;
+    }
+
+    if (parsed.type === 'slotTimetable') {
+      throw new Error('This is a slot timetable. Use the "Update Slot Timings" upload instead.');
+    }
+
+    if (parsed.courses.length === 0) {
+      throw new Error('No courses found in this file');
+    }
+    setCourseData(parsed.courses);
+    localStorage.setItem('uploadedCourseData', JSON.stringify(parsed.courses));
+    return parsed.courses;
   };
 
   const hasClash = () => {
@@ -215,7 +232,7 @@ export default function CourseScheduler({ theme, toggleTheme }) {
       <div
         className={`min-h-screen theme-transition transition-colors duration-500 ease-in-out ${pageBg} ${pageText}`}
       >
-      <div className="p-6 pt-20 max-w-5xl mx-auto">
+      <div className="p-4 sm:p-6 pt-20 sm:pt-20 max-w-5xl mx-auto">
 
         <FileUploader
           onExtract={handleFile}
@@ -273,7 +290,7 @@ export default function CourseScheduler({ theme, toggleTheme }) {
           theme={theme}
         />
 
-        <Toast message={toast.message} type={toast.type} visible={toast.visible} />
+        <Toast message={toast.message} type={toast.type} visible={toast.visible} theme={theme} />
 
         <div
           className={`mt-4 p-3 rounded-lg border ${alertBg}`}

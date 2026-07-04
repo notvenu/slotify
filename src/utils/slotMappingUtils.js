@@ -3,7 +3,15 @@ import slotMappingFreshers from '../data/slotMappingFreshers';
 import slotMappingSummer from '../data/slotMappingSummer';
 import slotMappingLongSummer from '../data/slotMappingLongSummer';
 
+const customKey = (semester) => `customSlotMapping_${semester}`;
+
 export const getSlotMappingForSemester = (semester) => {
+  try {
+    const custom = localStorage.getItem(customKey(semester));
+    if (custom) return JSON.parse(custom);
+  } catch {
+    // fall through to built-in mapping
+  }
   switch (semester) {
     case 'win':
     case 'fall':
@@ -20,3 +28,10 @@ export const getSlotMappingForSemester = (semester) => {
       return slotMappingWinterFall;
   }
 };
+
+export const saveCustomSlotMapping = (semester, mapping) =>
+  localStorage.setItem(customKey(semester), JSON.stringify(mapping));
+
+export const hasCustomSlotMapping = (semester) => !!localStorage.getItem(customKey(semester));
+
+export const clearCustomSlotMapping = (semester) => localStorage.removeItem(customKey(semester));
