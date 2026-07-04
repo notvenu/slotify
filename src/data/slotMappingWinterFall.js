@@ -8,7 +8,7 @@ const slotMappingWinterFall = {
   ],
   A2: [
     { day: 'TUE', time: '15:00-15:50' },
-    { day: 'THU', time: '16:00-16:50' }
+    { day: 'THU', time: '17:00-17:50' }
   ],
   B1: [
     { day: 'TUE', time: '10:00-10:50' },
@@ -66,13 +66,13 @@ const slotMappingWinterFall = {
   TC1: [{ day: 'TUE', time: '11:00-11:50' }],
   TC2: [{ day: 'TUE', time: '17:00-17:50' }],
   TD1: [{ day: 'THU', time: '10:00-10:50' }],
-  TD2: [{ day: 'THU', time: '17:00-17:50' }],
+  TD2: [{ day: 'THU', time: '16:00-16:50' }],
   TE1: [{ day: 'FRI', time: '12:00-12:50' }],
   TE2: [{ day: 'THU', time: '14:00-14:50' }],
   TF1: [{ day: 'SAT', time: '11:00-11:50' }],
   TF2: [{ day: 'WED', time: '15:00-15:50' }],
   TG1: [{ day: 'THU', time: '10:00-10:50' }],
-  TG2: [{ day: 'THU', time: '17:00-17:50' }],
+  TG2: [{ day: 'THU', time: '16:00-16:50' }],
   TAA1: [{ day: 'THU', time: '11:00-11:50' }],
   TAA2: [{ day: 'SAT', time: '16:00-16:50' }],
   TBB1: [{ day: 'THU', time: '12:00-12:50' }],
@@ -84,9 +84,9 @@ const slotMappingWinterFall = {
   TEE1: [{ day: 'THU', time: '08:00-08:50' }],
   TEE2: [{ day: 'FRI', time: '18:00-18:50' }],
   TFF1: [{ day: 'TUE', time: '08:00-08:50' }],
-  TFF2: [{ day: 'SAT', time: '18:00-18:50' }],
+  TFF2: [{ day: 'THU', time: '18:00-18:50' }],
   TGG1: [{ day: 'WED', time: '08:00-08:50' }],
-  TGG2: [{ day: 'THU', time: '18:00-18:50' }],
+  TGG2: [{ day: 'SAT', time: '18:00-18:50' }],
 
   SC1: [{ day: 'WED', time: '16:00-16:50' }],
   SC2: [{ day: 'WED', time: '11:00-11:50' }],

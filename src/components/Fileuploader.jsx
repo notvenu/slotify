@@ -35,7 +35,7 @@ export default function FileUploader({ onExtract, onRemove, defaultReloadSignal,
     const checkPublicFile = async () => {
       try {
         const candidates = [];
-        const currentYear = '25-26';
+        const currentYear = '26-27';
         candidates.push(`${semester}_${currentYear}.pdf`);
         candidates.push(`${semester}.pdf`);
         
